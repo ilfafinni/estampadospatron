@@ -1,15 +1,8 @@
 // src/app/layout.tsx
 
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { CartProvider } from '@/lib/CartContext';
 import CartDrawer from '@/components/CartDrawer';
-
-const inter = Inter({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700', '800'],
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'Patronestampados.cl — Estampados Personalizados | Ropa Roly',
@@ -28,7 +21,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body className={inter.className} style={{ margin: 0, padding: 0 }}>
+      <body style={{ margin: 0, padding: 0, fontFamily: 'Inter, Arial, sans-serif' }}>
         <CartProvider>
           {children}
           <CartDrawer />
