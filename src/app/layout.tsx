@@ -5,9 +5,9 @@ import { CartProvider } from '@/lib/CartContext';
 import CartDrawer from '@/components/CartDrawer';
 
 export const metadata: Metadata = {
-  title: 'Patronestampados.cl — Estampados Personalizados | Ropa Roly',
-  description: 'Tienda de estampados personalizados en Santiago. Poleras, polerones, tazas y más. Catálogo Roly Chile. Desde 1 unidad. Pago con Webpay.',
-  keywords: ['estampados', 'personalizados', 'poleras', 'roly', 'santiago', 'chile'],
+  title: 'Patronestampados.cl — Estampados Personalizados',
+  description: 'Tienda de estampados personalizados en Santiago. Poleras, polerones, tazas y más. Desde 1 unidad. Pago con Webpay.',
+  keywords: ['estampados', 'personalizados', 'poleras', 'santiago', 'chile'],
   openGraph: {
     title: 'Patronestampados.cl',
     description: 'Estampados personalizados en Santiago. Desde 1 unidad.',
