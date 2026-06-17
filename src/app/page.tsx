@@ -33,7 +33,7 @@ export default function HomePage() {
       bg: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
       tag: 'Nueva colección',
       h1: <><span>Patrón</span><br />con tu diseño</>,
-      p: 'Trabajamos con el catálogo completo de Roly. Estampa cualquier referencia con tu logo o diseño. Desde 1 unidad.',
+      p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad.',
       cta: 'Ver poleras',
       onCta: () => { setActiveCat('poleras'); scrollToCat(); },
     },
@@ -372,7 +372,7 @@ export default function HomePage() {
                 PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
               </div>
               <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginTop: '0.8rem' }}>
-                Tienda de estampados personalizados en Santiago. Trabajamos con el catálogo completo de Roly Chile. Desde 1 unidad, sin mínimo.
+                Tienda de estampados personalizados en Santiago. Personaliza prendas y productos con tu logo o diseño. Desde 1 unidad, sin mínimo.
               </p>
             </div>
             {[
