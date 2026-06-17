@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         )
       : new Options(
           IntegrationCommerceCodes.WEBPAY_PLUS,
-          IntegrationApiKeys.WEBPAY_PLUS,
+          IntegrationApiKeys.WEBPAY,
           Environment.Integration
         );
 
