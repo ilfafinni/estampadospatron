@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 // src/components/ProductModal.tsx
 
 import { useState, useEffect } from 'react';
@@ -21,9 +22,10 @@ export default function ProductModal({ product, onClose }: Props) {
 
   // IA preview state
   const [fileB64, setFileB64] = useState<string | null>(null);
+  const [fileDataUrl, setFileDataUrl] = useState<string | null>(null);
   const [fileMime, setFileMime] = useState<string>('image/png');
   const [generating, setGenerating] = useState(false);
-  const [mockupHtml, setMockupHtml] = useState<string | null>(null);
+  const [aiSuggestion, setAiSuggestion] = useState<{ headline: string; placement: string; technique: string; note: string } | null>(null);
   const [iaError, setIaError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,7 +37,8 @@ export default function ProductModal({ product, onClose }: Props) {
       setNota('');
       setAdded(false);
       setFileB64(null);
-      setMockupHtml(null);
+      setFileDataUrl(null);
+      setAiSuggestion(null);
       setIaError(null);
       document.body.style.overflow = 'hidden';
     }
@@ -57,9 +60,10 @@ export default function ProductModal({ product, onClose }: Props) {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const result = ev.target?.result as string;
+      setFileDataUrl(result);
       setFileB64(result.split(',')[1]);
       setIaError(null);
-      setMockupHtml(null);
+      setAiSuggestion(null);
     };
     reader.readAsDataURL(f);
   };
@@ -68,43 +72,25 @@ export default function ProductModal({ product, onClose }: Props) {
     if (!fileB64) return;
     setGenerating(true);
     setIaError(null);
-    const colorSel = color || '';
-    const prompt = `Eres un diseñador gráfico experto en mockups de productos estampados.
-El usuario tiene una empresa chilena de estampados llamada Patronestampados.cl.
-Se te adjunta una imagen con su logo o diseño.
-Genera una representación visual usando SOLO HTML y CSS inline (sin imágenes externas, sin canvas, sin SVG complejo) que muestre un mockup esquemático del producto "${product.n}" con el diseño aplicado${colorSel ? ' en color ' + colorSel : ''}.
-El mockup debe:
-- Mostrar la silueta del producto esquemática
-- Indicar dónde iría el estampado con un recuadro marcado
-- Incluir una nota textual describiendo el resultado
-- Usar colores acorde al producto${colorSel ? ' principalmente ' + colorSel : ''}
-- Fondo blanco, estilo limpio y profesional
-- Máximo 400px de ancho, 350px de alto
-Responde SOLO con el HTML del mockup (empieza directo con <div...), sin explicaciones.`;
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('/api/ai/mockup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: fileMime, data: fileB64 } },
-              { type: 'text', text: prompt },
-            ],
-          }],
+          imageBase64: fileB64,
+          imageMime: fileMime,
+          productName: product.n,
+          productCategory: catLabel(product.c),
+          selectedColor: color,
+          selectedType: tipo,
         }),
       });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error((err as { error?: { message?: string } }).error?.message || `Error ${res.status}`);
+        throw new Error((data as { error?: string }).error || `Error ${res.status}`);
       }
-      const data = await res.json();
-      const html = (data.content as { text?: string }[]).map(b => b.text || '').join('').trim();
-      setMockupHtml(html);
+      setAiSuggestion(data as { headline: string; placement: string; technique: string; note: string });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Intenta nuevamente';
       setIaError('Error al generar: ' + msg);
@@ -298,11 +284,8 @@ Responde SOLO con el HTML del mockup (empieza directo con <div...), sin explicac
                   <span style={{ fontSize: '12px', color: '#666' }}>Generando mockup...</span>
                 </div>
               )}
-              {mockupHtml ? (
-                <div
-                  style={{ width: '100%', height: '100%', padding: '1rem', background: '#fff', overflow: 'auto' }}
-                  dangerouslySetInnerHTML={{ __html: mockupHtml }}
-                />
+              {fileDataUrl ? (
+                <AiMockup product={product} color={color} imageUrl={fileDataUrl} suggestion={aiSuggestion} />
               ) : (
                 <div style={{ textAlign: 'center', padding: '2rem' }}>
                   <div style={{ fontSize: '3rem', marginBottom: '0.8rem', opacity: 0.3 }}>🎨</div>
@@ -398,5 +381,43 @@ function QtyBtn({ onClick, label }: { onClick: () => void; label: string }) {
     >
       {label}
     </button>
+  );
+}
+
+function AiMockup({ product, color, imageUrl, suggestion }: { product: Product; color?: string; imageUrl: string; suggestion: { headline: string; placement: string; technique: string; note: string } | null }) {
+  const baseColor = product.v.col?.find(c => c.n === color)?.h || (product.c === 'tazas' ? '#f7f7f7' : '#ffffff');
+  const isDark = ['#111', '#1a1a1a', '#0a0a0a'].includes(baseColor.toLowerCase());
+  const isMug = product.c === 'tazas';
+  const isAccessory = product.c === 'accesorios' || product.c === 'impresion';
+
+  return (
+    <div style={{ width: '100%', minHeight: '100%', padding: '18px', background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+      <div style={{ position: 'relative', width: '210px', height: '190px' }}>
+        {isMug ? (
+          <>
+            <div style={{ position: 'absolute', left: '45px', top: '28px', width: '118px', height: '132px', background: baseColor, border: '2px solid #ddd', borderRadius: '0 0 18px 18px', boxShadow: '0 18px 30px rgba(0,0,0,.12)' }} />
+            <div style={{ position: 'absolute', right: '20px', top: '58px', width: '52px', height: '62px', border: '10px solid #ddd', borderLeft: 'none', borderRadius: '0 28px 28px 0' }} />
+          </>
+        ) : isAccessory ? (
+          <div style={{ position: 'absolute', left: '42px', top: '28px', width: '126px', height: '138px', background: baseColor, border: '2px solid #ddd', borderRadius: product.c === 'accesorios' ? '18px' : '6px', boxShadow: '0 18px 30px rgba(0,0,0,.12)' }} />
+        ) : (
+          <>
+            <div style={{ position: 'absolute', left: '34px', top: '42px', width: '40px', height: '88px', background: baseColor, border: '2px solid #ddd', borderRadius: '18px 6px 10px 16px', transform: 'rotate(18deg)' }} />
+            <div style={{ position: 'absolute', right: '34px', top: '42px', width: '40px', height: '88px', background: baseColor, border: '2px solid #ddd', borderRadius: '6px 18px 16px 10px', transform: 'rotate(-18deg)' }} />
+            <div style={{ position: 'absolute', left: '55px', top: '30px', width: '100px', height: '140px', background: baseColor, border: '2px solid #ddd', borderRadius: product.c === 'polerones' ? '24px 24px 14px 14px' : '18px 18px 10px 10px', boxShadow: '0 18px 30px rgba(0,0,0,.12)' }} />
+            <div style={{ position: 'absolute', left: '86px', top: '30px', width: '38px', height: '22px', background: '#fff', border: '2px solid #ddd', borderTop: 0, borderRadius: '0 0 24px 24px' }} />
+          </>
+        )}
+        <div style={{ position: 'absolute', left: isMug ? '75px' : '82px', top: isMug ? '72px' : '78px', width: isMug ? '62px' : '48px', height: isMug ? '46px' : '54px', padding: '4px', background: isDark ? 'rgba(255,255,255,.92)' : 'rgba(255,255,255,.75)', border: '1px dashed #e53935', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src={imageUrl} alt="Diseño subido" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+        </div>
+      </div>
+      <div style={{ width: '100%', border: '1px solid #eee', borderRadius: '4px', padding: '10px', background: '#fafafa' }}>
+        <strong style={{ display: 'block', fontSize: '12px', color: '#111', marginBottom: '5px' }}>{suggestion?.headline || 'Mockup referencial listo'}</strong>
+        <p style={{ margin: 0, fontSize: '11px', color: '#666', lineHeight: 1.5 }}>
+          {suggestion ? `${suggestion.placement} · ${suggestion.technique}. ${suggestion.note}` : 'Presiona “Generar mockup IA” para recibir ubicación y técnica recomendada.'}
+        </p>
+      </div>
+    </div>
   );
 }
