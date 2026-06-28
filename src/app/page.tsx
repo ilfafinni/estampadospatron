@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { PRODUCTS, CATEGORIES, catLabel, type Product, type Categoria } from '@/data/products';
+import { CONTACT_PHONE_DISPLAY, WHATSAPP_URL } from '@/data/contact';
 import { useCart } from '@/lib/CartContext';
 import ProductModal from '@/components/ProductModal';
 
@@ -51,7 +52,7 @@ export default function HomePage() {
       h1: <>Retira en<br />4 horas</>,
       p: '¿Necesitas urgente? Contáctanos y coordinamos entrega express el mismo día en Santiago.',
       cta: 'WhatsApp',
-      onCta: () => window.open('https://wa.me/56900000000', '_blank'),
+      onCta: () => window.open(WHATSAPP_URL, '_blank'),
     },
   ];
 
@@ -101,7 +102,7 @@ export default function HomePage() {
 
           {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginLeft: 'auto' }}>
-            <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer">
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
               <button style={{ background: '#e53935', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 20px', borderRadius: '3px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 Cotizar
               </button>
@@ -351,7 +352,7 @@ export default function HomePage() {
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.5rem' }}>Información de contacto</h2>
             {[
               { title: 'Dirección', content: 'Av. Providencia 1234, Santiago\nLunes a Viernes 9:00 – 18:00\nSábados 10:00 – 14:00' },
-              { title: 'WhatsApp', content: '+56 9 XXXX XXXX\nRespuesta inmediata en horario hábil' },
+              { title: 'WhatsApp', content: `${CONTACT_PHONE_DISPLAY}\nRespuesta inmediata en horario hábil` },
               { title: 'Correo', content: 'hola@patronestampados.cl' },
             ].map(block => (
               <div key={block.title} style={{ marginBottom: '1.5rem' }}>
@@ -378,7 +379,7 @@ export default function HomePage() {
             {[
               { title: 'Productos', links: [['Poleras', () => { setActiveCat('poleras'); scrollToCat(); }], ['Polerones', () => { setActiveCat('polerones'); scrollToCat(); }], ['Tazas', () => { setActiveCat('tazas'); scrollToCat(); }], ['Deportiva', () => { setActiveCat('deportiva'); scrollToCat(); }]] },
               { title: 'Tienda', links: [['Cómo funciona', () => document.getElementById('proceso')?.scrollIntoView({ behavior: 'smooth' })], ['Cotizar', () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })]] },
-              { title: 'Contacto', links: [['WhatsApp', () => window.open('https://wa.me/56900000000')], ['Email', () => window.open('mailto:hola@patronestampados.cl')]] },
+              { title: 'Contacto', links: [['WhatsApp', () => window.open(WHATSAPP_URL)], ['Email', () => window.open('mailto:hola@patronestampados.cl')]] },
             ].map(col => (
               <div key={col.title}>
                 <h5 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem', color: 'rgba(255,255,255,0.9)' }}>{col.title}</h5>
@@ -396,6 +397,23 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* ── WHATSAPP FLOATING BUTTON ── */}
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`Contactar por WhatsApp al ${CONTACT_PHONE_DISPLAY}`}
+        style={{
+          position: 'fixed', left: '1.25rem', bottom: '1.25rem', zIndex: 450,
+          width: '58px', height: '58px', borderRadius: '50%', background: '#25D366',
+          color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          textDecoration: 'none', boxShadow: '0 10px 24px rgba(37,211,102,0.35)',
+          border: '2px solid #fff', fontSize: '27px', fontWeight: 800,
+        }}
+      >
+        ☎
+      </a>
 
       {/* ── MODAL ── */}
       <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />
@@ -472,6 +490,19 @@ function ProductCard({ product, onOpen }: { product: Product; onOpen: () => void
           </div>
         )}
         {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>{product.precio}</span>}
+        <a
+          href={`${WHATSAPP_URL}?text=${encodeURIComponent(`Hola, quiero consultar por ${product.n} (${product.ref})`)}`}
+          target="_blank"
+          rel="noreferrer"
+          onClick={e => e.stopPropagation()}
+          style={{
+            display: 'block', marginTop: '10px', background: '#25D366', color: '#fff',
+            fontSize: '11px', fontWeight: 800, letterSpacing: '0.06em', textTransform: 'uppercase',
+            textAlign: 'center', padding: '9px 10px', borderRadius: '3px', textDecoration: 'none',
+          }}
+        >
+          Contáctanos por WhatsApp
+        </a>
       </div>
     </div>
   );
