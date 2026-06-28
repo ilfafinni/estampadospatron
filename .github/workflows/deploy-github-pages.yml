@@ -31,10 +31,18 @@ jobs:
         run: npm ci
 
       - name: Build static site
-        run: npm run build:github-pages
+        run: npm run build:domain
+
+      - name: Set custom domain
+        run: echo 'estampadospatron.com' > ./out/CNAME
 
       - name: Add nojekyll file
         run: touch ./out/.nojekyll
+
+      - name: Validate Pages artifact
+        run: |
+          test "$(cat ./out/CNAME)" = "estampadospatron.com"
+          test -f ./out/.nojekyll
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
