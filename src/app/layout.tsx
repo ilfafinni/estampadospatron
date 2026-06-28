@@ -4,15 +4,18 @@ import type { Metadata } from 'next';
 import { CartProvider } from '@/lib/CartContext';
 import CartDrawer from '@/components/CartDrawer';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://estampadospatron.com';
+
 export const metadata: Metadata = {
-  title: 'Patronestampados.cl — Estampados Personalizados',
+  metadataBase: new URL(siteUrl),
+  title: 'Estampados Patrón — Estampados Personalizados',
   description: 'Tienda de estampados personalizados en Santiago. Poleras, polerones, tazas y más. Desde 1 unidad. Pago con Webpay.',
   keywords: ['estampados', 'personalizados', 'poleras', 'santiago', 'chile'],
   openGraph: {
-    title: 'Patronestampados.cl',
+    title: 'Estampados Patrón',
     description: 'Estampados personalizados en Santiago. Desde 1 unidad.',
-    url: 'https://patronestampados.cl',
-    siteName: 'Patronestampados.cl',
+    url: siteUrl,
+    siteName: 'Estampados Patrón',
     locale: 'es_CL',
     type: 'website',
   },
