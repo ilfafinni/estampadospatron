@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build static site
-        run: npm run build:github-pages
+        run: npm run build:domain
 
       - name: Add nojekyll file
         run: touch ./out/.nojekyll
