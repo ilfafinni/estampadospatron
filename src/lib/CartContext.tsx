@@ -12,6 +12,7 @@ export interface CartItem {
   color?: string;
   tipo?: string;
   nota?: string; // instrucciones de estampado
+  estampado?: { id: string; label: string; precio: number }; // tamaño de estampado (poleras/polerones)
 }
 
 interface CartState {
@@ -38,7 +39,8 @@ function cartReducer(state: CartState, action: CartAction): CartState {
           i.product.id === action.item.product.id &&
           i.talla === action.item.talla &&
           i.color === action.item.color &&
-          i.tipo === action.item.tipo
+          i.tipo === action.item.tipo &&
+          i.estampado?.id === action.item.estampado?.id
       );
       if (existingIdx >= 0) {
         const updated = [...state.items];
@@ -85,6 +87,7 @@ interface CartContextValue {
   closeCart: () => void;
   totalItems: number;
   totalPrice: number;
+  totalEstampado: number;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -118,8 +121,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const totalItems = state.items.reduce((sum, i) => sum + i.qty, 0);
   const totalPrice = state.items.reduce((sum, i) => {
-    return sum + parsePrecio(i.product.precio) * i.qty;
+    const unit = parsePrecio(i.product.precio) + (i.estampado?.precio || 0);
+    return sum + unit * i.qty;
   }, 0);
+  const totalEstampado = state.items.reduce((sum, i) => sum + (i.estampado?.precio || 0) * i.qty, 0);
 
   return (
     <CartContext.Provider
@@ -134,6 +139,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         closeCart: () => dispatch({ type: 'CLOSE_CART' }),
         totalItems,
         totalPrice,
+        totalEstampado,
       }}
     >
       {children}

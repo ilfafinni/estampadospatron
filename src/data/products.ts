@@ -29,30 +29,30 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
   /* POLERAS */
-  {id:1,c:'poleras',n:'Polera Básica Algodón MC',ref:'ROLY-6630',e:'👕',desc:'Algodón 180 g peinado. Base ideal para serigrafía o sublimación. La más vendida.',v:{t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'},{n:'Rojo',h:'#c0392b'}]},precio:'$2.900'},
-  {id:2,c:'poleras',n:'Polera Premium Cuello V',ref:'ROLY-6635',e:'👕',desc:'Corte slim fit. Cuello V reforzado. Ideal para impresión de alta definición.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris Jaspe',h:'#95a5a6'}]},precio:'$3.200',badge:'popular'},
-  {id:3,c:'poleras',n:'Polera Técnica Dry-Fit',ref:'ROLY-0420',e:'🏃',desc:'Poliéster 100% con tratamiento humedad. Para uniformes deportivos y eventos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Amarillo',h:'#f1c40f'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#27ae60'}]},precio:'$2.600'},
-  {id:4,c:'poleras',n:'Polera Manga Larga',ref:'ROLY-6641',e:'🧣',desc:'Algodón 100% manga larga. Perfecta para otoño y uniforme corporativo.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]},precio:'$3.600'},
-  {id:5,c:'poleras',n:'Deportiva Jaspeada MC',ref:'ROLY-6643J',e:'🎽',desc:'Tejido jaspeado con textura única. Estilo urbano cómodo y versátil.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Gris Jaspe',h:'#95a5a6'},{n:'Negro',h:'#1a1a1a'}]},precio:'$3.100'},
-  {id:6,c:'poleras',n:'Deportiva Brahain MC',ref:'ROLY-0523',e:'💪',desc:'Corte moderno y recto. Ideal para equipos y uniformes. Poliéster 100% transpirable.',v:{t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'}]},precio:'$2.600'},
-  {id:7,c:'poleras',n:'Piqué Sport MC',ref:'ROLY-0522',e:'🎯',desc:'Tela piqué de algodón premium. Para regalo corporativo o uniforme de empresa.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Rojo',h:'#c0392b'},{n:'Azul',h:'#1a5276'}]},precio:'$3.500'},
-  {id:8,c:'poleras',n:'Estilo Jeans MC',ref:'ROLY-6645',e:'👗',desc:'Textura denim con comodidad de tejido deportivo. Muy solicitada para regalos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Azul Jean',h:'#2471a3'},{n:'Negro',h:'#111'}]},precio:'$3.300'},
-  {id:9,c:'poleras',n:'Ecológica Algodón MC',ref:'ROLY-6680',e:'🌿',desc:'100% algodón orgánico certificado GOTS. La opción sostenible para empresas responsables.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Natural',h:'#d4b896'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde',h:'#27ae60'}]},precio:'$4.100',badge:'eco'},
+  {id:1,c:'poleras',n:'Polera Básica Algodón MC',ref:'ROLY-6630',e:'👕',desc:'Algodón 180 g peinado. Base ideal para serigrafía o sublimación. La más vendida.',v:{t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'},{n:'Rojo',h:'#c0392b'}]},precio:'$6.000'},
+  {id:2,c:'poleras',n:'Polera Premium Cuello V',ref:'ROLY-6635',e:'👕',desc:'Corte slim fit. Cuello V reforzado. Ideal para impresión de alta definición.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris Jaspe',h:'#95a5a6'}]},precio:'$7.000',badge:'popular'},
+  {id:3,c:'poleras',n:'Polera Técnica Dry-Fit',ref:'ROLY-0420',e:'🏃',desc:'Poliéster 100% con tratamiento humedad. Para uniformes deportivos y eventos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Amarillo',h:'#f1c40f'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#27ae60'}]},precio:'$6.000'},
+  {id:4,c:'poleras',n:'Polera Manga Larga',ref:'ROLY-6641',e:'🧣',desc:'Algodón 100% manga larga. Perfecta para otoño y uniforme corporativo.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]},precio:'$7.000'},
+  {id:5,c:'poleras',n:'Deportiva Jaspeada MC',ref:'ROLY-6643J',e:'🎽',desc:'Tejido jaspeado con textura única. Estilo urbano cómodo y versátil.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Gris Jaspe',h:'#95a5a6'},{n:'Negro',h:'#1a1a1a'}]},precio:'$7.000'},
+  {id:6,c:'poleras',n:'Deportiva Brahain MC',ref:'ROLY-0523',e:'💪',desc:'Corte moderno y recto. Ideal para equipos y uniformes. Poliéster 100% transpirable.',v:{t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'}]},precio:'$6.000'},
+  {id:7,c:'poleras',n:'Piqué Sport MC',ref:'ROLY-0522',e:'🎯',desc:'Tela piqué de algodón premium. Para regalo corporativo o uniforme de empresa.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Rojo',h:'#c0392b'},{n:'Azul',h:'#1a5276'}]},precio:'$8.000'},
+  {id:8,c:'poleras',n:'Estilo Jeans MC',ref:'ROLY-6645',e:'👗',desc:'Textura denim con comodidad de tejido deportivo. Muy solicitada para regalos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Azul Jean',h:'#2471a3'},{n:'Negro',h:'#111'}]},precio:'$8.000'},
+  {id:9,c:'poleras',n:'Ecológica Algodón MC',ref:'ROLY-6680',e:'🌿',desc:'100% algodón orgánico certificado GOTS. La opción sostenible para empresas responsables.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Natural',h:'#d4b896'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde',h:'#27ae60'}]},precio:'$7.000',badge:'eco'},
   /* POLERONES */
-  {id:10,c:'polerones',n:'Polerón Simple Clásico',ref:'ROLY-6950',e:'🧥',desc:'El básico imprescindible. Cuello redondo, tela gruesa. Estampado frontal y espalda.',v:{t:['XS','S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Azul',h:'#1a5276'}]},precio:'$6.500'},
-  {id:11,c:'polerones',n:'Polerón Canguro',ref:'ROLY-6960',e:'🦘',desc:'Con bolsillo frontal canguro. Diseño urbano y funcional. Tela premium 300 g.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde Oscuro',h:'#145a32'}]},precio:'$7.200',badge:'popular'},
-  {id:12,c:'polerones',n:'Canguro con Cierre',ref:'ROLY-6965',e:'🤐',desc:'Cremallera frontal. Versátil, ideal para uniformes y conjuntos corporativos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'}]},precio:'$7.800'},
-  {id:13,c:'polerones',n:'Cortavientos Glasgow',ref:'ROLY-7630',e:'💨',desc:'Chaqueta ligera con capucha, resistente al viento y agua. Muy popular para eventos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#145a32'}]},precio:'$9.500'},
+  {id:10,c:'polerones',n:'Polerón Simple Clásico',ref:'ROLY-6950',e:'🧥',desc:'El básico imprescindible. Cuello redondo, tela gruesa. Estampado frontal y espalda.',v:{t:['XS','S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Azul',h:'#1a5276'}]},precio:'$15.000'},
+  {id:11,c:'polerones',n:'Polerón Canguro',ref:'ROLY-6960',e:'🦘',desc:'Con bolsillo frontal canguro. Diseño urbano y funcional. Tela premium 300 g.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde Oscuro',h:'#145a32'}]},precio:'$15.000',badge:'popular'},
+  {id:12,c:'polerones',n:'Canguro con Cierre',ref:'ROLY-6965',e:'🤐',desc:'Cremallera frontal. Versátil, ideal para uniformes y conjuntos corporativos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'}]},precio:'$15.000'},
+  {id:13,c:'polerones',n:'Cortavientos Glasgow',ref:'ROLY-7630',e:'💨',desc:'Chaqueta ligera con capucha, resistente al viento y agua. Muy popular para eventos.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#145a32'}]},precio:'$15.000'},
   /* TAZAS */
-  {id:14,c:'tazas',n:'Taza Blanca 11 oz',ref:'TZ-001',e:'☕',desc:'La clásica. Superficie lisa ideal para sublimación. Máxima calidad de imagen.',v:{tipo:['11 oz estándar']},precio:'$2.800'},
-  {id:15,c:'tazas',n:'Taza Blanca 15 oz',ref:'TZ-002',e:'☕',desc:'Versión grande. Para los que necesitan más café o un regalo impactante.',v:{tipo:['15 oz grande']},precio:'$3.200'},
-  {id:16,c:'tazas',n:'Taza Cónica 16 oz',ref:'TZ-003',e:'🫖',desc:'Diseño cónico moderno y llamativo. Diferénciate con esta taza única.',v:{tipo:['Cónica 16 oz']},precio:'$3.500'},
-  {id:17,c:'tazas',n:'Taza Negra 11 oz',ref:'TZ-004',e:'🖤',desc:'El contraste negro realza diseños vibrantes, neón y pastel.',v:{tipo:['11 oz negra']},precio:'$3.100'},
-  {id:18,c:'tazas',n:'Taza Negra 15 oz',ref:'TZ-005',e:'🖤',desc:'Versión grande en negro. Para diseños neón o pastel con máximo impacto.',v:{tipo:['15 oz negra']},precio:'$3.600'},
-  {id:19,c:'tazas',n:'Taza Mágica',ref:'TZ-006',e:'✨',desc:'Cambia de color con agua caliente. El regalo perfecto y más solicitado.',v:{tipo:['Mágica estándar']},precio:'$4.500',badge:'popular'},
-  {id:20,c:'tazas',n:'Taza Mágica con Brillo',ref:'TZ-007',e:'🌟',desc:'Versión deluxe con efecto brillante adicional. Impresionante como regalo.',v:{tipo:['Mágica con brillo']},precio:'$5.200',badge:'nuevo'},
-  {id:21,c:'tazas',n:'Taza Borde de Color',ref:'TZ-008',e:'🎨',desc:'Taza blanca con borde interior de color. Elegante y diferente.',v:{col:[{n:'Rojo',h:'#e74c3c'},{n:'Azul',h:'#2980b9'},{n:'Verde',h:'#27ae60'},{n:'Rosa',h:'#f06292'}]},precio:'$3.800'},
-  {id:22,c:'tazas',n:'Taza Interior de Color',ref:'TZ-009',e:'🌈',desc:'Interior de color con exterior blanco personalizable. Combinación única.',v:{col:[{n:'Rojo',h:'#e74c3c'},{n:'Azul',h:'#2980b9'},{n:'Verde',h:'#27ae60'},{n:'Negro',h:'#111'}]},precio:'$3.800'},
+  {id:14,c:'tazas',n:'Taza Blanca 11 oz',ref:'TZ-001',e:'☕',desc:'La clásica. Superficie lisa ideal para sublimación. Máxima calidad de imagen.',v:{tipo:['11 oz estándar']},precio:'$5.000'},
+  {id:15,c:'tazas',n:'Taza Blanca 15 oz',ref:'TZ-002',e:'☕',desc:'Versión grande. Para los que necesitan más café o un regalo impactante.',v:{tipo:['15 oz grande']},precio:'$6.000'},
+  {id:16,c:'tazas',n:'Taza Cónica 16 oz',ref:'TZ-003',e:'🫖',desc:'Diseño cónico moderno y llamativo. Diferénciate con esta taza única.',v:{tipo:['Cónica 16 oz']},precio:'$7.000'},
+  {id:17,c:'tazas',n:'Taza Negra 11 oz',ref:'TZ-004',e:'🖤',desc:'El contraste negro realza diseños vibrantes, neón y pastel.',v:{tipo:['11 oz negra']},precio:'$5.000'},
+  {id:18,c:'tazas',n:'Taza Negra 15 oz',ref:'TZ-005',e:'🖤',desc:'Versión grande en negro. Para diseños neón o pastel con máximo impacto.',v:{tipo:['15 oz negra']},precio:'$6.000'},
+  {id:19,c:'tazas',n:'Taza Mágica',ref:'TZ-006',e:'✨',desc:'Cambia de color con agua caliente. El regalo perfecto y más solicitado.',v:{tipo:['Mágica estándar']},precio:'$6.000',badge:'popular'},
+  {id:20,c:'tazas',n:'Taza Mágica con Brillo',ref:'TZ-007',e:'🌟',desc:'Versión deluxe con efecto brillante adicional. Impresionante como regalo.',v:{tipo:['Mágica con brillo']},precio:'$6.000',badge:'nuevo'},
+  {id:21,c:'tazas',n:'Taza Borde de Color',ref:'TZ-008',e:'🎨',desc:'Taza blanca con borde interior de color. Elegante y diferente.',v:{col:[{n:'Rojo',h:'#e74c3c'},{n:'Azul',h:'#2980b9'},{n:'Verde',h:'#27ae60'},{n:'Rosa',h:'#f06292'}]},precio:'$5.000'},
+  {id:22,c:'tazas',n:'Taza Interior de Color',ref:'TZ-009',e:'🌈',desc:'Interior de color con exterior blanco personalizable. Combinación única.',v:{col:[{n:'Rojo',h:'#e74c3c'},{n:'Azul',h:'#2980b9'},{n:'Verde',h:'#27ae60'},{n:'Negro',h:'#111'}]},precio:'$5.000'},
   /* ACCESORIOS */
   {id:23,c:'accesorios',n:'Carcasa Personalizada',ref:'ACC-001',e:'📱',desc:'Para iPhone, Samsung, Xiaomi, Motorola y más. Impresión de alta resolución.',v:{tipo:['iPhone','Samsung Galaxy','Xiaomi','Motorola']},precio:'$4.900'},
   {id:24,c:'accesorios',n:'Posavasos',ref:'ACC-002',e:'🥂',desc:'Material resistente. Para bares, hogares y empresas. Pack ideal para regalo.',v:{tipo:['Individual','Pack x4','Pack x6']},precio:'$1.800'},
@@ -78,6 +78,24 @@ export const CATEGORIES = [
   {c:'deportiva' as Categoria, name:'Deportiva', count:'4 productos', icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
   {c:'impresion' as Categoria, name:'Impresión', count:'5 productos', icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'},
 ];
+
+// ─── Recargo por tamaño de estampado (solo poleras y polerones) ───
+export interface EstampadoSize {
+  id: string;
+  label: string;
+  precio: number; // recargo en CLP
+}
+
+export const ESTAMPADO_SIZES: EstampadoSize[] = [
+  { id: '30x30', label: '30 × 30 cm aprox', precio: 7000 },
+  { id: '20x20', label: '20 × 20 cm aprox', precio: 5000 },
+  { id: '10x30', label: '10 × 30 cm', precio: 2000 },
+  { id: '10x10', label: '10 × 10 cm', precio: 1000 },
+];
+
+export function tieneRecargoEstampado(c: Categoria): boolean {
+  return c === 'poleras' || c === 'polerones';
+}
 
 export function parsePrecio(precio: string): number {
   // Extrae el número del string de precio ej: "$2.900" → 2900

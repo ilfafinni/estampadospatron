@@ -2,10 +2,11 @@
 // src/components/CartDrawer.tsx
 
 import { useCart, formatPrice } from '@/lib/CartContext';
+import { parsePrecio } from '@/data/products';
 import { useRouter } from 'next/navigation';
 
 export default function CartDrawer() {
-  const { state, removeItem, updateQty, closeCart, totalItems, totalPrice } = useCart();
+  const { state, removeItem, updateQty, closeCart, totalItems, totalPrice, totalEstampado } = useCart();
   const router = useRouter();
 
   if (!state.isOpen) return null;
@@ -111,14 +112,18 @@ export default function CartDrawer() {
               marginBottom: '6px', fontSize: '13px', color: '#666',
             }}>
               <span>Subtotal productos</span>
-              <span>{formatPrice(totalPrice)}</span>
+              <span>{formatPrice(totalPrice - totalEstampado)}</span>
             </div>
             <div style={{
               display: 'flex', justifyContent: 'space-between',
               marginBottom: '6px', fontSize: '13px', color: '#666',
             }}>
               <span>Estampado</span>
-              <span style={{ color: '#e53935', fontWeight: 600 }}>A cotizar</span>
+              {totalEstampado > 0 ? (
+                <span style={{ fontWeight: 600 }}>{formatPrice(totalEstampado)}</span>
+              ) : (
+                <span style={{ color: '#e53935', fontWeight: 600 }}>A cotizar</span>
+              )}
             </div>
             <div style={{
               display: 'flex', justifyContent: 'space-between',
@@ -162,7 +167,8 @@ interface CartItemRowProps {
 }
 
 function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
-  const precioUnit = item.product.precio;
+  const precioBase = parsePrecio(item.product.precio);
+  const precioUnitTotal = precioBase + (item.estampado?.precio || 0);
 
   return (
     <div style={{
@@ -191,12 +197,15 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
           {item.talla && <Tag label={`Talla: ${item.talla}`} />}
           {item.color && <Tag label={`Color: ${item.color}`} />}
           {item.tipo && <Tag label={item.tipo} />}
+          {item.estampado && <Tag label={`Estampado: ${item.estampado.label}`} />}
         </div>
         <div style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginTop: '6px' }}>
-          {precioUnit}
-          <span style={{ fontSize: '11px', fontWeight: 400, color: '#999', marginLeft: '4px' }}>
-            + estampado
-          </span>
+          {formatPrice(precioUnitTotal)}
+          {!item.estampado && (
+            <span style={{ fontSize: '11px', fontWeight: 400, color: '#999', marginLeft: '4px' }}>
+              + estampado
+            </span>
+          )}
         </div>
       </div>
 

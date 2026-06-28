@@ -3,8 +3,8 @@
 // src/components/ProductModal.tsx
 
 import { useState, useEffect } from 'react';
-import { Product, catLabel } from '@/data/products';
-import { useCart } from '@/lib/CartContext';
+import { Product, catLabel, ESTAMPADO_SIZES, tieneRecargoEstampado, parsePrecio } from '@/data/products';
+import { useCart, formatPrice } from '@/lib/CartContext';
 
 interface Props {
   product: Product | null;
@@ -17,6 +17,7 @@ export default function ProductModal({ product, onClose }: Props) {
   const [talla, setTalla] = useState<string | undefined>();
   const [color, setColor] = useState<string | undefined>();
   const [tipo, setTipo] = useState<string | undefined>();
+  const [estampadoId, setEstampadoId] = useState<string | undefined>();
   const [nota, setNota] = useState('');
   const [added, setAdded] = useState(false);
 
@@ -34,6 +35,7 @@ export default function ProductModal({ product, onClose }: Props) {
       setTalla(undefined);
       setColor(undefined);
       setTipo(undefined);
+      setEstampadoId(undefined);
       setNota('');
       setAdded(false);
       setFileB64(null);
@@ -47,8 +49,13 @@ export default function ProductModal({ product, onClose }: Props) {
 
   if (!product) return null;
 
+  const aplicaEstampado = tieneRecargoEstampado(product.c);
+  const estampadoSel = aplicaEstampado ? ESTAMPADO_SIZES.find(s => s.id === estampadoId) : undefined;
+  const precioBase = parsePrecio(product.precio);
+  const precioUnitTotal = precioBase + (estampadoSel?.precio || 0);
+
   const handleAddToCart = () => {
-    addItem({ product, qty, talla, color, tipo, nota: nota || undefined });
+    addItem({ product, qty, talla, color, tipo, nota: nota || undefined, estampado: estampadoSel });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -202,13 +209,42 @@ export default function ProductModal({ product, onClose }: Props) {
               </>
             )}
 
+            {/* Tamaño de estampado (solo poleras/polerones) */}
+            {aplicaEstampado && (
+              <>
+                <Label text="Tamaño de estampado" />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '4px' }}>
+                  {ESTAMPADO_SIZES.map(s => (
+                    <TallaBtn
+                      key={s.id}
+                      label={`${s.label} (+${formatPrice(s.precio)})`}
+                      selected={estampadoId === s.id}
+                      onClick={() => setEstampadoId(prev => prev === s.id ? undefined : s.id)}
+                      small
+                    />
+                  ))}
+                </div>
+                <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
+                  Selecciona el tamaño aproximado de tu diseño. Si no seleccionas ninguno, cotizamos el estampado según tu diseño.
+                </div>
+              </>
+            )}
+
             {/* Precio */}
             {product.precio && (
               <>
                 <Label text="Precio referencial" />
                 <div style={{ fontSize: '18px', fontWeight: 800, color: '#111', marginTop: '4px' }}>
-                  {product.precio}{' '}
-                  <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>+ estampado</span>
+                  {formatPrice(precioUnitTotal)}{' '}
+                  {!aplicaEstampado ? (
+                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>+ estampado</span>
+                  ) : estampadoSel ? (
+                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>
+                      ({formatPrice(precioBase)} prenda + {formatPrice(estampadoSel.precio)} estampado {estampadoSel.label})
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>+ estampado a elegir</span>
+                  )}
                 </div>
               </>
             )}
