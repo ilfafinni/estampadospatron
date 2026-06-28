@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:github-pages": "NEXT_PUBLIC_GITHUB_PAGES=true next build"
+    "build:github-pages": "NEXT_PUBLIC_GITHUB_PAGES=true next build",
+    "build:domain": "NEXT_PUBLIC_GITHUB_PAGES=true NEXT_PUBLIC_SITE_URL=https://estampadospatron.com next build"
   },
   "dependencies": {
     "next": "14.2.5",
