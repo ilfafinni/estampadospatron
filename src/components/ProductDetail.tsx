@@ -1,10 +1,11 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 // src/components/ProductDetail.tsx
-// Vista de producto en página propia (no modal). Pensada para tener espacio
-// suficiente para fotos reales del producto + selectores + vista previa IA.
+// Vista de producto en página propia (no modal), con editor visual real:
+// el cliente sube su diseño y puede arrastrarlo/escalarlo sobre una plantilla
+// de la prenda (frente o espalda) para ver exactamente dónde quedará.
 
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Product, catLabel, ESTAMPADO_SIZES, tieneRecargoEstampado,
@@ -23,14 +24,6 @@ export default function ProductDetail({ product }: { product: Product }) {
   const [nota, setNota] = useState('');
   const [added, setAdded] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  // IA preview state
-  const [fileB64, setFileB64] = useState<string | null>(null);
-  const [fileDataUrl, setFileDataUrl] = useState<string | null>(null);
-  const [fileMime, setFileMime] = useState<string>('image/png');
-  const [generating, setGenerating] = useState(false);
-  const [aiSuggestion, setAiSuggestion] = useState<{ headline: string; placement: string; technique: string; note: string } | null>(null);
-  const [iaError, setIaError] = useState<string | null>(null);
 
   const aplicaEstampado = tieneRecargoEstampado(product.c);
   const frenteSel = aplicaEstampado ? ESTAMPADO_SIZES.find(s => s.id === frenteId) : undefined;
@@ -59,49 +52,6 @@ export default function ProductDetail({ product }: { product: Product }) {
     }
   };
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (!f) return;
-    setFileMime(f.type || 'image/png');
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const result = ev.target?.result as string;
-      setFileDataUrl(result);
-      setFileB64(result.split(',')[1]);
-      setIaError(null);
-      setAiSuggestion(null);
-    };
-    reader.readAsDataURL(f);
-  };
-
-  const handleGenerarPreview = async () => {
-    if (!fileB64) return;
-    setGenerating(true);
-    setIaError(null);
-    try {
-      const res = await fetch('/api/ai/mockup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          imageBase64: fileB64,
-          imageMime: fileMime,
-          productName: product.n,
-          productCategory: catLabel(product.c),
-          selectedColor: color,
-          selectedType: tipo,
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error((data as { error?: string }).error || `Error ${res.status}`);
-      setAiSuggestion(data as { headline: string; placement: string; technique: string; note: string });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Intenta nuevamente';
-      setIaError('Error al generar: ' + msg);
-    } finally {
-      setGenerating(false);
-    }
-  };
-
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem 1.5rem 3rem' }}>
       {/* Breadcrumb + compartir */}
@@ -127,10 +77,10 @@ export default function ProductDetail({ product }: { product: Product }) {
         </button>
       </div>
 
-      {/* Grid principal: foto grande | info y compra */}
+      {/* Grid principal: foto/editor | info y compra */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '2.5rem', alignItems: 'start' }}>
 
-        {/* ── COLUMNA IZQUIERDA: foto + IA ── */}
+        {/* ── COLUMNA IZQUIERDA: foto + editor de estampado ── */}
         <div>
           <div style={{
             aspectRatio: '1', background: '#f5f5f5', borderRadius: '6px',
@@ -150,64 +100,8 @@ export default function ProductDetail({ product }: { product: Product }) {
             Foto referencial — fotos reales del producto próximamente
           </p>
 
-          {/* IA mockup */}
-          <div style={{ marginTop: '1.8rem', border: '1px solid #e0e0e0', borderRadius: '6px', padding: '1.2rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Vista previa IA
-              </span>
-              <span style={{ background: '#e53935', color: '#fff', fontSize: '9px', padding: '2px 7px', borderRadius: '2px', fontWeight: 700 }}>
-                BETA
-              </span>
-            </div>
-
-            <div style={{
-              border: '1px solid #e0e0e0', background: '#f5f5f5', borderRadius: '3px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', overflow: 'hidden', minHeight: '220px', marginBottom: '1rem',
-            }}>
-              {generating && (
-                <div style={{ position: 'absolute', inset: 0, background: 'rgba(245,245,245,0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                  <div style={{ width: '32px', height: '32px', border: '2px solid #e0e0e0', borderTopColor: '#e53935', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                  <span style={{ fontSize: '12px', color: '#666' }}>Generando mockup...</span>
-                </div>
-              )}
-              {fileDataUrl ? (
-                <AiMockup product={product} color={color} imageUrl={fileDataUrl} suggestion={aiSuggestion} />
-              ) : (
-                <div style={{ textAlign: 'center', padding: '2rem' }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '0.8rem', opacity: 0.3 }}>🎨</div>
-                  <p style={{ fontSize: '11px', color: '#999', lineHeight: 1.6 }}>
-                    Sube tu logo para ver cómo<br />quedaría en este producto
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <label style={{ display: 'block', border: '1px dashed #ccc', padding: '10px 14px', borderRadius: '3px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', color: '#666', marginBottom: '8px' }}>
-              📎 Subir logo o diseño
-              <input type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
-            </label>
-
-            {iaError && (
-              <div style={{ fontSize: '11px', color: '#e53935', marginBottom: '8px', padding: '8px', background: '#fff5f5', borderRadius: '3px' }}>
-                {iaError}
-              </div>
-            )}
-
-            <button
-              onClick={handleGenerarPreview}
-              disabled={!fileB64 || generating}
-              style={{
-                width: '100%', background: fileB64 ? '#111' : '#ccc', color: '#fff',
-                border: 'none', padding: '11px', fontSize: '12px', fontWeight: 700,
-                letterSpacing: '0.06em', cursor: fileB64 ? 'pointer' : 'not-allowed',
-                borderRadius: '3px', textTransform: 'uppercase',
-              }}
-            >
-              {generating ? 'Generando...' : 'Generar mockup IA'}
-            </button>
-          </div>
+          {/* Editor visual de ubicación del estampado */}
+          <EstampadoEditor product={product} color={color} />
         </div>
 
         {/* ── COLUMNA DERECHA: info + compra ── */}
@@ -363,8 +257,6 @@ export default function ProductDetail({ product }: { product: Product }) {
           </p>
         </div>
       </div>
-
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   );
 }
@@ -413,40 +305,203 @@ function QtyBtn({ onClick, label }: { onClick: () => void; label: string }) {
   );
 }
 
-function AiMockup({ product, color, imageUrl, suggestion }: { product: Product; color?: string; imageUrl: string; suggestion: { headline: string; placement: string; technique: string; note: string } | null }) {
-  const baseColor = product.v.col?.find(c => c.n === color)?.h || (product.c === 'tazas' ? '#f7f7f7' : '#ffffff');
-  const isDark = ['#111', '#1a1a1a', '#0a0a0a'].includes(baseColor.toLowerCase());
-  const isMug = product.c === 'tazas';
-  const isAccessory = product.c === 'accesorios' || product.c === 'impresion';
+// ─── Editor visual de estampado ────────────────────────
+// Plantilla real de la prenda (silueta) + el logo del cliente, que se puede
+// arrastrar y escalar encima para ver y definir exactamente dónde va.
+
+type Vista = 'Frente' | 'Espalda';
+interface DesignTransform { x: number; y: number; scale: number; } // x,y en % del lienzo
+
+const DEFAULT_TRANSFORM: DesignTransform = { x: 50, y: 42, scale: 1 };
+
+function EstampadoEditor({ product, color }: { product: Product; color?: string }) {
+  const [vista, setVista] = useState<Vista>('Frente');
+  const [fileDataUrl, setFileDataUrl] = useState<string | null>(null);
+  const [transforms, setTransforms] = useState<Record<Vista, DesignTransform>>({
+    Frente: { ...DEFAULT_TRANSFORM },
+    Espalda: { ...DEFAULT_TRANSFORM },
+  });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragState = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null);
+
+  const mostrarTabs = product.c === 'poleras' || product.c === 'polerones';
+
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setFileDataUrl(ev.target?.result as string);
+    reader.readAsDataURL(f);
+  };
+
+  const updateTransform = (patch: Partial<DesignTransform>) => {
+    setTransforms(prev => ({ ...prev, [vista]: { ...prev[vista], ...patch } }));
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (!containerRef.current) return;
+    e.preventDefault();
+    const t = transforms[vista];
+    dragState.current = { startX: e.clientX, startY: e.clientY, origX: t.x, origY: t.y };
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+  };
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragState.current || !containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const dx = ((e.clientX - dragState.current.startX) / rect.width) * 100;
+    const dy = ((e.clientY - dragState.current.startY) / rect.height) * 100;
+    const newX = Math.min(95, Math.max(5, dragState.current.origX + dx));
+    const newY = Math.min(95, Math.max(5, dragState.current.origY + dy));
+    updateTransform({ x: newX, y: newY });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vista]);
+
+  const onPointerUp = () => { dragState.current = null; };
+
+  const t = transforms[vista];
+  const garmentColor = product.v.col?.find(c => c.n === color)?.h
+    || (product.c === 'tazas' ? '#f7f7f7' : '#ffffff');
 
   return (
-    <div style={{ width: '100%', minHeight: '100%', padding: '18px', background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
-      <div style={{ position: 'relative', width: '210px', height: '190px' }}>
-        {isMug ? (
-          <>
-            <div style={{ position: 'absolute', left: '45px', top: '28px', width: '118px', height: '132px', background: baseColor, border: '2px solid #ddd', borderRadius: '0 0 18px 18px', boxShadow: '0 18px 30px rgba(0,0,0,.12)' }} />
-            <div style={{ position: 'absolute', right: '20px', top: '58px', width: '52px', height: '62px', border: '10px solid #ddd', borderLeft: 'none', borderRadius: '0 28px 28px 0' }} />
-          </>
-        ) : isAccessory ? (
-          <div style={{ position: 'absolute', left: '42px', top: '28px', width: '126px', height: '138px', background: baseColor, border: '2px solid #ddd', borderRadius: product.c === 'accesorios' ? '18px' : '6px', boxShadow: '0 18px 30px rgba(0,0,0,.12)' }} />
-        ) : (
-          <>
-            <div style={{ position: 'absolute', left: '34px', top: '42px', width: '40px', height: '88px', background: baseColor, border: '2px solid #ddd', borderRadius: '18px 6px 10px 16px', transform: 'rotate(18deg)' }} />
-            <div style={{ position: 'absolute', right: '34px', top: '42px', width: '40px', height: '88px', background: baseColor, border: '2px solid #ddd', borderRadius: '6px 18px 16px 10px', transform: 'rotate(-18deg)' }} />
-            <div style={{ position: 'absolute', left: '55px', top: '30px', width: '100px', height: '140px', background: baseColor, border: '2px solid #ddd', borderRadius: product.c === 'polerones' ? '24px 24px 14px 14px' : '18px 18px 10px 10px', boxShadow: '0 18px 30px rgba(0,0,0,.12)' }} />
-            <div style={{ position: 'absolute', left: '86px', top: '30px', width: '38px', height: '22px', background: '#fff', border: '2px solid #ddd', borderTop: 0, borderRadius: '0 0 24px 24px' }} />
-          </>
+    <div style={{ marginTop: '1.8rem', border: '1px solid #e0e0e0', borderRadius: '6px', padding: '1.2rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '8px' }}>
+        <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+          Editor de estampado
+        </span>
+        {mostrarTabs && (
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {(['Frente', 'Espalda'] as Vista[]).map(v => (
+              <button
+                key={v}
+                onClick={() => setVista(v)}
+                style={{
+                  padding: '5px 12px', fontSize: '11px', fontWeight: 700, borderRadius: '3px',
+                  border: '1px solid ' + (vista === v ? '#111' : '#e0e0e0'),
+                  background: vista === v ? '#111' : '#fff', color: vista === v ? '#fff' : '#333',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
         )}
-        <div style={{ position: 'absolute', left: isMug ? '75px' : '82px', top: isMug ? '72px' : '78px', width: isMug ? '62px' : '48px', height: isMug ? '46px' : '54px', padding: '4px', background: isDark ? 'rgba(255,255,255,.92)' : 'rgba(255,255,255,.75)', border: '1px dashed #e53935', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src={imageUrl} alt="Diseño subido" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+      </div>
+
+      {/* Lienzo con plantilla + diseño arrastrable */}
+      <div
+        ref={containerRef}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        style={{
+          position: 'relative', width: '100%', aspectRatio: '1', background: '#fafafa',
+          border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden',
+          userSelect: 'none', touchAction: 'none',
+        }}
+      >
+        <GarmentTemplate categoria={product.c} vista={vista} color={garmentColor} />
+
+        {fileDataUrl && (
+          <div
+            onPointerDown={onPointerDown}
+            style={{
+              position: 'absolute', left: `${t.x}%`, top: `${t.y}%`,
+              width: `${28 * t.scale}%`, transform: 'translate(-50%, -50%)',
+              cursor: 'grab', border: '1px dashed #e53935', borderRadius: '4px',
+              padding: '2px', background: 'rgba(255,255,255,0.35)',
+            }}
+          >
+            <img src={fileDataUrl} alt="Tu diseño" draggable={false} style={{ width: '100%', display: 'block', pointerEvents: 'none' }} />
+          </div>
+        )}
+
+        {!fileDataUrl && (
+          <div style={{
+            position: 'absolute', inset: 0, display: 'flex', alignItems: 'center',
+            justifyContent: 'center', textAlign: 'center', padding: '2rem',
+          }}>
+            <p style={{ fontSize: '11px', color: '#999', lineHeight: 1.6, margin: 0 }}>
+              Sube tu logo o diseño para<br />ubicarlo sobre la prenda
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Controles */}
+      <label style={{ display: 'block', border: '1px dashed #ccc', padding: '10px 14px', borderRadius: '3px', cursor: 'pointer', textAlign: 'center', fontSize: '12px', color: '#666', marginTop: '12px', marginBottom: '10px' }}>
+        📎 {fileDataUrl ? 'Cambiar logo o diseño' : 'Subir logo o diseño'}
+        <input type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+      </label>
+
+      {fileDataUrl && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '11px', color: '#666', whiteSpace: 'nowrap' }}>Tamaño</span>
+          <input
+            type="range" min={0.4} max={2} step={0.05}
+            value={t.scale}
+            onChange={e => updateTransform({ scale: Number(e.target.value) })}
+            style={{ flex: 1 }}
+          />
         </div>
-      </div>
-      <div style={{ width: '100%', border: '1px solid #eee', borderRadius: '4px', padding: '10px', background: '#fafafa' }}>
-        <strong style={{ display: 'block', fontSize: '12px', color: '#111', marginBottom: '5px' }}>{suggestion?.headline || 'Mockup referencial listo'}</strong>
-        <p style={{ margin: 0, fontSize: '11px', color: '#666', lineHeight: 1.5 }}>
-          {suggestion ? `${suggestion.placement} · ${suggestion.technique}. ${suggestion.note}` : 'Presiona “Generar mockup IA” para recibir ubicación y técnica recomendada.'}
-        </p>
-      </div>
+      )}
+
+      <p style={{ fontSize: '11px', color: '#999', marginTop: '10px', lineHeight: 1.5 }}>
+        Arrastra tu diseño dentro del recuadro para ubicarlo exactamente donde lo quieres
+        {mostrarTabs ? ', y cambia entre Frente/Espalda arriba.' : '.'} Esta vista es referencial; confirmamos el detalle final antes de producir.
+      </p>
     </div>
+  );
+}
+
+// Silueta simple de la prenda según categoría, para usar como plantilla de referencia.
+function GarmentTemplate({ categoria, vista, color }: { categoria: Product['c']; vista: Vista; color: string }) {
+  const isMug = categoria === 'tazas';
+  const isFlat = categoria === 'accesorios' || categoria === 'impresion';
+  const isHoodie = categoria === 'polerones';
+
+  if (isMug) {
+    return (
+      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+        <rect x="55" y="55" width="95" height="105" rx="10" fill={color} stroke="#ddd" strokeWidth="2" />
+        <path d="M150 80 q35 0 35 35 t-35 35" fill="none" stroke="#ddd" strokeWidth="8" />
+      </svg>
+    );
+  }
+
+  if (isFlat) {
+    return (
+      <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+        <rect x="40" y="30" width="120" height="150" rx="16" fill={color} stroke="#ddd" strokeWidth="2" />
+      </svg>
+    );
+  }
+
+  // Polera o polerón: silueta de prenda con mangas, frente o espalda
+  return (
+    <svg viewBox="0 0 200 200" style={{ width: '100%', height: '100%' }}>
+      {/* Mangas */}
+      <path d="M55 35 L18 55 L30 95 L58 80 Z" fill={color} stroke="#ddd" strokeWidth="2" />
+      <path d="M145 35 L182 55 L170 95 L142 80 Z" fill={color} stroke="#ddd" strokeWidth="2" />
+      {/* Cuerpo */}
+      <path
+        d="M70 28 Q100 42 130 28 L150 45 L150 185 L50 185 L50 45 Z"
+        fill={color} stroke="#ddd" strokeWidth="2"
+      />
+      {/* Cuello: redondo para espalda, escotado para frente */}
+      {vista === 'Frente' ? (
+        <path d="M82 30 Q100 50 118 30" fill="none" stroke="#ddd" strokeWidth="2" />
+      ) : (
+        <path d="M85 28 Q100 38 115 28" fill="none" stroke="#ddd" strokeWidth="2" />
+      )}
+      {/* Capucha (solo polerón, vista espalda) */}
+      {isHoodie && vista === 'Espalda' && (
+        <path d="M75 30 Q100 5 125 30" fill="none" stroke="#ddd" strokeWidth="2" />
+      )}
+      {/* Bolsillo canguro (solo polerón, vista frente) */}
+      {isHoodie && vista === 'Frente' && (
+        <path d="M65 130 Q100 145 135 130 L135 160 Q100 172 65 160 Z" fill="none" stroke="#ddd" strokeWidth="1.5" />
+      )}
+    </svg>
   );
 }
