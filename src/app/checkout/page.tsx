@@ -116,7 +116,7 @@ export default function CheckoutPage() {
                   )}
                   {item.nota && (
                     <div style={{ fontSize: 11, color: '#888', marginTop: 3, fontStyle: 'italic' }}>
-                      "{item.nota}"
+                      &ldquo;{item.nota}&rdquo;
                     </div>
                   )}
                 </div>

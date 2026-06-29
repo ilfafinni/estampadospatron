@@ -301,7 +301,7 @@ export default function AdminPage() {
           <ol style={{ margin: 0, padding: '0 0 0 14px', fontSize: 13, color: '#555', lineHeight: 1.8 }}>
             <li>Arrastra o haz clic en cada producto para subir su foto a Cloudinary.</li>
             <li>Copia la URL generada y pégala en el campo <code>img</code> de <code>src/data/products.ts</code>.</li>
-            <li>Usa <strong>"Copiar todo"</strong> al final para obtener todos los cambios juntos.</li>
+            <li>Usa <strong>&ldquo;Copiar todo&rdquo;</strong> al final para obtener todos los cambios juntos.</li>
           </ol>
         </div>
 
