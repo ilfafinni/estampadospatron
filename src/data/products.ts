@@ -102,6 +102,20 @@ export interface EstampadoSeleccion {
   precio: number;
 }
 
+export function slugify(p: Product): string {
+  const base = p.n
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita tildes
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+  return `${base}-${p.id}`;
+}
+
+export function findBySlug(slug: string): Product | undefined {
+  const id = Number(slug.split('-').pop());
+  return PRODUCTS.find(p => p.id === id);
+}
+
 export function tieneRecargoEstampado(c: Categoria): boolean {
   return c === 'poleras' || c === 'polerones';
 }

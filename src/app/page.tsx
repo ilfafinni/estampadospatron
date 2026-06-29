@@ -2,14 +2,13 @@
 // src/app/page.tsx
 
 import { useState, useEffect } from 'react';
-import { PRODUCTS, CATEGORIES, catLabel, type Product, type Categoria } from '@/data/products';
+import Link from 'next/link';
+import { PRODUCTS, CATEGORIES, catLabel, slugify, type Product, type Categoria } from '@/data/products';
 import { useCart } from '@/lib/CartContext';
-import ProductModal from '@/components/ProductModal';
 
 export default function HomePage() {
   const { totalItems, toggleCart } = useCart();
   const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
-  const [modalProduct, setModalProduct] = useState<Product | null>(null);
   const [slideIdx, setSlideIdx] = useState(0);
   const [toast, setToast] = useState('');
 
@@ -17,6 +16,16 @@ export default function HomePage() {
   useEffect(() => {
     const t = setInterval(() => setSlideIdx(i => (i + 1) % 3), 5000);
     return () => clearInterval(t);
+  }, []);
+
+  // Si llegamos desde /producto/[slug] con ?cat=, filtramos esa categoría
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const cat = params.get('cat') as Categoria | null;
+    if (cat && CATEGORIES.some(cc => cc.c === cat)) {
+      setActiveCat(cat);
+      setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
   }, []);
 
   const filteredProducts = activeCat === 'todos'
@@ -275,7 +284,7 @@ export default function HomePage() {
         {/* Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '16px' }}>
           {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} onOpen={() => setModalProduct(product)} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>
@@ -397,9 +406,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* ── MODAL ── */}
-      <ProductModal product={modalProduct} onClose={() => setModalProduct(null)} />
-
       {/* ── TOAST ── */}
       {toast && (
         <div style={{
@@ -443,12 +449,13 @@ function FormField({ label, type, placeholder }: { label: string; type: string; 
   );
 }
 
-function ProductCard({ product, onOpen }: { product: Product; onOpen: () => void }) {
+function ProductCard({ product }: { product: Product }) {
   const badgeColors: Record<string, string> = {
     popular: '#e53935', eco: '#2e7d32', pack: '#1565c0', nuevo: '#111',
   };
   return (
-    <div onClick={onOpen} style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow .2s' }}>
+    <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow .2s' }}>
       <div style={{ aspectRatio: '1', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
         <span style={{ fontSize: '4rem' }}>{product.e}</span>
         {product.badge && (
@@ -474,6 +481,7 @@ function ProductCard({ product, onOpen }: { product: Product; onOpen: () => void
         {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>{product.precio}</span>}
       </div>
     </div>
+    </Link>
   );
 }
 
