@@ -2,7 +2,7 @@
 // src/lib/CartContext.tsx
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Product, parsePrecio } from '@/data/products';
+import { Product, parsePrecio, EstampadoSeleccion } from '@/data/products';
 
 // ─── Tipos ────────────────────────────────────────────
 export interface CartItem {
@@ -12,7 +12,7 @@ export interface CartItem {
   color?: string;
   tipo?: string;
   nota?: string; // instrucciones de estampado
-  estampado?: { id: string; label: string; precio: number }; // tamaño de estampado (poleras/polerones)
+  estampados?: EstampadoSeleccion[]; // estampado(s) por ubicación: Frente / Espalda
 }
 
 interface CartState {
@@ -34,13 +34,9 @@ function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case 'ADD': {
       // Busca si ya existe el mismo producto+variante
+      const key = (it: CartItem) => `${it.talla}|${it.color}|${it.tipo}|${(it.estampados || []).map(e => `${e.ubicacion}:${e.id}`).sort().join(',')}`;
       const existingIdx = state.items.findIndex(
-        (i) =>
-          i.product.id === action.item.product.id &&
-          i.talla === action.item.talla &&
-          i.color === action.item.color &&
-          i.tipo === action.item.tipo &&
-          i.estampado?.id === action.item.estampado?.id
+        (i) => i.product.id === action.item.product.id && key(i) === key(action.item)
       );
       if (existingIdx >= 0) {
         const updated = [...state.items];
@@ -120,11 +116,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, [state.items]);
 
   const totalItems = state.items.reduce((sum, i) => sum + i.qty, 0);
+  const estampadoSum = (i: CartItem) => (i.estampados || []).reduce((s, e) => s + e.precio, 0);
   const totalPrice = state.items.reduce((sum, i) => {
-    const unit = parsePrecio(i.product.precio) + (i.estampado?.precio || 0);
+    const unit = parsePrecio(i.product.precio) + estampadoSum(i);
     return sum + unit * i.qty;
   }, 0);
-  const totalEstampado = state.items.reduce((sum, i) => sum + (i.estampado?.precio || 0) * i.qty, 0);
+  const totalEstampado = state.items.reduce((sum, i) => sum + estampadoSum(i) * i.qty, 0);
 
   return (
     <CartContext.Provider

@@ -168,7 +168,8 @@ interface CartItemRowProps {
 
 function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
   const precioBase = parsePrecio(item.product.precio);
-  const precioUnitTotal = precioBase + (item.estampado?.precio || 0);
+  const recargoTotal = (item.estampados || []).reduce((s, e) => s + e.precio, 0);
+  const precioUnitTotal = precioBase + recargoTotal;
 
   return (
     <div style={{
@@ -197,11 +198,13 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
           {item.talla && <Tag label={`Talla: ${item.talla}`} />}
           {item.color && <Tag label={`Color: ${item.color}`} />}
           {item.tipo && <Tag label={item.tipo} />}
-          {item.estampado && <Tag label={`Estampado: ${item.estampado.label}`} />}
+          {(item.estampados || []).map(e => (
+            <Tag key={e.ubicacion} label={`${e.ubicacion}: ${e.label}`} />
+          ))}
         </div>
         <div style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginTop: '6px' }}>
           {formatPrice(precioUnitTotal)}
-          {!item.estampado && (
+          {(!item.estampados || item.estampados.length === 0) && (
             <span style={{ fontSize: '11px', fontWeight: 400, color: '#999', marginLeft: '4px' }}>
               + estampado
             </span>

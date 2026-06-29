@@ -3,7 +3,7 @@
 // src/components/ProductModal.tsx
 
 import { useState, useEffect } from 'react';
-import { Product, catLabel, ESTAMPADO_SIZES, tieneRecargoEstampado, parsePrecio } from '@/data/products';
+import { Product, catLabel, ESTAMPADO_SIZES, tieneRecargoEstampado, parsePrecio, Ubicacion, EstampadoSeleccion } from '@/data/products';
 import { useCart, formatPrice } from '@/lib/CartContext';
 
 interface Props {
@@ -17,7 +17,8 @@ export default function ProductModal({ product, onClose }: Props) {
   const [talla, setTalla] = useState<string | undefined>();
   const [color, setColor] = useState<string | undefined>();
   const [tipo, setTipo] = useState<string | undefined>();
-  const [estampadoId, setEstampadoId] = useState<string | undefined>();
+  const [frenteId, setFrenteId] = useState<string | undefined>();
+  const [espaldaId, setEspaldaId] = useState<string | undefined>();
   const [nota, setNota] = useState('');
   const [added, setAdded] = useState(false);
 
@@ -35,7 +36,8 @@ export default function ProductModal({ product, onClose }: Props) {
       setTalla(undefined);
       setColor(undefined);
       setTipo(undefined);
-      setEstampadoId(undefined);
+      setFrenteId(undefined);
+      setEspaldaId(undefined);
       setNota('');
       setAdded(false);
       setFileB64(null);
@@ -50,12 +52,18 @@ export default function ProductModal({ product, onClose }: Props) {
   if (!product) return null;
 
   const aplicaEstampado = tieneRecargoEstampado(product.c);
-  const estampadoSel = aplicaEstampado ? ESTAMPADO_SIZES.find(s => s.id === estampadoId) : undefined;
+  const frenteSel = aplicaEstampado ? ESTAMPADO_SIZES.find(s => s.id === frenteId) : undefined;
+  const espaldaSel = aplicaEstampado ? ESTAMPADO_SIZES.find(s => s.id === espaldaId) : undefined;
+  const estampados: EstampadoSeleccion[] = [
+    ...(frenteSel ? [{ ubicacion: 'Frente' as Ubicacion, ...frenteSel }] : []),
+    ...(espaldaSel ? [{ ubicacion: 'Espalda' as Ubicacion, ...espaldaSel }] : []),
+  ];
   const precioBase = parsePrecio(product.precio);
-  const precioUnitTotal = precioBase + (estampadoSel?.precio || 0);
+  const recargoTotal = estampados.reduce((s, e) => s + e.precio, 0);
+  const precioUnitTotal = precioBase + recargoTotal;
 
   const handleAddToCart = () => {
-    addItem({ product, qty, talla, color, tipo, nota: nota || undefined, estampado: estampadoSel });
+    addItem({ product, qty, talla, color, tipo, nota: nota || undefined, estampados: estampados.length ? estampados : undefined });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -209,23 +217,36 @@ export default function ProductModal({ product, onClose }: Props) {
               </>
             )}
 
-            {/* Tamaño de estampado (solo poleras/polerones) */}
+            {/* Estampado por ubicación (solo poleras/polerones) */}
             {aplicaEstampado && (
               <>
-                <Label text="Tamaño de estampado" />
+                <Label text="Estampado Frente (opcional)" />
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '4px' }}>
                   {ESTAMPADO_SIZES.map(s => (
                     <TallaBtn
                       key={s.id}
                       label={`${s.label} (+${formatPrice(s.precio)})`}
-                      selected={estampadoId === s.id}
-                      onClick={() => setEstampadoId(prev => prev === s.id ? undefined : s.id)}
+                      selected={frenteId === s.id}
+                      onClick={() => setFrenteId(prev => prev === s.id ? undefined : s.id)}
+                      small
+                    />
+                  ))}
+                </div>
+
+                <Label text="Estampado Espalda (opcional)" />
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px', marginBottom: '4px' }}>
+                  {ESTAMPADO_SIZES.map(s => (
+                    <TallaBtn
+                      key={s.id}
+                      label={`${s.label} (+${formatPrice(s.precio)})`}
+                      selected={espaldaId === s.id}
+                      onClick={() => setEspaldaId(prev => prev === s.id ? undefined : s.id)}
                       small
                     />
                   ))}
                 </div>
                 <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>
-                  Selecciona el tamaño aproximado de tu diseño. Si no seleccionas ninguno, cotizamos el estampado según tu diseño.
+                  Puedes elegir un tamaño para el frente y otro distinto para la espalda; ambos se suman al precio. Si no eliges ninguno, cotizamos el estampado según tu diseño.
                 </div>
               </>
             )}
@@ -235,17 +256,20 @@ export default function ProductModal({ product, onClose }: Props) {
               <>
                 <Label text="Precio referencial" />
                 <div style={{ fontSize: '18px', fontWeight: 800, color: '#111', marginTop: '4px' }}>
-                  {formatPrice(precioUnitTotal)}{' '}
-                  {!aplicaEstampado ? (
-                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>+ estampado</span>
-                  ) : estampadoSel ? (
-                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>
-                      ({formatPrice(precioBase)} prenda + {formatPrice(estampadoSel.precio)} estampado {estampadoSel.label})
-                    </span>
-                  ) : (
-                    <span style={{ fontSize: '11px', fontWeight: 400, color: '#999' }}>+ estampado a elegir</span>
-                  )}
+                  {formatPrice(precioUnitTotal)}
                 </div>
+                {!aplicaEstampado ? (
+                  <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>+ estampado</div>
+                ) : estampados.length > 0 ? (
+                  <div style={{ fontSize: '11px', color: '#999', marginTop: '2px', lineHeight: 1.5 }}>
+                    {formatPrice(precioBase)} prenda
+                    {estampados.map(e => (
+                      <span key={e.ubicacion}> + {formatPrice(e.precio)} {e.ubicacion.toLowerCase()} ({e.label})</span>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '11px', color: '#999', marginTop: '2px' }}>+ estampado a elegir</div>
+                )}
               </>
             )}
 

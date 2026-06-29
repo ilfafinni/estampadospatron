@@ -54,20 +54,20 @@ export const PRODUCTS: Product[] = [
   {id:21,c:'tazas',n:'Taza Borde de Color',ref:'TZ-008',e:'🎨',desc:'Taza blanca con borde interior de color. Elegante y diferente.',v:{col:[{n:'Rojo',h:'#e74c3c'},{n:'Azul',h:'#2980b9'},{n:'Verde',h:'#27ae60'},{n:'Rosa',h:'#f06292'}]},precio:'$5.000'},
   {id:22,c:'tazas',n:'Taza Interior de Color',ref:'TZ-009',e:'🌈',desc:'Interior de color con exterior blanco personalizable. Combinación única.',v:{col:[{n:'Rojo',h:'#e74c3c'},{n:'Azul',h:'#2980b9'},{n:'Verde',h:'#27ae60'},{n:'Negro',h:'#111'}]},precio:'$5.000'},
   /* ACCESORIOS */
-  {id:23,c:'accesorios',n:'Carcasa Personalizada',ref:'ACC-001',e:'📱',desc:'Para iPhone, Samsung, Xiaomi, Motorola y más. Impresión de alta resolución.',v:{tipo:['iPhone','Samsung Galaxy','Xiaomi','Motorola']},precio:'$4.900'},
-  {id:24,c:'accesorios',n:'Posavasos',ref:'ACC-002',e:'🥂',desc:'Material resistente. Para bares, hogares y empresas. Pack ideal para regalo.',v:{tipo:['Individual','Pack x4','Pack x6']},precio:'$1.800'},
-  {id:25,c:'accesorios',n:'Placa Mascota',ref:'ACC-003',e:'🐾',desc:'Placa metálica para collar. Con nombre y teléfono. Gran regalo personalizado.',v:{col:[{n:'Azul',h:'#2980b9'},{n:'Rosado',h:'#f48fb1'},{n:'Negro',h:'#111'}],tipo:['Redonda','Hueso','Corazón']},precio:'$2.500'},
+  {id:23,c:'accesorios',n:'Carcasa Personalizada',ref:'ACC-001',e:'📱',desc:'Para iPhone, Samsung, Xiaomi, Motorola y más. Impresión de alta resolución.',v:{tipo:['Estándar','Premium']},precio:'$2.500'},
+  {id:24,c:'accesorios',n:'Posavasos',ref:'ACC-002',e:'🥂',desc:'Material resistente. Para bares, hogares y empresas. Pack ideal para regalo.',v:{tipo:['Individual','Pack x4','Pack x6']},precio:'$2.500'},
+  {id:25,c:'accesorios',n:'Placa Mascota',ref:'ACC-003',e:'🐾',desc:'Placa metálica para collar. Con nombre y teléfono. Gran regalo personalizado.',v:{col:[{n:'Azul',h:'#2980b9'},{n:'Rosado',h:'#f48fb1'},{n:'Negro',h:'#111'}],tipo:['Redonda','Hueso','Corazón']},precio:'$3.500'},
   /* DEPORTIVA */
-  {id:26,c:'deportiva',n:'Short Traje de Baño',ref:'ROLY-0945',e:'🏖️',desc:'Sublimación total. Resistente al cloro y agua salada. Para equipos de natación.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'}]},precio:'$5.500'},
-  {id:27,c:'deportiva',n:'Short Deportivo',ref:'ROLY-0940',e:'🩳',desc:'Unisex, transpirable. Para entrenamiento o uso casual. Sublimación full print.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]},precio:'$4.800'},
-  {id:28,c:'deportiva',n:'Short Deportivo Fútbol',ref:'ROLY-0941',e:'⚽',desc:'Con número y nombre. Descuento por equipos completos. Ideal para ligas y colegios.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Blanco',h:'#f0f0f0'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'}]},precio:'$5.200',badge:'pack'},
+  {id:26,c:'deportiva',n:'Short Traje de Baño',ref:'ROLY-0945',e:'🏖️',desc:'Sublimación total. Resistente al cloro y agua salada. Para equipos de natación.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'}]},precio:'$8.000'},
+  {id:27,c:'deportiva',n:'Short Deportivo',ref:'ROLY-0940',e:'🩳',desc:'Unisex, transpirable. Para entrenamiento o uso casual. Sublimación full print.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]},precio:'$8.000'},
+  {id:28,c:'deportiva',n:'Short Deportivo Fútbol',ref:'ROLY-0941',e:'⚽',desc:'Con número y nombre. Descuento por equipos completos. Ideal para ligas y colegios.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Blanco',h:'#f0f0f0'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'}]},precio:'$8.000',badge:'pack'},
   {id:29,c:'deportiva',n:'Conjunto Deportivo',ref:'ROLY-CONJ',e:'🏋️',desc:'Polera + short con diseño unificado para equipos. Precio especial por conjunto.',v:{t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'}]},precio:'$7.500',badge:'pack'},
   /* IMPRESION */
-  {id:30,c:'impresion',n:'Adhesivos por Mayor',ref:'IMP-001',e:'🏷️',desc:'Papel o vinil de alta calidad. Corte en cualquier forma. Precio por lámina.',v:{tipo:['Papel','Vinil','Transparente','Holográfico']},precio:'$800/ud'},
-  {id:31,c:'impresion',n:'Fotografía 10×15 cm',ref:'IMP-002',e:'🖼️',desc:'Papel fotográfico profesional de alta resolución. Ideal para recuerdos.',v:{tipo:['Mate','Brillante']},precio:'$900'},
-  {id:32,c:'impresion',n:'Fotografía 10×10 cm',ref:'IMP-003',e:'📸',desc:'Formato cuadrado para redes sociales. Muy solicitado para eventos.',v:{tipo:['Mate','Brillante']},precio:'$800'},
-  {id:33,c:'impresion',n:'Fotografía 20×27 cm',ref:'IMP-004',e:'🖼️',desc:'Formato cuadro para enmarcar. Retratos y recordatorios de primera calidad.',v:{tipo:['Mate','Brillante']},precio:'$1.900'},
-  {id:34,c:'impresion',n:'Stickers 5×5 cm',ref:'IMP-005',e:'⭐',desc:'Vinil resistente al agua. Para personalizar todo. Mínimo 10 unidades.',v:{tipo:['Vinil blanco','Transparente','Holográfico']},precio:'$350/ud'},
+  {id:30,c:'impresion',n:'Adhesivos por Mayor',ref:'IMP-001',e:'🏷️',desc:'Papel o vinil de alta calidad. Corte en cualquier forma. Precio por metro lineal.',v:{tipo:['Papel','Vinil','Transparente','Holográfico']},precio:'$20.000/metro'},
+  {id:31,c:'impresion',n:'Fotografía 10×15 cm',ref:'IMP-002',e:'🖼️',desc:'Papel fotográfico profesional de alta resolución. Ideal para recuerdos.',v:{tipo:['Mate','Brillante']},precio:'$350'},
+  {id:32,c:'impresion',n:'Fotografía 10×10 cm',ref:'IMP-003',e:'📸',desc:'Formato cuadrado para redes sociales. Muy solicitado para eventos.',v:{tipo:['Mate','Brillante']},precio:'$300'},
+  {id:33,c:'impresion',n:'Fotografía 20×27 cm',ref:'IMP-004',e:'🖼️',desc:'Formato cuadro para enmarcar. Retratos y recordatorios de primera calidad.',v:{tipo:['Mate','Brillante']},precio:'$1.000'},
+  {id:34,c:'impresion',n:'Stickers 5×5 cm',ref:'IMP-005',e:'⭐',desc:'Vinil resistente al agua. Para personalizar todo. Mínimo 10 unidades.',v:{tipo:['Vinil blanco','Transparente','Holográfico']},precio:'$107/ud'},
 ];
 
 export const CATEGORIES = [
@@ -92,6 +92,15 @@ export const ESTAMPADO_SIZES: EstampadoSize[] = [
   { id: '10x30', label: '10 × 30 cm', precio: 2000 },
   { id: '10x10', label: '10 × 10 cm', precio: 1000 },
 ];
+
+export type Ubicacion = 'Frente' | 'Espalda';
+
+export interface EstampadoSeleccion {
+  ubicacion: Ubicacion;
+  id: string;
+  label: string;
+  precio: number;
+}
 
 export function tieneRecargoEstampado(c: Categoria): boolean {
   return c === 'poleras' || c === 'polerones';
