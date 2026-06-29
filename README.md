@@ -2,6 +2,17 @@
 
 Tienda web en Next.js para Estampados Patrón.
 
+## Despliegue en Vercel con dominio personalizado
+
+El dominio canónico del sitio es `https://estampadospatron.com` (sin `www`). El archivo `vercel.json` redirige cualquier visita a `www.estampadospatron.com` hacia el dominio raíz para evitar bucles entre variantes del dominio.
+
+En Vercel, configura `estampadospatron.com` como dominio principal del proyecto y deja `www.estampadospatron.com` como alias que apunte al mismo proyecto. Si el panel de Vercel o el proveedor DNS tiene una redirección adicional desde `estampadospatron.com` hacia `www.estampadospatron.com`, elimínala porque generaría un ciclo `www → raíz → www`.
+
+Registros DNS recomendados para Vercel:
+
+- `A` para `estampadospatron.com` apuntando a `76.76.21.21`.
+- `CNAME` para `www` apuntando a `cname.vercel-dns.com`.
+
 ## Conectar el dominio
 
 El proyecto incluye `public/CNAME` con el dominio `estampadospatron.com` para que GitHub Pages publique el sitio con dominio personalizado.
