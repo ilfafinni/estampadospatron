@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.estampadospatron.com"
+        }
+      ],
+      "destination": "https://estampadospatron.com/:path*",
+      "permanent": true
+    }
+  ]
+}
