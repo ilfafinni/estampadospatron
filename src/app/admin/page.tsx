@@ -30,54 +30,70 @@ function copyToClipboard(text: string) {
 }
 
 function generateProductsTs(products: EditableProduct[]): string {
-  const header = `// src/data/products.ts
+  const rows = products.filter(p => !p._deleted).map(p => {
+    const t    = p.v.t?.length    ? `t:[${p.v.t.map((s:string) => `'${s}'`).join(',')}]` : '';
+    const col  = p.v.col?.length  ? `col:[${p.v.col.map((c:{n:string;h:string}) => `{n:'${c.n}',h:'${c.h}'}`).join(',')}]` : '';
+    const tipo = p.v.tipo?.length ? `tipo:[${p.v.tipo.map((s:string) => `'${s}'`).join(',')}]` : '';
+    const v    = [t, col, tipo].filter(Boolean).join(',');
+    const img  = p.img   ? `  img: '${p.img}',\n` : '';
+    const bdg  = p.badge ? `  badge: '${p.badge}',\n` : '';
+    return `  {\n  id: ${p.id}, c: '${p.c}', n: '${p.n.replace(/'/g,"\\'")}', ref: '${p.ref}', e: '${p.e}',\n${img}  desc: '${p.desc.replace(/'/g,"\\'")}', v: {${v}}, precio: '${p.precio}',\n${bdg}  }`;
+  });
 
+  const polCount  = products.filter(p=>!p._deleted&&p.c==='poleras').length;
+  const polrCount = products.filter(p=>!p._deleted&&p.c==='polerones').length;
+  const tazCount  = products.filter(p=>!p._deleted&&p.c==='tazas').length;
+  const accCount  = products.filter(p=>!p._deleted&&p.c==='accesorios').length;
+  const depCount  = products.filter(p=>!p._deleted&&p.c==='deportiva').length;
+  const impCount  = products.filter(p=>!p._deleted&&p.c==='impresion').length;
+
+  return `// src/data/products.ts
 export type Categoria = 'poleras' | 'polerones' | 'tazas' | 'accesorios' | 'deportiva' | 'impresion';
 export type Badge = 'popular' | 'eco' | 'pack' | 'nuevo';
-
 export interface ColorVariant { n: string; h: string; }
 export interface ProductVariants { t?: string[]; col?: ColorVariant[]; tipo?: string[]; }
 export interface Product {
   id: number; c: Categoria; n: string; ref: string; e: string;
   img?: string; desc: string; v: ProductVariants; precio: string; badge?: Badge;
 }
-
-export const PRODUCTS: Product[] = [`;
-
-  const rows = products.filter(p => !p._deleted).map(p => {
-    const t    = p.v.t?.length    ? `t:[${p.v.t.map(s => `'${s}'`).join(',')}]` : '';
-    const col  = p.v.col?.length  ? `col:[${p.v.col.map(c => `{n:'${c.n}',h:'${c.h}'}`).join(',')}]` : '';
-    const tipo = p.v.tipo?.length ? `tipo:[${p.v.tipo.map(s => `'${s}'`).join(',')}]` : '';
-    const v    = [t, col, tipo].filter(Boolean).join(',');
-    const img  = p.img   ? `img:'${p.img}',`      : '';
-    const bdg  = p.badge ? `badge:'${p.badge}',`  : '';
-    return `  {id:${p.id},c:'${p.c}',n:'${p.n.replace(/'/g,"\\'")}',ref:'${p.ref}',e:'${p.e}',${img}desc:'${p.desc.replace(/'/g,"\\'")}',v:{${v}},precio:'${p.precio}',${bdg}}`;
-  });
-
-  const footer = `];
-
-export const CATEGORIES = [
-  {c:'poleras' as Categoria,   name:'Poleras',    count:'${products.filter(p=>!p._deleted&&p.c==='poleras').length} productos',    icon:'👕', bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
-  {c:'polerones' as Categoria, name:'Polerones',  count:'${products.filter(p=>!p._deleted&&p.c==='polerones').length} productos',  icon:'🧥', bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
-  {c:'tazas' as Categoria,     name:'Tazas',      count:'${products.filter(p=>!p._deleted&&p.c==='tazas').length} modelos',       icon:'☕', bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
-  {c:'accesorios' as Categoria,name:'Accesorios', count:'${products.filter(p=>!p._deleted&&p.c==='accesorios').length} productos', icon:'📱', bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
-  {c:'deportiva' as Categoria, name:'Deportiva',  count:'${products.filter(p=>!p._deleted&&p.c==='deportiva').length} productos',  icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
-  {c:'impresion' as Categoria, name:'Impresión',  count:'${products.filter(p=>!p._deleted&&p.c==='impresion').length} productos',  icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'},
+export const PRODUCTS: Product[] = [
+${rows.join(',\n')}
 ];
-
-export interface EstampadoSeleccion { ubicacion: 'Frente' | 'Espalda'; id: string; label: string; precio: number; }
+export const CATEGORIES = [
+  {c:'poleras' as Categoria,   name:'Poleras',    count:'${polCount} productos',    icon:'👕', bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
+  {c:'polerones' as Categoria, name:'Polerones',  count:'${polrCount} productos',   icon:'🧥', bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
+  {c:'tazas' as Categoria,     name:'Tazas',      count:'${tazCount} modelos',      icon:'☕', bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
+  {c:'accesorios' as Categoria,name:'Accesorios', count:'${accCount} productos',    icon:'📱', bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
+  {c:'deportiva' as Categoria, name:'Deportiva',  count:'${depCount} productos',    icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
+  {c:'impresion' as Categoria, name:'Impresión',  count:'${impCount} productos',    icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'},
+];
+export interface EstampadoSize { id: string; label: string; precio: number; }
+export const ESTAMPADO_SIZES: EstampadoSize[] = [
+  { id: '30x30', label: '30 × 30 cm aprox', precio: 7000 },
+  { id: '20x20', label: '20 × 20 cm aprox', precio: 5000 },
+  { id: '10x30', label: '10 × 30 cm', precio: 2000 },
+  { id: '10x10', label: '10 × 10 cm', precio: 1000 },
+];
+export type Ubicacion = 'Frente' | 'Espalda';
+export interface EstampadoSeleccion { ubicacion: Ubicacion; id: string; label: string; precio: number; }
+export function slugify(p: Product): string {
+  const base = p.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  return \`\${base}-\${p.id}\`;
+}
+export function findBySlug(slug: string): Product | undefined {
+  const id = Number(slug.split('-').pop());
+  return PRODUCTS.find(p => p.id === id);
+}
 export function tieneRecargoEstampado(c: Categoria): boolean { return c === 'poleras' || c === 'polerones'; }
 export function parsePrecio(precio: string): number {
-  const match = precio.match(/[\\d.]+/);
+  const match = precio.match(/[\d.]+/);
   if (!match) return 0;
-  return parseInt(match[0].replace(/\\./g, ''), 10);
+  return parseInt(match[0].replace(/\./g, ''), 10);
 }
 export function catLabel(c: Categoria): string {
   const map: Record<Categoria,string> = { poleras:'Poleras', polerones:'Polerones', tazas:'Tazas', accesorios:'Accesorios', deportiva:'Deportiva', impresion:'Impresión' };
   return map[c] || c;
 }`;
-
-  return `${header}\n${rows.join(',\n')}\n];\n\n${footer.split('\n').slice(1).join('\n')}`;
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
