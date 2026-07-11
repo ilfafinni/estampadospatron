@@ -314,6 +314,7 @@ export default function AdminPage() {
       const data = await res.json();
       if(!res.ok) throw new Error(data.error||'Error al guardar');
       setSaveMsg('✓ Guardado en GitHub — Vercel está redesplegando (1-2 min)');
+      setUploads([]);
       setProducts(prev=>prev.filter(p=>!p._deleted).map(p=>({...p,_dirty:false,_new:false})));
     } catch(err: unknown){
       setSaveMsg('⚠ '+(err instanceof Error?err.message:'Error desconocido'));
@@ -327,7 +328,7 @@ export default function AdminPage() {
     {value:'tazas',label:'Tazas'},{value:'accesorios',label:'Accesorios'},{value:'deportiva',label:'Deportiva'},{value:'impresion',label:'Impresión'},
   ];
 
-  const filteredPhotos = PRODUCTS.filter(p=>{
+  const filteredPhotos = products.filter(p=>{
     const catOk  = filterCat==='todos'||p.c===filterCat;
     const statOk = filterStatus==='todos'||(filterStatus==='con-foto'&&!!p.img)||(filterStatus==='sin-foto'&&!p.img);
     return catOk&&statOk;
@@ -350,6 +351,24 @@ export default function AdminPage() {
   });
   const th: React.CSSProperties = { padding:'10px 14px', textAlign:'left', fontSize:11, fontWeight:700, color:'#888', textTransform:'uppercase', letterSpacing:'0.05em' };
   const td: React.CSSProperties = { padding:'10px 14px', verticalAlign:'middle' };
+
+  const SaveChangesPanel = ({ compact = false }: { compact?: boolean }) => (
+    <div style={{ marginTop:compact?0:20, marginBottom:compact?16:0, background:dirtyCount>0?'#fffbeb':'#fff', border:`1px solid ${dirtyCount>0?'#fde68a':'#e8e8e8'}`, borderRadius:12, padding:compact?'12px 16px':'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
+      <div>
+        <div style={{ fontWeight:700, fontSize:14 }}>
+          {dirtyCount>0?`⚠ ${dirtyCount} cambio${dirtyCount>1?'s':''} sin guardar`:'✓ Todo guardado'}
+        </div>
+        <div style={{ fontSize:12, color:'#888', marginTop:3 }}>
+          {dirtyCount>0?'Guarda para que las fotos y cambios se publiquen en la tienda.':'No hay cambios pendientes por publicar.'}
+        </div>
+        {saveMsg&&<div style={{ fontSize:12, marginTop:6, color:saveMsg.startsWith('✓')?'#16a34a':'#dc2626', fontWeight:600 }}>{saveMsg}</div>}
+      </div>
+      <button onClick={handleSaveToGitHub} disabled={saving||dirtyCount===0}
+        style={{ background:saving?'#ccc':dirtyCount===0?'#e5e7eb':'#111', color:dirtyCount===0?'#999':'#fff', border:'none', borderRadius:8, padding:'10px 24px', fontSize:13, fontWeight:700, cursor:saving||dirtyCount===0?'not-allowed':'pointer', whiteSpace:'nowrap' }}>
+        {saving?'Guardando…':'💾 Guardar cambios'}
+      </button>
+    </div>
+  );
 
   return (
     <div style={{ minHeight:'100vh', background:'#f5f5f5', fontFamily:"'Inter',sans-serif" }}>
@@ -379,11 +398,12 @@ export default function AdminPage() {
         {/* ── TAB FOTOS ── */}
         {tab==='fotos'&&(
           <>
+            <SaveChangesPanel compact />
             <div style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, padding:'14px 18px', marginBottom:20, display:'flex', gap:14 }}>
               <span style={{ fontSize:24 }}>☁️</span>
               <ol style={{ margin:0, padding:'0 0 0 14px', fontSize:13, color:'#555', lineHeight:1.8 }}>
                 <li>Arrastra o haz clic para subir la foto a Cloudinary.</li>
-                <li>La URL se guarda automáticamente — luego haz clic en <strong>Guardar en GitHub</strong> en la tab Productos para que se vea en la página.</li>
+                <li>La foto queda lista en el panel, pero para publicarla debes hacer clic en <strong>💾 Guardar cambios</strong>.</li>
               </ol>
             </div>
             <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:16, alignItems:'center' }}>
@@ -400,7 +420,7 @@ export default function AdminPage() {
                   {s==='todos'?'Todos':s==='sin-foto'?'○ Sin foto':'✓ Con foto'}
                 </button>
               ))}
-              <span style={{ marginLeft:'auto', fontSize:11, color:'#bbb' }}>{filteredPhotos.length} de {PRODUCTS.length}</span>
+              <span style={{ marginLeft:'auto', fontSize:11, color:'#bbb' }}>{filteredPhotos.length} de {products.filter(p=>!p._deleted).length}</span>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:14 }}>
               {filteredPhotos.map(p=>(
@@ -467,28 +487,14 @@ export default function AdminPage() {
               {filteredProds.length===0&&<div style={{ textAlign:'center', padding:'40px 0', color:'#ccc' }}>Sin resultados.</div>}
             </div>
 
-            {/* Guardar en GitHub */}
-            <div style={{ marginTop:20, background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, padding:'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
-              <div>
-                <div style={{ fontWeight:700, fontSize:14 }}>
-                  {dirtyCount>0?`⚠ ${dirtyCount} cambio${dirtyCount>1?'s':''} sin guardar`:'✓ Todo guardado'}
-                </div>
-                <div style={{ fontSize:12, color:'#888', marginTop:3 }}>
-                  Al guardar se hace commit en GitHub y Vercel redespliega automáticamente (~1 min)
-                </div>
-                {saveMsg&&<div style={{ fontSize:12, marginTop:6, color:saveMsg.startsWith('✓')?'#16a34a':'#dc2626', fontWeight:600 }}>{saveMsg}</div>}
-              </div>
-              <button onClick={handleSaveToGitHub} disabled={saving||dirtyCount===0}
-                style={{ background:saving?'#ccc':dirtyCount===0?'#e5e7eb':'#111', color:dirtyCount===0?'#999':'#fff', border:'none', borderRadius:8, padding:'10px 24px', fontSize:13, fontWeight:700, cursor:saving||dirtyCount===0?'not-allowed':'pointer', whiteSpace:'nowrap' }}>
-                {saving?'Guardando…':'💾 Guardar en GitHub'}
-              </button>
-            </div>
+            <SaveChangesPanel />
           </>
         )}
 
         {/* ── TAB CATEGORÍAS ── */}
         {tab==='categorias'&&(
           <>
+            <SaveChangesPanel compact />
             <div style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', marginBottom:20 }}>
               <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
                 <thead>
