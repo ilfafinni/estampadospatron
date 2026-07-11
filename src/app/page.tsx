@@ -6,6 +6,10 @@ import Link from 'next/link';
 import { PRODUCTS, CATEGORIES, catLabel, slugify, type Product, type Categoria } from '@/data/products';
 import { useCart } from '@/lib/CartContext';
 
+const WHATSAPP_NUMBER_DISPLAY = '+56 9 6638 9299';
+const WHATSAPP_URL = 'https://wa.me/56966389299';
+const CONTACT_EMAIL = 'contacto@estampadospatron.com';
+
 export default function HomePage() {
   const { totalItems, toggleCart } = useCart();
   const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
@@ -58,9 +62,9 @@ export default function HomePage() {
       bg: 'linear-gradient(135deg,#0a1a0a 0%,#1a3a1a 50%,#2d5016 100%)',
       tag: 'Express',
       h1: <>Retira en<br />4 horas</>,
-      p: '¿Necesitas urgente? Contáctanos y coordinamos entrega express el mismo día en Santiago.',
+      p: '¿Necesitas urgente? Contáctanos y coordinamos entrega express el mismo día en Curicó.',
       cta: 'WhatsApp',
-      onCta: () => window.open('https://wa.me/56900000000', '_blank'),
+      onCta: () => window.open(WHATSAPP_URL, '_blank'),
     },
   ];
 
@@ -110,7 +114,7 @@ export default function HomePage() {
 
           {/* Actions */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginLeft: 'auto' }}>
-            <a href="https://wa.me/56900000000" target="_blank" rel="noreferrer">
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
               <button style={{ background: '#e53935', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 20px', borderRadius: '3px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 Cotizar
               </button>
@@ -219,7 +223,7 @@ export default function HomePage() {
       <div style={{ background: '#f5f5f5', borderTop: '1px solid #e0e0e0', borderBottom: '1px solid #e0e0e0' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', padding: '1.5rem 2rem', gap: '1rem' }}>
           {[
-            { icon: '🚀', title: 'Retiro Express 4 horas', sub: 'Disponible en Santiago' },
+            { icon: '🚀', title: 'Retiro Express 4 horas', sub: 'Disponible en Curicó' },
             { icon: '📦', title: 'Despacho a todo Chile', sub: 'Coordinamos envío a tu puerta' },
             { icon: '🎨', title: 'Desde 1 unidad', sub: 'Sin mínimo de pedido' },
             { icon: '💬', title: 'Respuesta en 1 hora', sub: 'WhatsApp y correo' },
@@ -317,7 +321,7 @@ export default function HomePage() {
             { n: '01', h: 'Elige el producto', p: 'Selecciona de nuestro catálogo. Más de 34 artículos disponibles.' },
             { n: '02', h: 'Sube tu diseño', p: 'Usa el previsualizador IA para ver cómo queda tu logo.' },
             { n: '03', h: 'Confirmamos juntos', p: 'Revisamos tallas, colores y acabado contigo antes de producir.' },
-            { n: '04', h: 'Retiro o envío', p: 'Retira en Santiago en 4 horas o enviamos a todo Chile.' },
+            { n: '04', h: 'Retiro o envío', p: 'Retira en Curicó en 4 horas o enviamos a todo Chile.' },
           ].map(paso => (
             <div key={paso.n} style={{ textAlign: 'center', padding: '2rem 1.5rem', border: '1px solid #e0e0e0', borderRadius: '4px' }}>
               <div style={{ width: '44px', height: '44px', background: '#111', color: '#fff', borderRadius: '50%', fontSize: '16px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>{paso.n}</div>
@@ -359,9 +363,9 @@ export default function HomePage() {
           <div style={{ paddingTop: '1rem' }}>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.5rem' }}>Información de contacto</h2>
             {[
-              { title: 'Dirección', content: 'Av. Providencia 1234, Santiago\nLunes a Viernes 9:00 – 18:00\nSábados 10:00 – 14:00' },
-              { title: 'WhatsApp', content: '+56 9 XXXX XXXX\nRespuesta inmediata en horario hábil' },
-              { title: 'Correo', content: 'hola@patronestampados.cl' },
+              { title: 'Ubicación', content: 'Curicó' },
+              { title: 'WhatsApp', content: `${WHATSAPP_NUMBER_DISPLAY}\nRespuesta inmediata en horario hábil` },
+              { title: 'Correo', content: CONTACT_EMAIL },
             ].map(block => (
               <div key={block.title} style={{ marginBottom: '1.5rem' }}>
                 <h4 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e53935', marginBottom: '6px' }}>{block.title}</h4>
@@ -381,13 +385,13 @@ export default function HomePage() {
                 PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
               </div>
               <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginTop: '0.8rem' }}>
-                Tienda de estampados personalizados en Santiago. Personaliza prendas y productos con tu logo o diseño. Desde 1 unidad, sin mínimo.
+                Tienda de estampados personalizados en Curicó. Personaliza prendas y productos con tu logo o diseño. Desde 1 unidad, sin mínimo.
               </p>
             </div>
             {[
               { title: 'Productos', links: [['Poleras', () => { setActiveCat('poleras'); scrollToCat(); }], ['Polerones', () => { setActiveCat('polerones'); scrollToCat(); }], ['Tazas', () => { setActiveCat('tazas'); scrollToCat(); }], ['Deportiva', () => { setActiveCat('deportiva'); scrollToCat(); }]] },
               { title: 'Tienda', links: [['Cómo funciona', () => document.getElementById('proceso')?.scrollIntoView({ behavior: 'smooth' })], ['Cotizar', () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })]] },
-              { title: 'Contacto', links: [['WhatsApp', () => window.open('https://wa.me/56900000000')], ['Email', () => window.open('mailto:hola@patronestampados.cl')]] },
+              { title: 'Contacto', links: [['WhatsApp', () => window.open(WHATSAPP_URL)], ['Email', () => window.open(`mailto:${CONTACT_EMAIL}`)]] },
             ].map(col => (
               <div key={col.title}>
                 <h5 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem', color: 'rgba(255,255,255,0.9)' }}>{col.title}</h5>
@@ -400,11 +404,43 @@ export default function HomePage() {
             ))}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1.5rem', fontSize: '11px', color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', gap: '1rem' }}>
-            <span>© 2025 Patronestampados.cl · Santiago, Chile</span>
+            <span>© 2025 Patronestampados.cl · Curicó, Chile</span>
             <span>🔒 Pagos seguros con Transbank Webpay</span>
           </div>
         </div>
       </footer>
+
+      {/* ── WHATSAPP FLOATING BUTTON ── */}
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`Contactar por WhatsApp al ${WHATSAPP_NUMBER_DISPLAY}`}
+        style={{
+          position: 'fixed',
+          right: '1.5rem',
+          bottom: '1.5rem',
+          zIndex: 9998,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          background: '#25D366',
+          color: '#fff',
+          textDecoration: 'none',
+          padding: '12px 16px',
+          borderRadius: '999px',
+          boxShadow: '0 10px 28px rgba(0,0,0,0.25)',
+          fontSize: '13px',
+          fontWeight: 800,
+          letterSpacing: '0.01em',
+        }}
+      >
+        <span style={{ fontSize: '20px', lineHeight: 1 }}>💬</span>
+        <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+          <span>WhatsApp</span>
+          <span style={{ fontSize: '11px', fontWeight: 600 }}>{WHATSAPP_NUMBER_DISPLAY}</span>
+        </span>
+      </a>
 
       {/* ── TOAST ── */}
       {toast && (
