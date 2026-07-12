@@ -87,9 +87,12 @@ export default function ProductDetail({ product }: { product: Product }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             position: 'relative', border: '1px solid #e0e0e0', overflow: 'hidden',
           }}>
-            {/* TODO: cuando tengamos fotos reales, reemplazar este bloque por
-                <img src={product.foto} alt={product.n} style={{ width:'100%', height:'100%', objectFit:'cover' }} /> */}
-            <span style={{ fontSize: '7rem' }}>{product.e}</span>
+            {product.img ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={product.img} alt={product.n} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+            ) : (
+              <span style={{ fontSize: '5rem', color: '#ccc' }}>■</span>
+            )}
             {product.badge && (
               <div style={{ position: 'absolute', top: '14px', left: '14px', fontSize: '10px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '5px 10px', borderRadius: '2px', background: '#111', color: '#fff' }}>
                 {product.badge}

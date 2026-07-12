@@ -37,7 +37,7 @@ function generateProductsTs(products: EditableProduct[]): string {
     const v    = [t, col, tipo].filter(Boolean).join(',');
     const img  = p.img   ? `  img: '${p.img}',\n` : '';
     const bdg  = p.badge ? `  badge: '${p.badge}',\n` : '';
-    return `  {\n  id: ${p.id}, c: '${p.c}', n: '${p.n.replace(/'/g,"\\'")}', ref: '${p.ref}', e: '${p.e}',\n${img}  desc: '${p.desc.replace(/'/g,"\\'")}', v: {${v}}, precio: '${p.precio}',\n${bdg}  }`;
+    return `  {\n  id: ${p.id}, c: '${p.c}', n: '${p.n.replace(/'/g,"\\'")}', ref: '${p.ref}',\n${img}  desc: '${p.desc.replace(/'/g,"\\'")}', v: {${v}}, precio: '${p.precio}',\n${bdg}  }`;
   });
 
   const polCount  = products.filter(p=>!p._deleted&&p.c==='poleras').length;
@@ -169,7 +169,7 @@ function PhotoCard({ product, uploadedUrl, onUploaded }: { product: Product; upl
         {preview
           // eslint-disable-next-line @next/next/no-img-element
           ? <img src={preview} alt={product.n} style={{ width:'100%', height:'100%', objectFit:'contain', padding:6 }} />
-          : <><span style={{ fontSize:36 }}>{product.e}</span><span style={{ fontSize:11, color:'#bbb' }}>{dragOver?'Suelta aquí':'Arrastra o clic'}</span></>}
+          : <span style={{ fontSize:11, color:'#bbb' }}>{dragOver?'Suelta aquí':'Arrastra imagen o clic'}</span>}
         {state==='uploading' && (
           <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,.6)', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:8 }}>
             <svg width="26" height="26" viewBox="0 0 26 26" fill="none" style={{ animation:'spin 1s linear infinite' }}>
@@ -211,7 +211,7 @@ const inp: React.CSSProperties = { padding:'8px 10px', border:'1px solid #e0e0e0
 
 function ProductModal({ product, onSave, onClose }: { product: EditableProduct | null; onSave:(p:EditableProduct)=>void; onClose:()=>void }) {
   const cats: Categoria[] = ['poleras','polerones','tazas','accesorios','deportiva','impresion'];
-  const blank: EditableProduct = { id:Date.now(), c:'poleras', n:'', ref:'', e:'👕', desc:'', v:{}, precio:'$0', _new:true };
+  const blank: EditableProduct = { id:Date.now(), c:'poleras', n:'', ref:'', desc:'', v:{}, precio:'$0', _new:true };
   const [form, setForm] = useState<EditableProduct>(product || blank);
   const set = (k: keyof EditableProduct, v: unknown) => setForm(f=>({...f,[k]:v,_dirty:true}));
 
@@ -224,10 +224,7 @@ function ProductModal({ product, onSave, onClose }: { product: EditableProduct |
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
           <label style={lbl}>Nombre<input value={form.n} onChange={e=>set('n',e.target.value)} style={inp} placeholder="Ej: Polera Básica Algodón"/></label>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
-            <label style={lbl}>Referencia<input value={form.ref} onChange={e=>set('ref',e.target.value)} style={inp} placeholder="ROLY-0001"/></label>
-            <label style={lbl}>Emoji<input value={form.e} onChange={e=>set('e',e.target.value)} style={inp} placeholder="👕"/></label>
-          </div>
+          <label style={lbl}>Referencia<input value={form.ref} onChange={e=>set('ref',e.target.value)} style={inp} placeholder="ROLY-0001"/></label>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
             <label style={lbl}>Categoría
               <select value={form.c} onChange={e=>set('c',e.target.value as Categoria)} style={inp}>
@@ -463,7 +460,7 @@ export default function AdminPage() {
                     <tr key={p.id} style={{ borderBottom:'1px solid #f0f0f0', background:p._new?'#f0fdf4':p._dirty?'#fffbeb':idx%2===0?'#fff':'#fafafa' }}>
                       <td style={td}><span style={{ color:'#aaa', fontFamily:'monospace', fontSize:11 }}>{p.id}</span></td>
                       <td style={td}>
-                        <div style={{ fontWeight:600 }}>{p.e} {p.n}</div>
+                        <div style={{ fontWeight:600 }}>{p.n}</div>
                         {p._new&&<span style={{ background:'#dcfce7', color:'#16a34a', fontSize:10, padding:'1px 6px', borderRadius:10, fontWeight:700 }}>Nuevo</span>}
                         {p._dirty&&!p._new&&<span style={{ background:'#fef9c3', color:'#ca8a04', fontSize:10, padding:'1px 6px', borderRadius:10 }}>Modificado</span>}
                       </td>

@@ -180,9 +180,9 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
       <div style={{
         width: '64px', height: '64px', background: '#f5f5f5',
         borderRadius: '3px', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', fontSize: '2rem', flexShrink: 0,
+        justifyContent: 'center', fontSize: '0.9rem', flexShrink: 0, color: '#999',
       }}>
-        {item.product.e}
+        ■
       </div>
 
       {/* Info */}

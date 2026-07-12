@@ -103,7 +103,7 @@ export default function CheckoutPage() {
               }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, fontSize: 14, color: '#111' }}>
-                    {item.product.e} {item.product.n}
+                    {item.product.n}
                   </div>
                   <div style={{ fontSize: 12, color: '#888', marginTop: 3 }}>
                     {[item.talla, item.color, item.tipo].filter(Boolean).join(' · ')}

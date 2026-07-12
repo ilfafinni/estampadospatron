@@ -15,6 +15,7 @@ export default function HomePage() {
   const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
   const [slideIdx, setSlideIdx] = useState(0);
   const [toast, setToast] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Slider auto
   useEffect(() => {
@@ -32,9 +33,21 @@ export default function HomePage() {
     }
   }, []);
 
-  const filteredProducts = activeCat === 'todos'
-    ? PRODUCTS
-    : PRODUCTS.filter(p => p.c === activeCat);
+  const filteredProducts = (() => {
+    let products = activeCat === 'todos'
+      ? PRODUCTS
+      : PRODUCTS.filter(p => p.c === activeCat);
+    
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      products = products.filter(p => 
+        p.n.toLowerCase().includes(term) || 
+        p.desc.toLowerCase().includes(term) ||
+        p.ref.toLowerCase().includes(term)
+      );
+    }
+    return products;
+  })();
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -77,7 +90,7 @@ export default function HomePage() {
 
       {/* ── TOPBAR ── */}
       <div style={{ background: '#111', color: '#fff', textAlign: 'center', padding: '8px 1rem', fontSize: '12px', fontWeight: 500, letterSpacing: '0.04em' }}>
-        🚀 Retiro Express en 4 horas
+        Retiro Express en 4 horas
         <span style={{ opacity: 0.7, margin: '0 12px' }}>·</span>
         Desde 1 unidad
         <span style={{ opacity: 0.7, margin: '0 12px' }}>·</span>
@@ -101,6 +114,8 @@ export default function HomePage() {
           <div style={{ flex: 1, maxWidth: '520px', position: 'relative' }}>
             <input
               placeholder="Buscar productos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%', padding: '10px 16px 10px 42px', border: '1px solid #e0e0e0',
                 borderRadius: '4px', fontSize: '13px', fontFamily: 'inherit', outline: 'none',
@@ -405,7 +420,7 @@ export default function HomePage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1.5rem', fontSize: '11px', color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', gap: '1rem' }}>
             <span>© 2025 Patronestampados.cl · Curicó, Chile</span>
-            <span>🔒 Pagos seguros con Transbank Webpay</span>
+            <span>Pagos seguros con Transbank Webpay</span>
           </div>
         </div>
       </footer>
@@ -435,7 +450,9 @@ export default function HomePage() {
           letterSpacing: '0.01em',
         }}
       >
-        <span style={{ fontSize: '20px', lineHeight: 1 }}>💬</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004c-2.848 0-5.143-2.295-5.143-5.143 0-2.848 2.295-5.143 5.143-5.143 2.848 0 5.143 2.295 5.143 5.143 0 2.848-2.295 5.143-5.143 5.143m5.143-9.364c-2.309-2.309-6.045-2.309-8.354 0-2.309 2.31-2.309 6.045 0 8.354 2.31 2.31 6.045 2.31 8.354 0 .226-.226.423-.47.605-.722.182-.252.35-.517.496-.8.147-.283.268-.58.363-.889.095-.309.165-.632.206-.962.041-.33.041-.67 0-1 .041-.33.111-.652.206-.962.095-.309.216-.606.363-.889.146-.283.314-.548.496-.8.182-.252.379-.496.605-.722z"/>
+        </svg>
         <span style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
           <span>WhatsApp</span>
           <span style={{ fontSize: '11px', fontWeight: 600 }}>{WHATSAPP_NUMBER_DISPLAY}</span>
@@ -492,8 +509,13 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
     <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow .2s' }}>
-      <div style={{ aspectRatio: '1', background: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-        <span style={{ fontSize: '4rem' }}>{product.e}</span>
+      <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+        {product.img ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <span style={{ fontSize: '3rem', opacity: 0.5 }}>■</span>
+        )}
         {product.badge && (
           <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff' }}>
             {product.badge}
