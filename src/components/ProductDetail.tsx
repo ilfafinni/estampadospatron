@@ -42,6 +42,42 @@ export default function ProductDetail({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 2000);
   };
 
+  const handleSendToWhatsApp = () => {
+    if (!talla && product.v.t) {
+      alert('Por favor, selecciona una talla');
+      return;
+    }
+    if (!color && product.v.col) {
+      alert('Por favor, selecciona un color');
+      return;
+    }
+    if (!tipo && product.v.tipo) {
+      alert('Por favor, selecciona un tipo/modelo');
+      return;
+    }
+
+    const lines = [
+      `*Hola, me interesa este producto:*`,
+      ``,
+      `*${product.n}*`,
+      `Ref: ${product.ref}`,
+      talla ? `Talla: ${talla}` : '',
+      color ? `Color: ${color}` : '',
+      tipo ? `Tipo: ${tipo}` : '',
+      estampados.length > 0 ? `\n*Estampados solicitados:*` : '',
+      ...estampados.map(e => `• ${e.ubicacion}: ${e.label} (+$${e.precio.toLocaleString('es-CL')})`),
+      ``,
+      `Cantidad: ${qty}`,
+      `Precio estimado: $${precioUnitTotal.toLocaleString('es-CL')} por unidad`,
+      nota ? `\nInstrucciones: ${nota}` : '',
+      ``,
+      `Link del producto: ${typeof window !== 'undefined' ? window.location.href : ''}`,
+    ].filter(Boolean).join('\n');
+
+    const url = `https://wa.me/56966389299?text=${encodeURIComponent(lines)}`;
+    window.open(url, '_blank');
+  };
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -244,17 +280,30 @@ export default function ProductDetail({ product }: { product: Product }) {
           </div>
 
           {/* CTA */}
-          <button
-            onClick={handleAddToCart}
-            style={{
-              width: '100%', background: added ? '#2e7d32' : '#e53935', color: '#fff', border: 'none',
-              padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em',
-              cursor: 'pointer', marginTop: '16px', borderRadius: '3px',
-              transition: 'background .3s', textTransform: 'uppercase',
-            }}
-          >
-            {added ? '✓ Agregado al carrito' : '🛒 Agregar al carrito'}
-          </button>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '16px' }}>
+            <button
+              onClick={handleAddToCart}
+              style={{
+                background: added ? '#2e7d32' : '#e53935', color: '#fff', border: 'none',
+                padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em',
+                cursor: 'pointer', borderRadius: '3px',
+                transition: 'background .3s', textTransform: 'uppercase',
+              }}
+            >
+              {added ? '✓ Agregado' : 'Agregar al carrito'}
+            </button>
+            <button
+              onClick={handleSendToWhatsApp}
+              style={{
+                background: '#25D366', color: '#fff', border: 'none',
+                padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em',
+                cursor: 'pointer', borderRadius: '3px',
+                transition: 'background .3s', textTransform: 'uppercase',
+              }}
+            >
+              Consultar por WhatsApp
+            </button>
+          </div>
           <p style={{ fontSize: '11px', color: '#999', textAlign: 'center', marginTop: '8px', lineHeight: 1.5 }}>
             Confirmaremos tallas y colores antes de producir
           </p>
