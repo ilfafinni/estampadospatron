@@ -68,3 +68,22 @@ export function catLabel(c: Categoria): string {
   const map: Record<Categoria,string> = { poleras:'Poleras', polerones:'Polerones', tazas:'Tazas', accesorios:'Accesorios', deportiva:'Deportiva', impresion:'Impresión' };
   return map[c] || c;
 }
+
+export type Ubicacion = 'Frente' | 'Espalda';
+
+export const ESTAMPADO_SIZES = [
+  { id: 'small', label: 'Pequeño (10×10 cm)', precio: 5000 },
+  { id: 'medium', label: 'Mediano (15×15 cm)', precio: 8000 },
+  { id: 'large', label: 'Grande (20×20 cm)', precio: 12000 },
+  { id: 'xlarge', label: 'Extra Grande (30×30 cm)', precio: 18000 },
+];
+
+export function slugify(p: Product): string {
+  const base = p.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  return `${base}-${p.id}`;
+}
+
+export function findBySlug(slug: string): Product | undefined {
+  const id = Number(slug.split('-').pop());
+  return PRODUCTS.find(p => p.id === id);
+}
