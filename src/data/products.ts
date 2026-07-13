@@ -10,7 +10,6 @@ export interface Product {
 export const PRODUCTS: Product[] = [
   {
   id: 1, c: 'poleras', n: 'Polera Básica Algodón MC', ref: 'ROLY-6630',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982617/patronestampados/productos/producto-1.jpg',
   desc: 'Algodón 180 g peinado. Base ideal para serigrafía o sublimación. La más vendida.', v: {t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'},{n:'Rojo',h:'#c0392b'}]}, precio: '$6.000',
   },
   {
@@ -24,12 +23,10 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 4, c: 'poleras', n: 'Polera Manga Larga', ref: 'ROLY-6641',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982644/patronestampados/productos/producto-4.jpg',
   desc: 'Algodón 100% manga larga. Perfecta para otoño y uniforme corporativo.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]}, precio: '$7.000',
   },
   {
   id: 5, c: 'poleras', n: 'Deportiva Jaspeada MC', ref: 'ROLY-6643J',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982666/patronestampados/productos/producto-5.jpg',
   desc: 'Tejido jaspeado con textura única. Estilo urbano cómodo y versátil.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Gris Jaspe',h:'#95a5a6'},{n:'Negro',h:'#1a1a1a'}]}, precio: '$7.000',
   },
   {
@@ -38,7 +35,6 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 7, c: 'poleras', n: 'Piqué Sport MC', ref: 'ROLY-0522',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982695/patronestampados/productos/producto-7.jpg',
   desc: 'Tela piqué de algodón premium. Para regalo corporativo o uniforme de empresa.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Rojo',h:'#c0392b'},{n:'Azul',h:'#1a5276'}]}, precio: '$8.000',
   },
   {
@@ -57,13 +53,11 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 11, c: 'polerones', n: 'Polerón Canguro', ref: 'ROLY-6960',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982717/patronestampados/productos/producto-11.jpg',
   desc: 'Con bolsillo frontal canguro. Diseño urbano y funcional. Tela premium 300 g.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde Oscuro',h:'#145a32'}]}, precio: '$15.000',
   badge: 'popular',
   },
   {
   id: 12, c: 'polerones', n: 'Canguro con Cierre', ref: 'ROLY-6965',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982724/patronestampados/productos/producto-12.jpg',
   desc: 'Cremallera frontal. Versátil, ideal para uniformes y conjuntos corporativos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'}]}, precio: '$15.000',
   },
   {
