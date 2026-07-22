@@ -4,7 +4,7 @@ export type Badge = 'popular' | 'eco' | 'pack' | 'nuevo';
 export interface ColorVariant { n: string; h: string; }
 export interface ProductVariants { t?: string[]; col?: ColorVariant[]; tipo?: string[]; }
 export interface Product {
-  id: number; c: Categoria; n: string; ref: string; e: string;
+  id: number; c: Categoria; n: string; ref: string; e?: string;
   img?: string; desc: string; v: ProductVariants; precio: string; badge?: Badge;
 }
 export const PRODUCTS: Product[] = [
