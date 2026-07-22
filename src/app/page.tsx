@@ -88,6 +88,13 @@ export default function HomePage() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", background: '#fff', color: '#111', overflowX: 'hidden' }}>
 
+      <style>{`
+        @media (min-width: 769px) {
+          .hero-outer { height: 100vh !important; }
+          .hero-slide { height: 100vh !important; }
+        }
+      `}</style>
+
       {/* ── TOPBAR ── */}
       <div style={{ background: '#111', color: '#fff', textAlign: 'center', padding: '8px 1rem', fontSize: '12px', fontWeight: 500, letterSpacing: '0.04em' }}>
         Retiro Express en 4 horas
@@ -193,10 +200,11 @@ export default function HomePage() {
       </nav>
 
       {/* ── HERO SLIDER ── */}
-      <div style={{ position: 'relative', overflow: 'hidden', background: '#f5f5f5', minHeight: '420px' }}>
+      <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: '#f5f5f5', minHeight: '420px' }}>
         {slides.map((slide, i) => (
           <div
             key={i}
+            className="hero-slide"
             style={{
               display: i === slideIdx ? 'flex' : 'none',
               alignItems: 'center', minHeight: '420px', position: 'relative',
