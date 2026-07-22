@@ -90,8 +90,8 @@ export default function HomePage() {
 
       <style>{`
         @media (min-width: 769px) {
-          .hero-outer { height: 100vh !important; }
-          .hero-slide { height: 100vh !important; }
+          .hero-outer { height: calc(100vh - 144px) !important; }
+          .hero-slide { height: calc(100vh - 144px) !important; }
         }
       `}</style>
 
