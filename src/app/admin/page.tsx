@@ -224,7 +224,7 @@ function ProductModal({ product, onSave, onClose }: { product: EditableProduct |
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
           <label style={lbl}>Nombre<input value={form.n} onChange={e=>set('n',e.target.value)} style={inp} placeholder="Ej: Polera Básica Algodón"/></label>
-          <label style={lbl}>Referencia<input value={form.ref} onChange={e=>set('ref',e.target.value)} style={inp} placeholder="ROLY-0001"/></label>
+          <label style={lbl}>Referencia<input value={form.ref} onChange={e=>set('ref',e.target.value)} style={inp} placeholder="PAT-0001"/></label>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
             <label style={lbl}>Categoría
               <select value={form.c} onChange={e=>set('c',e.target.value as Categoria)} style={inp}>

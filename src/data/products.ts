@@ -9,59 +9,59 @@ export interface Product {
 }
 export const PRODUCTS: Product[] = [
   {
-  id: 1, c: 'poleras', n: 'Polera Básica Algodón MC', ref: 'ROLY-6630',
+  id: 1, c: 'poleras', n: 'Polera Básica Algodón MC', ref: 'PAT-6630',
   desc: 'Algodón 180 g peinado. Base ideal para serigrafía o sublimación. La más vendida.', v: {t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'},{n:'Rojo',h:'#c0392b'}]}, precio: '$6.000',
   },
   {
-  id: 2, c: 'poleras', n: 'Polera Premium Cuello V', ref: 'ROLY-6635',
+  id: 2, c: 'poleras', n: 'Polera Premium Cuello V', ref: 'PAT-6635',
   desc: 'Corte slim fit. Cuello V reforzado. Ideal para impresión de alta definición.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris Jaspe',h:'#95a5a6'}]}, precio: '$7.000',
   badge: 'popular',
   },
   {
-  id: 3, c: 'poleras', n: 'Polera Técnica Dry-Fit', ref: 'ROLY-0420',
+  id: 3, c: 'poleras', n: 'Polera Técnica Dry-Fit', ref: 'PAT-0420',
   desc: 'Poliéster 100% con tratamiento humedad. Para uniformes deportivos y eventos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Amarillo',h:'#f1c40f'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#27ae60'}]}, precio: '$6.000',
   },
   {
-  id: 4, c: 'poleras', n: 'Polera Manga Larga', ref: 'ROLY-6641',
+  id: 4, c: 'poleras', n: 'Polera Manga Larga', ref: 'PAT-6641',
   desc: 'Algodón 100% manga larga. Perfecta para otoño y uniforme corporativo.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]}, precio: '$7.000',
   },
   {
-  id: 5, c: 'poleras', n: 'Deportiva Jaspeada MC', ref: 'ROLY-6643J',
+  id: 5, c: 'poleras', n: 'Deportiva Jaspeada MC', ref: 'PAT-6643J',
   desc: 'Tejido jaspeado con textura única. Estilo urbano cómodo y versátil.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Gris Jaspe',h:'#95a5a6'},{n:'Negro',h:'#1a1a1a'}]}, precio: '$7.000',
   },
   {
-  id: 6, c: 'poleras', n: 'Deportiva Brahain MC', ref: 'ROLY-0523',
+  id: 6, c: 'poleras', n: 'Deportiva Brahain MC', ref: 'PAT-0523',
   desc: 'Corte moderno y recto. Ideal para equipos y uniformes. Poliéster 100% transpirable.', v: {t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'}]}, precio: '$6.000',
   },
   {
-  id: 7, c: 'poleras', n: 'Piqué Sport MC', ref: 'ROLY-0522',
+  id: 7, c: 'poleras', n: 'Piqué Sport MC', ref: 'PAT-0522',
   desc: 'Tela piqué de algodón premium. Para regalo corporativo o uniforme de empresa.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Rojo',h:'#c0392b'},{n:'Azul',h:'#1a5276'}]}, precio: '$8.000',
   },
   {
-  id: 8, c: 'poleras', n: 'Estilo Jeans MC', ref: 'ROLY-6645',
+  id: 8, c: 'poleras', n: 'Estilo Jeans MC', ref: 'PAT-6645',
   desc: 'Textura denim con comodidad de tejido deportivo. Muy solicitada para regalos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Azul Jean',h:'#2471a3'},{n:'Negro',h:'#111'}]}, precio: '$8.000',
   },
   {
-  id: 9, c: 'poleras', n: 'Ecológica Algodón MC', ref: 'ROLY-6680',
+  id: 9, c: 'poleras', n: 'Ecológica Algodón MC', ref: 'PAT-6680',
   desc: '100% algodón orgánico certificado GOTS. La opción sostenible para empresas responsables.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Natural',h:'#d4b896'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde',h:'#27ae60'}]}, precio: '$7.000',
   badge: 'eco',
   },
   {
-  id: 10, c: 'polerones', n: 'Polerón Simple Clásico', ref: 'ROLY-6950',
+  id: 10, c: 'polerones', n: 'Polerón Simple Clásico', ref: 'PAT-6950',
   img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1783982657/patronestampados/productos/producto-10.jpg',
   desc: 'El básico imprescindible. Cuello redondo, tela gruesa. Estampado frontal y espalda.', v: {t:['XS','S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Azul',h:'#1a5276'}]}, precio: '$15.000',
   },
   {
-  id: 11, c: 'polerones', n: 'Polerón Canguro', ref: 'ROLY-6960',
+  id: 11, c: 'polerones', n: 'Polerón Canguro', ref: 'PAT-6960',
   desc: 'Con bolsillo frontal canguro. Diseño urbano y funcional. Tela premium 300 g.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde Oscuro',h:'#145a32'}]}, precio: '$15.000',
   badge: 'popular',
   },
   {
-  id: 12, c: 'polerones', n: 'Canguro con Cierre', ref: 'ROLY-6965',
+  id: 12, c: 'polerones', n: 'Canguro con Cierre', ref: 'PAT-6965',
   desc: 'Cremallera frontal. Versátil, ideal para uniformes y conjuntos corporativos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'}]}, precio: '$15.000',
   },
   {
-  id: 13, c: 'polerones', n: 'Cortavientos Glasgow', ref: 'ROLY-7630',
+  id: 13, c: 'polerones', n: 'Cortavientos Glasgow', ref: 'PAT-7630',
   desc: 'Chaqueta ligera con capucha, resistente al viento y agua. Muy popular para eventos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#145a32'}]}, precio: '$15.000',
   },
   {
@@ -115,20 +115,20 @@ export const PRODUCTS: Product[] = [
   desc: 'Placa metálica para collar. Con nombre y teléfono. Gran regalo personalizado.', v: {col:[{n:'Azul',h:'#2980b9'},{n:'Rosado',h:'#f48fb1'},{n:'Negro',h:'#111'}],tipo:['Redonda','Hueso','Corazón']}, precio: '$3.500',
   },
   {
-  id: 26, c: 'deportiva', n: 'Short Traje de Baño', ref: 'ROLY-0945',
+  id: 26, c: 'deportiva', n: 'Short Traje de Baño', ref: 'PAT-0945',
   desc: 'Sublimación total. Resistente al cloro y agua salada. Para equipos de natación.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'}]}, precio: '$8.000',
   },
   {
-  id: 27, c: 'deportiva', n: 'Short Deportivo', ref: 'ROLY-0940',
+  id: 27, c: 'deportiva', n: 'Short Deportivo', ref: 'PAT-0940',
   desc: 'Unisex, transpirable. Para entrenamiento o uso casual. Sublimación full print.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul',h:'#1a5276'}]}, precio: '$8.000',
   },
   {
-  id: 28, c: 'deportiva', n: 'Short Deportivo Fútbol', ref: 'ROLY-0941',
+  id: 28, c: 'deportiva', n: 'Short Deportivo Fútbol', ref: 'PAT-0941',
   desc: 'Con número y nombre. Descuento por equipos completos. Ideal para ligas y colegios.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Blanco',h:'#f0f0f0'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'}]}, precio: '$8.000',
   badge: 'pack',
   },
   {
-  id: 29, c: 'deportiva', n: 'Conjunto Deportivo', ref: 'ROLY-CONJ',
+  id: 29, c: 'deportiva', n: 'Conjunto Deportivo', ref: 'PAT-CONJ',
   desc: 'Polera + short con diseño unificado para equipos. Precio especial por conjunto.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'}]}, precio: '$7.500',
   badge: 'pack',
   },
