@@ -20,12 +20,12 @@ export function generateMetadata({ params }: ProductoPageProps): Metadata {
 
   if (!product) {
     return {
-      title: 'Producto no encontrado | Patrón.cl',
+      title: 'Producto no encontrado | estampadospatron.com',
     };
   }
 
   return {
-    title: `${product.n} | Patrón.cl`,
+    title: `${product.n} | estampadospatron.com`,
     description: product.desc,
   };
 }

@@ -56,24 +56,24 @@ export default function HomePage() {
 
   const slides = [
     {
-      bg: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)',
-      tag: 'Nueva colección',
-      h1: <><span>Patrón</span><br />con tu diseño</>,
-      p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad.',
+      bg: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+      tag: 'Nueva colección 2025',
+      h1: <><span>Estampados</span><br />con tu diseño</>,
+      p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad, sin mínimos.',
       cta: 'Ver poleras',
       onCta: () => { setActiveCat('poleras'); scrollToCat(); },
     },
     {
-      bg: 'linear-gradient(135deg,#1a0a00 0%,#3d1a00 50%,#7a3500 100%)',
-      tag: 'Personalización',
+      bg: 'linear-gradient(135deg, #1c1917 0%, #44403c 50%, #78716c 100%)',
+      tag: 'Personalización profesional',
       h1: <>Tu marca en<br />cada prenda</>,
       p: 'Serigrafía, sublimación y bordado. El mejor acabado para tu empresa o evento corporativo.',
       cta: 'Cotizar ahora',
       onCta: () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }),
     },
     {
-      bg: 'linear-gradient(135deg,#0a1a0a 0%,#1a3a1a 50%,#2d5016 100%)',
-      tag: 'Express',
+      bg: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #166534 100%)',
+      tag: 'Entrega Express',
       h1: <>Retira en<br />4 horas</>,
       p: '¿Necesitas urgente? Contáctanos y coordinamos entrega express el mismo día en Curicó.',
       cta: 'WhatsApp',
@@ -86,58 +86,73 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", background: '#fff', color: '#111', overflowX: 'hidden' }}>
-
+    <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', color: '#111', overflowX: 'hidden' }}>
       <style>{`
         @media (min-width: 769px) {
           .hero-outer { height: calc(100vh - 144px) !important; }
           .hero-slide { height: calc(100vh - 144px) !important; }
         }
+        @media (max-width: 768px) {
+          .hero-outer { min-height: 500px !important; }
+          .hero-slide { min-height: 500px !important; }
+        }
+        @media (max-width: 640px) {
+          .hero-outer { min-height: 420px !important; }
+          .hero-slide { min-height: 420px !important; }
+        }
       `}</style>
 
       {/* ── TOPBAR ── */}
-      <div style={{ background: '#111', color: '#fff', textAlign: 'center', padding: '8px 1rem', fontSize: '12px', fontWeight: 500, letterSpacing: '0.04em' }}>
-        Retiro Express en 4 horas
-        <span style={{ opacity: 0.7, margin: '0 12px' }}>·</span>
-        Desde 1 unidad
-        <span style={{ opacity: 0.7, margin: '0 12px' }}>·</span>
-        Despacho a todo Chile
+      <div style={{ background: '#0f172a', color: '#fff', textAlign: 'center', padding: '8px 1rem', fontSize: '12px', fontWeight: 500, letterSpacing: '0.04em' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '4px' }}>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          Retiro Express en 4 hrs · Curicó
+        </span>
+        <span style={{ opacity: 0.5, margin: '0 16px' }}>·</span>
+        <span>Desde 1 unidad</span>
+        <span style={{ opacity: 0.5, margin: '0 16px' }}>·</span>
+        <span>Despacho a todo Chile</span>
       </div>
 
       {/* ── HEADER ── */}
-      <header style={{ background: '#fff', borderBottom: '1px solid #e0e0e0', position: 'sticky', top: 0, zIndex: 200 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '0 2rem', height: '68px', maxWidth: '1400px', margin: '0 auto' }}>
+      <header style={{ background: '#fff', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: 0, zIndex: 200 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '0 2rem', height: '72px', maxWidth: '1400px', margin: '0 auto' }}>
           {/* Logo */}
-          <div style={{ flexShrink: 0 }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.03em', color: '#111', lineHeight: 1 }}>
-              PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
+          <Link href="/" style={{ textDecoration: 'none', color: 'inherit', flexShrink: 0 }}>
+            <div style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.03em', color: '#111', lineHeight: 1 }}>
+              ESTAMPADOS <span style={{ color: '#dc2626' }}>PATRÓN</span>
             </div>
-            <div style={{ fontSize: '9px', fontWeight: 500, letterSpacing: '0.12em', color: '#666', textTransform: 'uppercase', marginTop: '1px' }}>
+            <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.15em', color: '#6b7280', textTransform: 'uppercase', marginTop: '1px' }}>
               Estampados Personalizados
             </div>
-          </div>
+          </Link>
 
           {/* Search */}
           <div style={{ flex: 1, maxWidth: '520px', position: 'relative' }}>
             <input
-              placeholder="Buscar productos..."
+              placeholder="Buscar productos, referencias..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
-                width: '100%', padding: '10px 16px 10px 42px', border: '1px solid #e0e0e0',
-                borderRadius: '4px', fontSize: '13px', fontFamily: 'inherit', outline: 'none',
-                background: '#f5f5f5',
+                width: '100%', padding: '10px 16px 10px 42px', border: '1px solid #e5e7eb',
+                borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', outline: 'none',
+                background: '#f9fafb', transition: 'border-color 0.2s, box-shadow 0.2s',
               }}
+              onFocus={(e) => { e.target.style.borderColor = '#dc2626'; e.target.style.boxShadow = '0 0 0 3px rgba(220,38,38,0.1)'; }}
+              onBlur={(e) => { e.target.style.borderColor = '#e5e7eb'; e.target.style.boxShadow = 'none'; }}
             />
-            <svg style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }} width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
             </svg>
           </div>
 
           {/* Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginLeft: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: 'auto' }}>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
-              <button style={{ background: '#e53935', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 20px', borderRadius: '3px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+              <button style={{ background: '#dc2626', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '11px 22px', borderRadius: '6px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}>
                 Cotizar
               </button>
             </a>
@@ -145,19 +160,19 @@ export default function HomePage() {
             {/* Carrito */}
             <button
               onClick={toggleCart}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', color: '#111', fontSize: '10px', fontWeight: 500, background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 8px', borderRadius: '3px', position: 'relative' }}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px', cursor: 'pointer', color: '#111', fontSize: '10px', fontWeight: 500, background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 8px', borderRadius: '6px', position: 'relative', transition: 'background 0.2s' }}
             >
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
               {totalItems > 0 && (
                 <span style={{
-                  position: 'absolute', top: '-2px', right: '-2px',
-                  background: '#e53935', color: '#fff', borderRadius: '50%',
+                  position: 'absolute', top: '-4px', right: '-4px',
+                  background: '#dc2626', color: '#fff', borderRadius: '50%',
                   width: '18px', height: '18px', fontSize: '10px', fontWeight: 700,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  {totalItems}
+                  {totalItems > 9 ? '9+' : totalItems}
                 </span>
               )}
               Carrito
@@ -181,10 +196,10 @@ export default function HomePage() {
               key={item.label}
               onClick={item.onClick}
               style={{
-                padding: '13px 18px', fontSize: '13px', fontWeight: 600,
+                padding: '14px 20px', fontSize: '13px', fontWeight: 600,
                 letterSpacing: '0.02em', textTransform: 'uppercase', color: '#111',
                 background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-                whiteSpace: 'nowrap',
+                whiteSpace: 'nowrap', position: 'relative',
               }}
             >
               {item.label}
@@ -192,7 +207,7 @@ export default function HomePage() {
           ))}
           <button
             onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ marginLeft: '8px', background: '#e53935', color: '#fff', padding: '4px 10px', border: 'none', borderRadius: '3px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase' }}
+            style={{ marginLeft: '8px', background: '#dc2626', color: '#fff', padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase', transition: 'background 0.2s' }}
           >
             COTIZAR
           </button>
@@ -200,31 +215,33 @@ export default function HomePage() {
       </nav>
 
       {/* ── HERO SLIDER ── */}
-      <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: '#f5f5f5', minHeight: '420px' }}>
+      <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: '#f3f4f6', minHeight: '480px' }}>
         {slides.map((slide, i) => (
           <div
             key={i}
             className="hero-slide"
             style={{
               display: i === slideIdx ? 'flex' : 'none',
-              alignItems: 'center', minHeight: '420px', position: 'relative',
+              alignItems: 'center', minHeight: '480px', position: 'relative',
             }}
           >
             <div style={{ position: 'absolute', inset: 0, background: slide.bg }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,rgba(0,0,0,0.65) 0%,rgba(0,0,0,0.1) 60%,transparent 100%)' }} />
-            <div style={{ position: 'relative', zIndex: 2, padding: '4rem 5rem', maxWidth: '600px', color: '#fff' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#e53935', background: '#fff', padding: '4px 10px', borderRadius: '2px', display: 'inline-block', marginBottom: '1rem' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
+            <div style={{ position: 'relative', zIndex: 2, padding: '4rem 5rem', maxWidth: '640px', color: '#fff' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fca5a5', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
                 {slide.tag}
               </div>
-              <h1 style={{ fontSize: 'clamp(2rem,4vw,3.2rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
+              <h1 style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
                 {slide.h1}
               </h1>
-              <p style={{ fontSize: '14px', opacity: 0.85, marginBottom: '1.8rem', lineHeight: 1.6 }}>
+              <p style={{ fontSize: '15px', opacity: 0.9, marginBottom: '2rem', lineHeight: 1.7, maxWidth: '500px' }}>
                 {slide.p}
               </p>
               <button
                 onClick={slide.onCta}
-                style={{ background: '#e53935', color: '#fff', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '13px 28px', borderRadius: '3px', border: 'none', cursor: 'pointer' }}
+                style={{ background: '#fff', color: '#111', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '14px 32px', borderRadius: '6px', border: 'none', cursor: 'pointer', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.2)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)'; }}
               >
                 {slide.cta}
               </button>
@@ -235,27 +252,27 @@ export default function HomePage() {
         <button onClick={() => setSlideIdx(i => (i - 1 + 3) % 3)} style={arrowStyle('left')}>‹</button>
         <button onClick={() => setSlideIdx(i => (i + 1) % 3)} style={arrowStyle('right')}>›</button>
         {/* Dots */}
-        <div style={{ position: 'absolute', bottom: '1.2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '7px', zIndex: 10 }}>
+        <div style={{ position: 'absolute', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10 }}>
           {[0, 1, 2].map(i => (
-            <div key={i} onClick={() => setSlideIdx(i)} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i === slideIdx ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer' }} />
+            <div key={i} onClick={() => setSlideIdx(i)} style={{ width: '10px', height: '10px', borderRadius: '50%', background: i === slideIdx ? '#fff' : 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'all 0.2s' }} />
           ))}
         </div>
       </div>
 
       {/* ── INFO STRIP ── */}
-      <div style={{ background: '#f5f5f5', borderTop: '1px solid #e0e0e0', borderBottom: '1px solid #e0e0e0' }}>
+      <div style={{ background: '#fafafa', borderTop: '1px solid #e5e7eb', borderBottom: '1px solid #e5e7eb' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', padding: '1.5rem 2rem', gap: '1rem' }}>
           {[
-            { icon: '🚀', title: 'Retiro Express 4 horas', sub: 'Disponible en Curicó' },
+            { icon: '🚀', title: 'Retiro Express 4 hrs', sub: 'Disponible en Curicó' },
             { icon: '📦', title: 'Despacho a todo Chile', sub: 'Coordinamos envío a tu puerta' },
             { icon: '🎨', title: 'Desde 1 unidad', sub: 'Sin mínimo de pedido' },
             { icon: '💬', title: 'Respuesta en 1 hora', sub: 'WhatsApp y correo' },
           ].map(item => (
             <div key={item.title} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '1.6rem' }}>{item.icon}</span>
+              <span style={{ fontSize: '1.8rem' }}>{item.icon}</span>
               <div>
                 <strong style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#111' }}>{item.title}</strong>
-                <span style={{ fontSize: '11px', color: '#666' }}>{item.sub}</span>
+                <span style={{ fontSize: '11px', color: '#6b7280' }}>{item.sub}</span>
               </div>
             </div>
           ))}
@@ -263,22 +280,24 @@ export default function HomePage() {
       </div>
 
       {/* ── CATEGORIES ── */}
-      <div style={{ padding: '2.5rem 2rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
+      <div style={{ padding: '3rem 2rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
         <SectionTitle text="Explorar categorías" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '12px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '16px' }}>
           {CATEGORIES.map(cat => (
             <div
               key={cat.c}
               onClick={() => { setActiveCat(cat.c); scrollToCat(); }}
-              style={{ position: 'relative', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', aspectRatio: '3/4', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
+              style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', aspectRatio: '3/4', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(0,0,0,0.12)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'; }}
             >
               <div style={{ position: 'absolute', inset: 0, background: cat.bg }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.1) 60%)' }} />
-              <div style={{ position: 'relative', zIndex: 2, padding: '1rem 0.9rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '6px' }}>{cat.icon}</div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', marginTop: '3px' }}>{cat.count}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', marginTop: '6px' }}>Ver →</div>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%)' }} />
+              <div style={{ position: 'relative', zIndex: 2, padding: '1.2rem 1rem' }}>
+                <div style={{ fontSize: '2.2rem', marginBottom: '8px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{cat.icon}</div>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
+                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{cat.count}</div>
+                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '8px' }}>Ver productos →</div>
               </div>
             </div>
           ))}
@@ -286,9 +305,9 @@ export default function HomePage() {
       </div>
 
       {/* ── CATALOGUE ── */}
-      <div style={{ padding: '0 2rem 3rem', maxWidth: '1400px', margin: '0 auto' }} id="catalogo">
+      <div style={{ padding: '0 2rem 3.5rem', maxWidth: '1400px', margin: '0 auto' }} id="catalogo">
         <SectionTitle text="Catálogo de productos" />
-
+        
         {/* Filtros */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
           {([['todos', 'Todos'], ['poleras', 'Poleras'], ['polerones', 'Polerones'], ['tazas', 'Tazas'], ['accesorios', 'Accesorios'], ['deportiva', 'Deportiva'], ['impresion', 'Impresión']] as const).map(([c, label]) => (
@@ -297,10 +316,11 @@ export default function HomePage() {
               onClick={() => setActiveCat(c)}
               style={{
                 fontSize: '12px', fontWeight: 500, padding: '8px 16px',
-                border: '1px solid ' + (activeCat === c ? '#111' : '#e0e0e0'),
+                border: '1px solid ' + (activeCat === c ? '#111' : '#e5e7eb'),
                 background: activeCat === c ? '#111' : '#fff',
-                color: activeCat === c ? '#fff' : '#333',
-                cursor: 'pointer', borderRadius: '3px', fontFamily: 'inherit', whiteSpace: 'nowrap',
+                color: activeCat === c ? '#fff' : '#374151',
+                cursor: 'pointer', borderRadius: '6px', fontFamily: 'inherit', whiteSpace: 'nowrap',
+                transition: 'all 0.2s',
               }}
             >
               {label}
@@ -309,25 +329,33 @@ export default function HomePage() {
         </div>
 
         {/* Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '20px' }}>
           {filteredProducts.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+        
+        {filteredProducts.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '4rem 2rem', color: '#6b7280' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
+            <p style={{ fontSize: '16px', fontWeight: 500 }}>No hay productos en esta categoría</p>
+            <p style={{ fontSize: '14px', marginTop: '0.5rem' }}>Prueba con otra categoría o busca otro término</p>
+          </div>
+        )}
       </div>
 
       {/* ── PROMO BANNERS ── */}
-      <div style={{ padding: '0 2rem 2.5rem', maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+      <div style={{ padding: '0 2rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <PromoCard
-            bg="linear-gradient(135deg,#111 0%,#2d5016 100%)"
+            bg="linear-gradient(135deg, #111 0%, #166534 100%)"
             label="Ideal para equipos"
             title={<>Polerones<br />Personalizados</>}
             cta="Ver polerones"
             onClick={() => { setActiveCat('polerones'); scrollToCat(); }}
           />
           <PromoCard
-            bg="linear-gradient(135deg,#1a0a2e 0%,#4a1a6b 100%)"
+            bg="linear-gradient(135deg, #1c1917 0%, #44403c 100%)"
             label="Descuento por volumen"
             title={<>Venta<br />Corporativa</>}
             cta="Cotizar empresa"
@@ -337,62 +365,62 @@ export default function HomePage() {
       </div>
 
       {/* ── PROCESO ── */}
-      <div style={{ padding: '3rem 2rem', maxWidth: '1400px', margin: '0 auto' }} id="proceso">
+      <div style={{ padding: '3.5rem 2rem', maxWidth: '1400px', margin: '0 auto' }} id="proceso">
         <SectionTitle text="Cómo funciona" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '24px', marginTop: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '24px', marginTop: '2rem' }}>
           {[
             { n: '01', h: 'Elige el producto', p: 'Selecciona de nuestro catálogo. Más de 34 artículos disponibles.' },
-            { n: '02', h: 'Sube tu diseño', p: 'Usa el previsualizador IA para ver cómo queda tu logo.' },
+            { n: '02', h: 'Sube tu diseño', p: 'Usa el previsualizador para ver cómo queda tu logo en la prenda.' },
             { n: '03', h: 'Confirmamos juntos', p: 'Revisamos tallas, colores y acabado contigo antes de producir.' },
-            { n: '04', h: 'Retiro o envío', p: 'Retira en Curicó en 4 horas o enviamos a todo Chile.' },
+            { n: '04', h: 'Retiro o envío', p: 'Retira en Curicó en 4 hrs o enviamos a todo Chile.' },
           ].map(paso => (
-            <div key={paso.n} style={{ textAlign: 'center', padding: '2rem 1.5rem', border: '1px solid #e0e0e0', borderRadius: '4px' }}>
-              <div style={{ width: '44px', height: '44px', background: '#111', color: '#fff', borderRadius: '50%', fontSize: '16px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>{paso.n}</div>
-              <h3 style={{ fontSize: '14px', fontWeight: 700, marginBottom: '6px' }}>{paso.h}</h3>
-              <p style={{ fontSize: '12px', color: '#666', lineHeight: 1.6 }}>{paso.p}</p>
+            <div key={paso.n} style={{ textAlign: 'center', padding: '2rem 1.5rem', border: '1px solid #e5e7eb', borderRadius: '8px', background: '#fff', transition: 'border-color 0.2s, box-shadow 0.2s' }}>
+              <div style={{ width: '48px', height: '48px', background: '#111', color: '#fff', borderRadius: '50%', fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.2rem' }}>{paso.n}</div>
+              <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px', color: '#111' }}>{paso.h}</h3>
+              <p style={{ fontSize: '13px', color: '#6b7280', lineHeight: 1.6 }}>{paso.p}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── CONTACTO ── */}
-      <div style={{ background: '#f5f5f5', padding: '3rem 2rem' }} id="contacto">
+      <div style={{ background: '#fafafa', padding: '3.5rem 2rem' }} id="contacto">
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
           <div>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '0.4rem' }}>Cotiza tu pedido</h2>
-            <p style={{ fontSize: '13px', color: '#666', marginBottom: '1.5rem' }}>Cuéntanos tu proyecto y te respondemos en menos de una hora.</p>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.5rem', color: '#111' }}>Cotiza tu pedido</h2>
+            <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '2rem' }}>Cuéntanos tu proyecto y te respondemos en menos de una hora.</p>
             <form onSubmit={e => { e.preventDefault(); showToast('¡Cotización enviada! Te respondemos pronto.'); (e.target as HTMLFormElement).reset(); }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                 <FormField label="Nombre" type="text" placeholder="Tu nombre" />
                 <FormField label="Contacto" type="text" placeholder="Correo o WhatsApp" />
               </div>
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#333', display: 'block', marginBottom: '5px' }}>Producto</label>
-                <select style={{ width: '100%', padding: '10px 12px', border: '1px solid #e0e0e0', borderRadius: '3px', fontFamily: 'inherit', fontSize: '13px', color: '#111', background: '#fff', outline: 'none' }}>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#374151', display: 'block', marginBottom: '6px' }}>Producto</label>
+                <select style={{ width: '100%', padding: '11px 14px', border: '1px solid #e5e7eb', borderRadius: '6px', fontFamily: 'inherit', fontSize: '13px', color: '#111', background: '#fff', outline: 'none', cursor: 'pointer' }}>
                   <option>Selecciona...</option>
                   <option>Poleras</option><option>Polerones</option><option>Tazas</option>
                   <option>Carcasas</option><option>Ropa deportiva</option><option>Otro</option>
                 </select>
               </div>
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#333', display: 'block', marginBottom: '5px' }}>Mensaje</label>
-                <textarea placeholder="Describe tu proyecto, cantidad, colores, tallas..." rows={4} style={{ width: '100%', padding: '10px 12px', border: '1px solid #e0e0e0', borderRadius: '3px', fontFamily: 'inherit', fontSize: '13px', color: '#111', background: '#fff', outline: 'none', resize: 'vertical' }} />
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#374151', display: 'block', marginBottom: '6px' }}>Mensaje</label>
+                <textarea placeholder="Describe tu proyecto, cantidad, colores, tallas..." rows={4} style={{ width: '100%', padding: '11px 14px', border: '1px solid #e5e7eb', borderRadius: '6px', fontFamily: 'inherit', fontSize: '13px', color: '#111', background: '#fff', outline: 'none', resize: 'vertical' }} />
               </div>
-              <button type="submit" style={{ width: '100%', background: '#e53935', color: '#fff', border: 'none', padding: '13px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', borderRadius: '3px' }}>
+              <button type="submit" style={{ width: '100%', background: '#dc2626', color: '#fff', border: 'none', padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', borderRadius: '6px', transition: 'background 0.2s' }}>
                 Enviar cotización
               </button>
             </form>
           </div>
           <div style={{ paddingTop: '1rem' }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.5rem' }}>Información de contacto</h2>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '2rem', color: '#111' }}>Información de contacto</h2>
             {[
-              { title: 'Ubicación', content: 'Curicó' },
+              { title: 'Ubicación', content: 'Curicó, Región del Maule' },
               { title: 'WhatsApp', content: `${WHATSAPP_NUMBER_DISPLAY}\nRespuesta inmediata en horario hábil` },
               { title: 'Correo', content: CONTACT_EMAIL },
             ].map(block => (
-              <div key={block.title} style={{ marginBottom: '1.5rem' }}>
-                <h4 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#e53935', marginBottom: '6px' }}>{block.title}</h4>
-                <p style={{ fontSize: '13px', color: '#333', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{block.content}</p>
+              <div key={block.title} style={{ marginBottom: '2rem' }}>
+                <h4 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#dc2626', marginBottom: '8px' }}>{block.title}</h4>
+                <p style={{ fontSize: '14px', color: '#374151', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{block.content}</p>
               </div>
             ))}
           </div>
@@ -400,14 +428,14 @@ export default function HomePage() {
       </div>
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: '#111', color: '#fff', padding: '3rem 2rem 1.5rem' }}>
+      <footer style={{ background: '#0f172a', color: '#fff', padding: '3.5rem 2rem 2rem' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: '2.5rem', paddingBottom: '2.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
             <div>
-              <div style={{ fontSize: '22px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.5rem' }}>
-                PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
+              <div style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.5rem' }}>
+                ESTAMPADOS <span style={{ color: '#dc2626' }}>PATRÓN</span>
               </div>
-              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginTop: '0.8rem' }}>
+              <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, marginTop: '1rem', maxWidth: '300px' }}>
                 Tienda de estampados personalizados en Curicó. Personaliza prendas y productos con tu logo o diseño. Desde 1 unidad, sin mínimo.
               </p>
             </div>
@@ -418,16 +446,16 @@ export default function HomePage() {
             ].map(col => (
               <div key={col.title}>
                 <h5 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '1rem', color: 'rgba(255,255,255,0.9)' }}>{col.title}</h5>
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {col.links.map(([label, fn]) => (
-                    <li key={label as string}><button onClick={fn as () => void} style={{ fontSize: '12px', color: 'rgba(255,255,255,0.55)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>{label as string}</button></li>
+                    <li key={label as string}><button onClick={fn as () => void} style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0, transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255,255,255,0.6)'}>{label as string}</button></li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1.5rem', fontSize: '11px', color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', gap: '1rem' }}>
-            <span>© 2025 Patronestampados.cl · Curicó, Chile</span>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '1.5rem', fontSize: '12px', color: 'rgba(255,255,255,0.4)', flexWrap: 'wrap', gap: '1rem' }}>
+            <span>© 2025 estampadospatron.com · Curicó, Chile</span>
             <span>Pagos seguros con Transbank Webpay</span>
           </div>
         </div>
@@ -447,16 +475,19 @@ export default function HomePage() {
           display: 'flex',
           alignItems: 'center',
           gap: '10px',
-          background: '#25D366',
+          background: '#22c55e',
           color: '#fff',
           textDecoration: 'none',
-          padding: '12px 16px',
+          padding: '13px 18px',
           borderRadius: '999px',
-          boxShadow: '0 10px 28px rgba(0,0,0,0.25)',
+          boxShadow: '0 10px 30px rgba(34,197,94,0.35)',
           fontSize: '13px',
           fontWeight: 800,
           letterSpacing: '0.01em',
+          transition: 'transform 0.2s, box-shadow 0.2s',
         }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 14px 35px rgba(34,197,94,0.4)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(34,197,94,0.35)'; }}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004c-2.848 0-5.143-2.295-5.143-5.143 0-2.848 2.295-5.143 5.143-5.143 2.848 0 5.143 2.295 5.143 5.143 0 2.848-2.295 5.143-5.143 5.143m5.143-9.364c-2.309-2.309-6.045-2.309-8.354 0-2.309 2.31-2.309 6.045 0 8.354 2.31 2.31 6.045 2.31 8.354 0 .226-.226.423-.47.605-.722.182-.252.35-.517.496-.8.147-.283.268-.58.363-.889.095-.309.165-.632.206-.962.041-.33.041-.67 0-1 .041-.33.111-.652.206-.962.095-.309.216-.606.363-.889.146-.283.314-.548.496-.8.182-.252.379-.496.605-.722z"/>
@@ -471,8 +502,9 @@ export default function HomePage() {
       {toast && (
         <div style={{
           position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
-          background: '#111', color: '#fff', padding: '12px 24px', borderRadius: '4px',
-          fontSize: '13px', fontWeight: 500, zIndex: 9999, boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          background: '#111', color: '#fff', padding: '12px 24px', borderRadius: '6px',
+          fontSize: '13px', fontWeight: 500, zIndex: 9999, boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+          animation: 'slideUp 0.3s ease-out'
         }}>
           {toast}
         </div>
@@ -482,20 +514,22 @@ export default function HomePage() {
 }
 
 // ─── Helpers ──────────────────────────────────────────
+
 function arrowStyle(side: 'left' | 'right'): React.CSSProperties {
   return {
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
     [side]: '1.5rem',
-    background: 'rgba(255,255,255,0.9)', border: 'none', width: '42px', height: '42px',
-    borderRadius: '50%', cursor: 'pointer', fontSize: '24px',
+    background: 'rgba(255,255,255,0.95)', border: 'none', width: '44px', height: '44px',
+    borderRadius: '50%', cursor: 'pointer', fontSize: '26px',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    zIndex: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    zIndex: 10, boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+    transition: 'background 0.2s, transform 0.2s',
   };
 }
 
 function SectionTitle({ text }: { text: string }) {
   return (
-    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#666', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '2px solid #111', display: 'flex', alignItems: 'center', gap: '10px' }}>
+    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#6b7280', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '2px solid #111', display: 'flex', alignItems: 'center', gap: '10px' }}>
       {text}
     </div>
   );
@@ -504,47 +538,46 @@ function SectionTitle({ text }: { text: string }) {
 function FormField({ label, type, placeholder }: { label: string; type: string; placeholder: string }) {
   return (
     <div>
-      <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#333', display: 'block', marginBottom: '5px' }}>{label}</label>
-      <input type={type} placeholder={placeholder} required style={{ width: '100%', padding: '10px 12px', border: '1px solid #e0e0e0', borderRadius: '3px', fontFamily: 'inherit', fontSize: '13px', color: '#111', background: '#fff', outline: 'none' }} />
+      <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: '#374151', display: 'block', marginBottom: '6px' }}>{label}</label>
+      <input type={type} placeholder={placeholder} required style={{ width: '100%', padding: '11px 14px', border: '1px solid #e5e7eb', borderRadius: '6px', fontFamily: 'inherit', fontSize: '13px', color: '#111', background: '#fff', outline: 'none', transition: 'border-color 0.2s, box-shadow 0.2s' }} onFocus={(e) => { e.currentTarget.style.borderColor = '#dc2626'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(220,38,38,0.1)'; }} onBlur={(e) => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.boxShadow = 'none'; }} />
     </div>
   );
 }
 
 function ProductCard({ product }: { product: Product }) {
   const badgeColors: Record<string, string> = {
-    popular: '#e53935', eco: '#2e7d32', pack: '#1565c0', nuevo: '#111',
+    popular: '#dc2626', eco: '#16a34a', pack: '#2563eb', nuevo: '#111',
   };
   return (
     <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-    <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: '4px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow .2s' }}>
-      <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow 0.2s, border-color 0.2s' }}>
+      <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
         {product.img ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />
         ) : (
-          <span style={{ fontSize: '3rem', opacity: 0.5 }}>■</span>
+          <span style={{ fontSize: '3rem', opacity: 0.4 }}>■</span>
         )}
         {product.badge && (
-          <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff' }}>
+          <div style={{ position: 'absolute', top: '10px', left: '10px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: '4px', background: badgeColors[product.badge] || '#111', color: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
             {product.badge}
           </div>
         )}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(17,17,17,0.9)', color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px', textAlign: 'center' }}>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(17,17,17,0.92)', color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '12px', textAlign: 'center', opacity: 0, transition: 'opacity 0.2s' }}>
           Ver producto
         </div>
       </div>
-      <div style={{ padding: '12px 14px 14px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#666', marginBottom: '4px' }}>{catLabel(product.c)}</div>
-        <div style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: '#111', marginBottom: '6px' }}>{product.n}</div>
-        <div style={{ fontSize: '10px', color: '#999', fontWeight: 500, letterSpacing: '0.06em', marginBottom: '8px' }}>Ref: {product.ref}</div>
+      <div style={{ padding: '14px 16px 16px' }}>
+        <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#6b7280', marginBottom: '5px' }}>{catLabel(product.c)}</div>
+        <div style={{ fontSize: '14px', fontWeight: 600, lineHeight: 1.3, color: '#111', marginBottom: '7px' }}>{product.n}</div>
+        <div style={{ fontSize: '10px', color: '#9ca3af', fontWeight: 500, letterSpacing: '0.06em', marginBottom: '10px' }}>Ref: {product.ref}</div>
         {product.v.col && (
-          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '10px' }}>
             {product.v.col.map(c => (
-              <div key={c.n} title={c.n} style={{ width: '16px', height: '16px', borderRadius: '50%', background: c.h, border: '1.5px solid rgba(0,0,0,0.15)' }} />
+              <div key={c.n} title={c.n} style={{ width: '18px', height: '18px', borderRadius: '50%', background: c.h, border: '2px solid #fff', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
             ))}
           </div>
         )}
-        {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>{product.precio}</span>}
+        {product.precio && <span style={{ fontSize: '16px', fontWeight: 700, color: '#111' }}>{product.precio}</span>}
       </div>
     </div>
     </Link>
@@ -553,13 +586,13 @@ function ProductCard({ product }: { product: Product }) {
 
 function PromoCard({ bg, label, title, cta, onClick }: { bg: string; label: string; title: React.ReactNode; cta: string; onClick: () => void }) {
   return (
-    <div onClick={onClick} style={{ position: 'relative', borderRadius: '4px', overflow: 'hidden', minHeight: '200px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer' }}>
+    <div onClick={onClick} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', minHeight: '220px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer' }}>
       <div style={{ position: 'absolute', inset: 0, background: bg }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,rgba(0,0,0,0.7) 0%,transparent 70%)' }} />
-      <div style={{ position: 'relative', zIndex: 2, padding: '1.8rem 2rem', color: '#fff' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#e53935', marginBottom: '6px' }}>{label}</div>
-        <div style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '10px' }}>{title}</div>
-        <span style={{ background: '#e53935', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '9px 18px', borderRadius: '3px', display: 'inline-block' }}>{cta}</span>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 70%)' }} />
+      <div style={{ position: 'relative', zIndex: 2, padding: '2rem 2.2rem', color: '#fff' }}>
+        <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#fca5a5', marginBottom: '8px' }}>{label}</div>
+        <div style={{ fontSize: '1.5rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '12px' }}>{title}</div>
+        <span style={{ background: '#dc2626', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '10px 20px', borderRadius: '6px', display: 'inline-block', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>{cta}</span>
       </div>
     </div>
   );
