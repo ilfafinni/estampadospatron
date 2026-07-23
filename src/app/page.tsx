@@ -338,7 +338,7 @@ export default function HomePage() {
             <div style={{ position: 'absolute', inset: 0, background: slide.bg }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
             <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fca5a5', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-primary-light)', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
                 {slide.tag}
               </div>
               <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 3.2rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
@@ -556,16 +556,16 @@ export default function HomePage() {
           justifyContent: 'center',
           width: '56px',
           height: '56px',
-          background: '#25D366',
+          background: 'transparent',
           borderRadius: '50%',
-          boxShadow: '0 8px 24px rgba(37,211,102,0.4)',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
           transition: 'transform 0.2s, box-shadow 0.2s',
           textDecoration: 'none',
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(37,211,102,0.5)'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(37,211,102,0.4)'; }}
+        onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(0,0,0,0.25)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)'; }}
       >
-        <img src="/images/whatsapp.png" alt="WhatsApp" width="28" height="28" style={{ display: 'block' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+        <img src="/images/whatsapp.png" alt="WhatsApp" width="56" height="56" style={{ display: 'block', borderRadius: '50%', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
       </a>
 
       {/* ── TOAST ── */}
