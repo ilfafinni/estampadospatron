@@ -41,8 +41,25 @@ export default function Header({
     { label: 'Accesorios', cat: 'accesorios' as Categoria },
   ];
 
+  const goToCategory = (cat: Categoria) => {
+    window.location.href = `/catalogo?cat=${cat}`;
+    setMobileCatOpen(false);
+    setCatMenuOpen(false);
+  };
+
   return (
     <>
+      <style>{`
+        .cat-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
+        .cat-panel.open { transform: translateX(0) !important; }
+        .nav-drawer.open { transform: translateX(0) !important; }
+        .nav-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
+        @media (max-width: 900px) {
+          .cat-panel { transform: translateX(100%); }
+          .cat-overlay { opacity: 0; pointer-events: none; }
+        }
+      `}</style>
+
       {/* ── HEADER FIJO ── */}
       <header style={{ 
         position: 'sticky', top: 0, zIndex: 500,
@@ -52,7 +69,7 @@ export default function Header({
         transition: 'background 0.3s, border 0.3s, box-shadow 0.3s',
         boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', height: '64px', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', height: '64px', maxWidth: '1400px', margin: '0 auto' }}>
           
           {/* LEFT: Hamburger + Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
@@ -217,7 +234,7 @@ export default function Header({
                   {navCategories.map(item => (
                     <button
                       key={item.label}
-                      onClick={() => { window.location.href = `/catalogo?cat=${item.cat}`; setMobileCatOpen(false); }}
+                      onClick={() => goToCategory(item.cat)}
                       style={{ padding: '14px 16px', fontSize: '15px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.15s' }}
                       onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
@@ -272,7 +289,7 @@ export default function Header({
                 {navCategories.map(item => (
                   <button
                     key={item.label}
-                    onClick={() => { window.location.href = `/catalogo?cat=${item.cat}`; setCatMenuOpen(false); }}
+                    onClick={() => goToCategory(item.cat)}
                     style={{ width: '100%', padding: '12px 16px', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', transition: 'background 0.15s' }}
                     onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
                     onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
