@@ -109,7 +109,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             fontFamily: 'inherit', transition: 'all var(--transition)',
           }}
         >
-          {copied ? '✓ Link copiado' : '🔗 Copiar link de este producto'}
+          {copied ? 'Link copiado' : 'Copiar link del producto'}
         </button>
       </div>
 
@@ -299,7 +299,7 @@ export default function ProductDetail({ product }: { product: Product }) {
               onMouseEnter={(e) => { if (!added) e.currentTarget.style.background = 'var(--color-accent-hover)'; }}
               onMouseLeave={(e) => { if (!added) e.currentTarget.style.background = 'var(--color-accent)'; }}
             >
-              {added ? '✓ Agregado' : 'Agregar al carrito'}
+              {added ? 'Agregado' : 'Agregar al carrito'}
             </button>
             <button
               onClick={handleSendToWhatsApp}

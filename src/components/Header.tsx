@@ -2,6 +2,7 @@
 // src/components/Header.tsx
 
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/lib/CartContext';
 import { useTheme } from '@/components/ThemeProvider';
 import { CATEGORIES, type Categoria } from '@/data/products';
@@ -24,6 +25,7 @@ export default function Header({
   const [navOpen, setNavOpen] = useState(false);
   const [catMenuOpen, setCatMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileCatOpen, setMobileCatOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -56,7 +58,7 @@ export default function Header({
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
             {showHamburger && (
               <button
-                onClick={() => setNavOpen(true)}
+                onClick={() => setMobileCatOpen(true)}
                 style={{ 
                   display: 'flex', alignItems: 'center', justifyContent: 'center', 
                   width: '44px', height: '44px', 
@@ -66,7 +68,7 @@ export default function Header({
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--border-light)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
-                aria-label="Abrir menú"
+                aria-label="Abrir categorías"
                 className="touch-target"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -169,41 +171,41 @@ export default function Header({
         </div>
       </header>
 
-      {/* ── MOBILE NAV DRAWER ── */}
+      {/* ── MOBILE CATEGORIES SIDE PANEL (Right side slide) ── */}
       {showHamburger && (
         <>
           <div
-            className={`nav-overlay ${navOpen ? 'open' : ''}`}
-            onClick={() => setNavOpen(false)}
+            className={`cat-overlay ${mobileCatOpen ? 'open' : ''}`}
+            onClick={() => setMobileCatOpen(false)}
             style={{
               position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
               zIndex: 999, opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s',
             }}
           />
           <div
-            className={`nav-drawer ${navOpen ? 'open' : ''}`}
+            className={`cat-panel ${mobileCatOpen ? 'open' : ''}`}
             style={{
               position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '320px',
               background: 'var(--bg-card)', zIndex: 1000,
               display: 'flex', flexDirection: 'column',
               boxShadow: 'var(--shadow-lg)',
-              transform: 'translateX(100%)', transition: 'transform 0.3s ease',
+              transform: 'translateX(100%)', transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
-              <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Menú</div>
+              <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Categorías</div>
               <button
-                onClick={() => setNavOpen(false)}
+                onClick={() => setMobileCatOpen(false)}
                 style={{ width: '36px', height: '36px', border: '1px solid var(--border-medium)', background: 'var(--bg-tertiary)', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-sm)', color: 'var(--text-muted)', transition: 'background 0.2s, border-color 0.2s' }}
-                aria-label="Cerrar menú"
+                aria-label="Cerrar categorías"
               >
-                ✕
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               </button>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <button
-                  onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setNavOpen(false); }}
+                  onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileCatOpen(false); }}
                   style={{ padding: '14px 16px', fontSize: '15px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
@@ -212,12 +214,11 @@ export default function Header({
                 </button>
                 
                 <div style={{ borderTop: '1px solid var(--border-light)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem', paddingLeft: '4px' }}>CATEGORÍAS</div>
                   {navCategories.map(item => (
                     <button
                       key={item.label}
-                      onClick={() => { window.location.href = `/catalogo?cat=${item.cat}`; setNavOpen(false); }}
-                      style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.15s' }}
+                      onClick={() => { window.location.href = `/catalogo?cat=${item.cat}`; setMobileCatOpen(false); }}
+                      style={{ padding: '14px 16px', fontSize: '15px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.15s' }}
                       onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
                     >
@@ -227,7 +228,7 @@ export default function Header({
                 </div>
 
                 <button
-                  onClick={() => { document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }); setNavOpen(false); }}
+                  onClick={() => { document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }); setMobileCatOpen(false); }}
                   style={{ marginTop: '1rem', background: 'var(--color-accent)', color: '#fff', padding: '14px 16px', border: 'none', borderRadius: 'var(--radius-md)', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase' }}
                 >
                   COTIZAR
@@ -294,6 +295,3 @@ export default function Header({
     </>
   );
 }
-
-// Need to import useState and useEffect
-import { useState, useEffect } from 'react';

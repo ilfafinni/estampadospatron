@@ -373,10 +373,10 @@ export default function HomePage() {
       <div style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', padding: '1.5rem 1.5rem', gap: '1rem' }}>
           {[
-            { icon: '🚀', title: 'Retiro Express 4 hrs', sub: 'Disponible en Curicó' },
-            { icon: '📦', title: 'Despacho a todo Chile', sub: 'Coordinamos envío a tu puerta' },
-            { icon: '🎨', title: 'Desde 1 unidad', sub: 'Sin mínimo de pedido' },
-            { icon: '💬', title: 'Respuesta en 1 hora', sub: 'WhatsApp y correo' },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>, title: 'Retiro Express 4 hrs', sub: 'Disponible en Curicó' },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>, title: 'Despacho a todo Chile', sub: 'Coordinamos envío a tu puerta' },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M2 12h20"/></svg>, title: 'Desde 1 unidad', sub: 'Sin mínimo de pedido' },
+            { icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, title: 'Respuesta en 1 hora', sub: 'WhatsApp y correo' },
           ].map(item => (
             <div key={item.title} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <span style={{ fontSize: '1.8rem' }}>{item.icon}</span>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CATEGORIES, PRODUCTS, catLabel, slugify, type Categoria, type Product } from '@/data/products';
 import Header from '@/components/Header';
+import ProductCard from '@/components/ProductCard';
 
 export default function CatalogPage() {
   const router = useRouter();
@@ -119,54 +120,17 @@ export default function CatalogPage() {
         
         {filteredProducts.length === 0 && (
           <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ display: 'block', margin: '0 auto' }}>
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+            </div>
             <p style={{ fontSize: '16px', fontWeight: 500 }}>No hay productos en esta categoría</p>
             <p style={{ fontSize: '14px', marginTop: '0.5rem' }}>Prueba con otra categoría o busca otro término</p>
           </div>
         )}
       </main>
     </div>
-  );
-}
-
-function ProductCard({ product }: { product: Product }) {
-  const badgeColors: Record<string, string> = {
-    popular: '#ef4444', eco: '#22c55e', pack: '#3b82f6', nuevo: '#111',
-  };
-
-  return (
-    <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow 0.2s, transform 0.2s', boxShadow: 'var(--shadow-sm)' }}>
-        <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-          {product.img ? (
-            <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />
-          ) : (
-            <span style={{ fontSize: '3rem', opacity: 0.5 }}>■</span>
-          )}
-          {product.badge && (
-            <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-              {product.badge}
-            </div>
-          )}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(17,17,17,0.9)', color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px', textAlign: 'center', opacity: 0, transition: 'opacity 0.2s' }}>
-            Ver producto
-          </div>
-        </div>
-
-        <div style={{ padding: '12px 14px 14px' }}>
-          <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>{catLabel(product.c)}</div>
-          <div style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: 'var(--text-primary)', marginBottom: '6px' }}>{product.n}</div>
-          <div style={{ fontSize: '10px', color: 'var(--text-light)', fontWeight: 500, letterSpacing: '0.06em', marginBottom: '8px' }}>Ref: {product.ref}</div>
-          {product.v.col && (
-            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '8px' }}>
-              {product.v.col.map((c) => (
-                <div key={c.n} title={c.n} style={{ width: '16px', height: '16px', borderRadius: '50%', background: c.h, border: '1.5px solid var(--border-light)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
-              ))}
-            </div>
-          )}
-          {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>{product.precio}</span>}
-        </div>
-      </div>
-    </Link>
   );
 }

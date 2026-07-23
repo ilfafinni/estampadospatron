@@ -153,8 +153,16 @@ export default function CheckoutPage() {
         <div style={{
           background: '#fff8e1', border: '1px solid #ffe082', borderRadius: 8,
           padding: '12px 16px', marginBottom: 20, fontSize: 12, color: '#795548', lineHeight: 1.6,
+          display: 'flex', alignItems: 'flex-start', gap: '8px',
         }}>
-          📦 <strong>¿Cómo funciona?</strong> Pagas ahora con tarjeta y nosotros te contactamos en menos de 1 hora para coordinar el diseño, estampado y entrega.
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" x2="21" y1="6" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          <div>
+            <strong>¿Cómo funciona?</strong> Pagas ahora con tarjeta y nosotros te contactamos en menos de 1 hora para coordinar el diseño, estampado y entrega.
+          </div>
         </div>
 
         {/* Error */}
@@ -162,8 +170,14 @@ export default function CheckoutPage() {
           <div style={{
             background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8,
             padding: '12px 16px', marginBottom: 16, fontSize: 13, color: '#dc2626',
+            display: 'flex', alignItems: 'flex-start', gap: '8px',
           }}>
-            ⚠ {error}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
+              <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{error}</span>
           </div>
         )}
 

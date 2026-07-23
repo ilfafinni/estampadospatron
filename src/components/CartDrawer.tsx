@@ -62,7 +62,7 @@ export default function CartDrawer() {
             onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-secondary)'; e.currentTarget.style.borderColor = 'var(--border-light)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--border-medium)'; }}
           >
-            ✕
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
@@ -70,7 +70,7 @@ export default function CartDrawer() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.5rem' }}>
           {state.items.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: '1rem', opacity: 0.5 }}><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
               <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
                 Tu carrito está vacío
               </div>
@@ -158,8 +158,14 @@ export default function CartDrawer() {
             </button>
             <div style={{
               textAlign: 'center', fontSize: '11px', color: 'var(--text-light)', lineHeight: 1.5,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
             }}>
-              🔒 Pago seguro con Transbank Webpay · Tarjetas crédito y débito
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}>
+                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              Pago seguro con Transbank Webpay · Tarjetas crédito y débito
             </div>
           </div>
         )}
@@ -234,7 +240,7 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
           onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
           onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
         >
-          ✕
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <QtyBtn onClick={() => onUpdateQty(index, item.qty - 1)} label="−" />
