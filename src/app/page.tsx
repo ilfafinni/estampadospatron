@@ -389,69 +389,35 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── CATEGORÍAS (GRID 6) ── */}
+      {/* ── CATEGORÍAS DESTACADAS ── */}
       <div style={{ padding: '2.5rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
         <SectionTitle text="Explorar categorías" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '18px' }}>
           {CATEGORIES.map(cat => (
-            <div
+            <Link
               key={cat.c}
-              onClick={() => { setActiveCat(cat.c); scrollToCat(); }}
-              style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', aspectRatio: '3/4', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+              href={`/catalogo?cat=${cat.c}`}
+              style={{ position: 'relative', borderRadius: '14px', overflow: 'hidden', cursor: 'pointer', minHeight: '240px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', textDecoration: 'none', boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s, box-shadow 0.2s' }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
             >
               <div style={{ position: 'absolute', inset: 0, background: cat.bg }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%)' }} />
-              <div style={{ position: 'relative', zIndex: 2, padding: '1.2rem 1rem' }}>
-                <div style={{ fontSize: '2.2rem', marginBottom: '8px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{cat.icon}</div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{cat.count}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '8px' }}>Ver productos →</div>
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.8) 100%)' }} />
+              <div style={{ position: 'relative', zIndex: 2, padding: '1.4rem 1.2rem' }}>
+                <div style={{ fontSize: '2.6rem', marginBottom: '10px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{cat.icon}</div>
+                <div style={{ fontSize: '16px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{cat.count}</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '12px', display: 'inline-block', padding: '8px 12px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.4)' }}>Ver productos →</div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── CATALOGUE ── */}
-      <div style={{ padding: '0 1.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }} id="catalogo">
-        <SectionTitle text="Catálogo de productos" />
-        
-        {/* Filtros */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', flexWrap: 'wrap', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {([['todos', 'Todos'], ['poleras', 'Poleras'], ['polerones', 'Polerones'], ['tazas', 'Tazas'], ['accesorios', 'Accesorios'], ['deportiva', 'Deportiva'], ['impresion', 'Impresión']] as const).map(([c, label]) => (
-            <button
-              key={c}
-              onClick={() => setActiveCat(c)}
-              style={{
-                fontSize: '12px', fontWeight: 500, padding: '8px 16px',
-                border: '1px solid ' + (activeCat === c ? 'var(--text-primary)' : 'var(--border-medium)'),
-                background: activeCat === c ? 'var(--text-primary)' : 'var(--bg-card)',
-                color: activeCat === c ? (theme === 'dark' ? '#fff' : '#fff') : 'var(--text-secondary)',
-                cursor: 'pointer', borderRadius: '6px', fontFamily: 'inherit', whiteSpace: 'nowrap',
-                transition: 'all 0.2s',
-              }}
-            >
-              {label}
-            </button>
+            </Link>
           ))}
         </div>
 
-        {/* Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '20px' }}>
-          {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+        <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+          <Link href="/catalogo" style={{ background: 'var(--text-primary)', color: '#fff', padding: '12px 22px', borderRadius: '999px', textDecoration: 'none', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+            Ver catálogo completo
+          </Link>
         </div>
-        
-        {filteredProducts.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-            <p style={{ fontSize: '16px', fontWeight: 500 }}>No hay productos en esta categoría</p>
-            <p style={{ fontSize: '14px', marginTop: '0.5rem' }}>Prueba con otra categoría o busca otro término</p>
-          </div>
-        )}
       </div>
 
       {/* ── PROMO BANNERS (AMPLIADOS) ── */}
