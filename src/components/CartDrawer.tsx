@@ -31,32 +31,36 @@ export default function CartDrawer() {
       <div style={{
         position: 'fixed', top: 0, right: 0, bottom: 0,
         width: '100%', maxWidth: '420px',
-        background: '#fff', zIndex: 900,
+        background: 'var(--bg-card)', zIndex: 900,
         display: 'flex', flexDirection: 'column',
-        boxShadow: '-8px 0 32px rgba(0,0,0,0.15)',
+        boxShadow: 'var(--shadow-lg)',
+        borderLeft: '1px solid var(--border-light)',
       }}>
         {/* Header */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '1.2rem 1.5rem', borderBottom: '1px solid #e0e0e0',
+          padding: '1.2rem 1.5rem', borderBottom: '1px solid var(--border-light)',
           flexShrink: 0,
         }}>
           <div>
-            <div style={{ fontSize: '16px', fontWeight: 800, color: '#111' }}>
+            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>
               Tu carrito
             </div>
-            <div style={{ fontSize: '12px', color: '#666', marginTop: '2px' }}>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
               {totalItems} {totalItems === 1 ? 'producto' : 'productos'}
             </div>
           </div>
           <button
             onClick={closeCart}
             style={{
-              width: '36px', height: '36px', border: '1px solid #e0e0e0',
-              background: '#fff', cursor: 'pointer', fontSize: '16px',
+              width: '36px', height: '36px', border: '1px solid var(--border-medium)',
+              background: 'var(--bg-tertiary)', cursor: 'pointer', fontSize: '16px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              borderRadius: '3px', color: '#666',
+              borderRadius: 'var(--radius-sm)', color: 'var(--text-muted)',
+              transition: 'background 0.2s, border-color 0.2s',
             }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-secondary)'; e.currentTarget.style.borderColor = 'var(--border-light)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--border-medium)'; }}
           >
             ✕
           </button>
@@ -65,9 +69,9 @@ export default function CartDrawer() {
         {/* Items */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.5rem' }}>
           {state.items.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#999' }}>
+            <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-muted)' }}>
               <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🛒</div>
-              <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: '#333' }}>
+              <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>
                 Tu carrito está vacío
               </div>
               <div style={{ fontSize: '13px' }}>
@@ -76,11 +80,14 @@ export default function CartDrawer() {
               <button
                 onClick={closeCart}
                 style={{
-                  marginTop: '1.5rem', background: '#111', color: '#fff',
-                  border: 'none', padding: '12px 24px', borderRadius: '3px',
+                  marginTop: '1.5rem', background: 'var(--text-primary)', color: 'var(--bg-primary)',
+                  border: 'none', padding: '12px 24px', borderRadius: 'var(--radius-md)',
                   fontWeight: 700, fontSize: '13px', cursor: 'pointer',
                   letterSpacing: '0.06em', textTransform: 'uppercase',
+                  transition: 'opacity 0.2s',
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
               >
                 Ver productos
               </button>
@@ -103,32 +110,32 @@ export default function CartDrawer() {
         {/* Footer */}
         {state.items.length > 0 && (
           <div style={{
-            borderTop: '1px solid #e0e0e0', padding: '1.2rem 1.5rem',
-            flexShrink: 0, background: '#fafafa',
+            borderTop: '1px solid var(--border-light)', padding: '1.2rem 1.5rem',
+            flexShrink: 0, background: 'var(--bg-secondary)',
           }}>
             {/* Subtotal */}
             <div style={{
               display: 'flex', justifyContent: 'space-between',
-              marginBottom: '6px', fontSize: '13px', color: '#666',
+              marginBottom: '6px', fontSize: '13px', color: 'var(--text-muted)',
             }}>
               <span>Subtotal productos</span>
               <span>{formatPrice(totalPrice - totalEstampado)}</span>
             </div>
             <div style={{
               display: 'flex', justifyContent: 'space-between',
-              marginBottom: '6px', fontSize: '13px', color: '#666',
+              marginBottom: '6px', fontSize: '13px', color: 'var(--text-muted)',
             }}>
               <span>Estampado</span>
               {totalEstampado > 0 ? (
                 <span style={{ fontWeight: 600 }}>{formatPrice(totalEstampado)}</span>
               ) : (
-                <span style={{ color: '#e53935', fontWeight: 600 }}>A cotizar</span>
+                <span style={{ color: 'var(--color-accent)', fontWeight: 600 }}>A cotizar</span>
               )}
             </div>
             <div style={{
               display: 'flex', justifyContent: 'space-between',
-              marginBottom: '1.2rem', fontSize: '15px', fontWeight: 800, color: '#111',
-              paddingTop: '10px', borderTop: '1px solid #e0e0e0',
+              marginBottom: '1.2rem', fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)',
+              paddingTop: '10px', borderTop: '1px solid var(--border-light)',
             }}>
               <span>Total estimado</span>
               <span>{formatPrice(totalPrice)}</span>
@@ -138,16 +145,19 @@ export default function CartDrawer() {
             <button
               onClick={handleCheckout}
               style={{
-                width: '100%', background: '#e53935', color: '#fff',
+                width: '100%', background: 'var(--color-accent)', color: '#fff',
                 border: 'none', padding: '14px', fontSize: '14px',
                 fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
-                cursor: 'pointer', borderRadius: '3px', marginBottom: '10px',
+                cursor: 'pointer', borderRadius: 'var(--radius-md)', marginBottom: '10px',
+                transition: 'background 0.2s',
               }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--color-accent-hover)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'var(--color-accent)'}
             >
               Pagar con Webpay →
             </button>
             <div style={{
-              textAlign: 'center', fontSize: '11px', color: '#999', lineHeight: 1.5,
+              textAlign: 'center', fontSize: '11px', color: 'var(--text-light)', lineHeight: 1.5,
             }}>
               🔒 Pago seguro con Transbank Webpay · Tarjetas crédito y débito
             </div>
@@ -174,23 +184,23 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
   return (
     <div style={{
       display: 'flex', gap: '12px', padding: '12px',
-      border: '1px solid #e0e0e0', borderRadius: '4px', background: '#fff',
+      border: '1px solid var(--border-light)', borderRadius: 'var(--radius-md)', background: 'var(--bg-card)',
     }}>
       {/* Imagen/Emoji */}
       <div style={{
-        width: '64px', height: '64px', background: '#f5f5f5',
-        borderRadius: '3px', display: 'flex', alignItems: 'center',
-        justifyContent: 'center', fontSize: '0.9rem', flexShrink: 0, color: '#999',
+        width: '64px', height: '64px', background: 'var(--bg-tertiary)',
+        borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', fontSize: '0.9rem', flexShrink: 0, color: 'var(--text-light)',
       }}>
         ■
       </div>
 
       {/* Info */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: '#111', lineHeight: 1.3 }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3 }}>
           {item.product.n}
         </div>
-        <div style={{ fontSize: '10px', color: '#999', marginTop: '2px', letterSpacing: '0.06em' }}>
+        <div style={{ fontSize: '10px', color: 'var(--text-light)', marginTop: '2px', letterSpacing: '0.06em' }}>
           Ref: {item.product.ref}
         </div>
         {/* Variantes seleccionadas */}
@@ -202,10 +212,10 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
             <Tag key={e.ubicacion} label={`${e.ubicacion}: ${e.label}`} />
           ))}
         </div>
-        <div style={{ fontSize: '13px', fontWeight: 700, color: '#111', marginTop: '6px' }}>
+        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '6px' }}>
           {formatPrice(precioUnitTotal)}
           {(!item.estampados || item.estampados.length === 0) && (
-            <span style={{ fontSize: '11px', fontWeight: 400, color: '#999', marginLeft: '4px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 400, color: 'var(--text-muted)', marginLeft: '4px' }}>
               + estampado
             </span>
           )}
@@ -218,8 +228,11 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
           onClick={() => onRemove(index)}
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: '#999', fontSize: '14px', padding: '2px',
+            color: 'var(--text-muted)', fontSize: '14px', padding: '2px',
+            transition: 'color 0.2s',
           }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
         >
           ✕
         </button>
@@ -238,8 +251,9 @@ function CartItemRow({ item, index, onRemove, onUpdateQty }: CartItemRowProps) {
 function Tag({ label }: { label: string }) {
   return (
     <span style={{
-      fontSize: '10px', padding: '2px 6px', background: '#f5f5f5',
-      borderRadius: '2px', color: '#555', fontWeight: 500,
+      fontSize: '10px', padding: '2px 6px', background: 'var(--bg-tertiary)',
+      borderRadius: '2px', color: 'var(--text-secondary)', fontWeight: 500,
+      border: '1px solid var(--border-light)',
     }}>
       {label}
     </span>
@@ -251,11 +265,15 @@ function QtyBtn({ onClick, label }: { onClick: () => void; label: string }) {
     <button
       onClick={onClick}
       style={{
-        width: '28px', height: '28px', border: '1px solid #e0e0e0',
-        background: '#fff', cursor: 'pointer', borderRadius: '3px',
+        width: '28px', height: '28px', border: '1px solid var(--border-medium)',
+        background: 'var(--bg-card)', cursor: 'pointer', borderRadius: 'var(--radius-sm)',
         fontSize: '16px', display: 'flex', alignItems: 'center',
         justifyContent: 'center', fontWeight: 300, lineHeight: 1,
+        color: 'var(--text-primary)',
+        transition: 'background 0.2s, border-color 0.2s',
       }}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; e.currentTarget.style.borderColor = 'var(--border-light)'; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-card)'; e.currentTarget.style.borderColor = 'var(--border-medium)'; }}
     >
       {label}
     </button>
