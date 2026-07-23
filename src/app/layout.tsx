@@ -38,12 +38,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <style>{`
           * { box-sizing: border-box; }
           html { scroll-behavior: smooth; }
-          body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; }
+          body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; width: 100%; max-width: 100vw; }
           ::selection { background: var(--color-primary); color: #fff; }
           a { color: inherit; }
           button { font-family: inherit; }
-          input, select, textarea { font-family: inherit; }
+          input, select, textarea { font-family: inherit; max-width: 100%; }
           :focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+          img, video { max-width: 100%; height: auto; }
 
           /* CSS Variables for theming */
           :root {

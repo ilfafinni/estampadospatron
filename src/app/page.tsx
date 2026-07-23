@@ -34,32 +34,6 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Si llegamos desde /producto/[slug] con ?cat=, filtramos esa categoría
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get('cat') as Categoria | null;
-    if (cat && CATEGORIES.some(cc => cc.c === cat)) {
-      setActiveCat(cat);
-      setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }
-  }, []);
-
-  const filteredProducts = (() => {
-    let products = activeCat === 'todos'
-      ? PRODUCTS
-      : PRODUCTS.filter(p => p.c === activeCat);
-    
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      products = products.filter(p => 
-        p.n.toLowerCase().includes(term) || 
-        p.desc.toLowerCase().includes(term) ||
-        p.ref.toLowerCase().includes(term)
-      );
-    }
-    return products;
-  })();
-
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(''), 3500);
@@ -72,7 +46,7 @@ export default function HomePage() {
       h1: <><span>Estampados</span><br />con tu diseño</>,
       p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad, sin mínimos.',
       cta: 'Ver poleras',
-      onCta: () => { setActiveCat('poleras'); scrollToCat(); },
+      onCta: () => { window.location.href = '/catalogo?cat=poleras'; },
     },
     {
       bg: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-primary) 100%)',
@@ -404,7 +378,14 @@ export default function HomePage() {
               <div style={{ position: 'absolute', inset: 0, background: cat.bg }} />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.8) 100%)' }} />
               <div style={{ position: 'relative', zIndex: 2, padding: '1.4rem 1.2rem' }}>
-                <div style={{ fontSize: '2.6rem', marginBottom: '10px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{cat.icon}</div>
+                <div style={{ fontSize: '2.6rem', marginBottom: '10px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
+                  {cat.c === 'poleras' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 3h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 13h8"/><path d="M12 5v14"/></svg>}
+                  {cat.c === 'polerones' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 10h6"/><path d="M12 7v6"/></svg>}
+                  {cat.c === 'tazas' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 2h18v20H3V2z"/><path d="M7 8h10"/><path d="M9 12h6"/></svg>}
+                  {cat.c === 'accesorios' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg>}
+                  {cat.c === 'deportiva' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>}
+                  {cat.c === 'impresion' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3z"/><polyline points="17 3 17 9 23 9"/></svg>}
+                </div>
                 <div style={{ fontSize: '16px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
                 <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{cat.count}</div>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '12px', display: 'inline-block', padding: '8px 12px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.4)' }}>Ver productos →</div>
