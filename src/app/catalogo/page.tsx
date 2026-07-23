@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CATEGORIES, PRODUCTS, catLabel, slugify, type Categoria, type Product } from '@/data/products';
+import Header from '@/components/Header';
 
 export default function CatalogPage() {
   const router = useRouter();
@@ -70,46 +71,24 @@ export default function CatalogPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#fff', color: '#111', fontFamily: "'Inter', sans-serif" }}>
-      <header style={{ borderBottom: '1px solid #e0e0e0', background: '#fff' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '1.1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
-          <Link href="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.03em' }}>
-              PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
-            </div>
-            <div style={{ fontSize: '9px', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#666' }}>
-              Catálogo de productos
-            </div>
-          </Link>
-
-          <form onSubmit={handleSearch} style={{ flex: 1, maxWidth: '520px', position: 'relative' }}>
-            <input
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar productos..."
-              style={{ width: '100%', padding: '10px 16px 10px 42px', border: '1px solid #e0e0e0', borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', background: '#f5f5f5' }}
-            />
-            <svg style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#666' }} width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-          </form>
-
-          <Link href="/" style={{ color: '#111', fontSize: '13px', fontWeight: 700, textDecoration: 'none', padding: '10px 16px', border: '1px solid #e0e0e0', borderRadius: '6px' }}>
-            Volver al inicio
-          </Link>
-        </div>
-      </header>
-
-      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '2.5rem 2rem 4rem' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>
+      <style>{`
+        .product-grid { display: grid; gap: 16px; grid-template-columns: repeat(1, minmax(0, 1fr)); }
+        @media (min-width: 641px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (min-width: 1025px) { .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        @media (min-width: 1281px) { .product-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+      `}</style>
+      <Header showSearch={true} showHamburger={true} />
+      
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '2.5rem 1.5rem 4rem' }}>
         <div style={{ marginBottom: '2rem' }}>
-          <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#e53935', marginBottom: '0.8rem' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '0.8rem' }}>
             Catálogo completo
           </div>
           <h1 style={{ fontSize: 'clamp(1.8rem, 2.4vw, 2.7rem)', fontWeight: 800, margin: '0 0 0.75rem', lineHeight: 1.1 }}>
             Productos personalizados para tu marca o evento
           </h1>
-          <p style={{ fontSize: '14px', color: '#666', lineHeight: 1.7, maxWidth: '760px', margin: 0 }}>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.7, maxWidth: '760px', margin: 0 }}>
             Elige entre poleras, polerones, tazas, accesorios y más. Desde 1 unidad, con impresión lista para tu empresa o regalo.
           </p>
         </div>
@@ -120,10 +99,11 @@ export default function CatalogPage() {
               key={c}
               onClick={() => goToCat(c as 'todos' | Categoria)}
               style={{
-                border: '1px solid ' + (activeCat === c ? '#111' : '#e0e0e0'),
-                background: activeCat === c ? '#111' : '#fff',
-                color: activeCat === c ? '#fff' : '#333',
-                padding: '8px 16px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap'
+                border: '1px solid ' + (activeCat === c ? 'var(--text-primary)' : 'var(--border-medium)'),
+                background: activeCat === c ? 'var(--text-primary)' : 'var(--bg-card)',
+                color: activeCat === c ? (activeCat === 'todos' ? '#fff' : '#fff') : 'var(--text-secondary)',
+                padding: '8px 16px', borderRadius: '999px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap',
+                transition: 'all 0.2s',
               }}
             >
               {label}
@@ -131,61 +111,60 @@ export default function CatalogPage() {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '16px' }}>
+        <div className="product-grid">
           {filteredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+        
+        {filteredProducts.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
+            <p style={{ fontSize: '16px', fontWeight: 500 }}>No hay productos en esta categoría</p>
+            <p style={{ fontSize: '14px', marginTop: '0.5rem' }}>Prueba con otra categoría o busca otro término</p>
+          </div>
+        )}
       </main>
-    </div>
-  );
-}
-
-function SectionTitle({ text }: { text: string }) {
-  return (
-    <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#666', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '2px solid #111' }}>
-      {text}
     </div>
   );
 }
 
 function ProductCard({ product }: { product: Product }) {
   const badgeColors: Record<string, string> = {
-    popular: '#e53935', eco: '#2e7d32', pack: '#1565c0', nuevo: '#111',
+    popular: '#ef4444', eco: '#22c55e', pack: '#3b82f6', nuevo: '#111',
   };
 
   return (
     <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-      <div style={{ background: '#fff', border: '1px solid #e0e0e0', borderRadius: '6px', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}>
-        <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow 0.2s, transform 0.2s', boxShadow: 'var(--shadow-sm)' }}>
+        <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
           {product.img ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />
           ) : (
             <span style={{ fontSize: '3rem', opacity: 0.5 }}>■</span>
           )}
           {product.badge && (
-            <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff' }}>
+            <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
               {product.badge}
             </div>
           )}
-          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(17,17,17,0.9)', color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px', textAlign: 'center' }}>
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(17,17,17,0.9)', color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px', textAlign: 'center', opacity: 0, transition: 'opacity 0.2s' }}>
             Ver producto
           </div>
         </div>
 
         <div style={{ padding: '12px 14px 14px' }}>
-          <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#666', marginBottom: '4px' }}>{catLabel(product.c)}</div>
-          <div style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: '#111', marginBottom: '6px' }}>{product.n}</div>
-          <div style={{ fontSize: '10px', color: '#999', fontWeight: 500, letterSpacing: '0.06em', marginBottom: '8px' }}>Ref: {product.ref}</div>
+          <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>{catLabel(product.c)}</div>
+          <div style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: 'var(--text-primary)', marginBottom: '6px' }}>{product.n}</div>
+          <div style={{ fontSize: '10px', color: 'var(--text-light)', fontWeight: 500, letterSpacing: '0.06em', marginBottom: '8px' }}>Ref: {product.ref}</div>
           {product.v.col && (
             <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '8px' }}>
               {product.v.col.map((c) => (
-                <div key={c.n} title={c.n} style={{ width: '16px', height: '16px', borderRadius: '50%', background: c.h, border: '1.5px solid rgba(0,0,0,0.15)' }} />
+                <div key={c.n} title={c.n} style={{ width: '16px', height: '16px', borderRadius: '50%', background: c.h, border: '1.5px solid var(--border-light)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
               ))}
             </div>
           )}
-          {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: '#111' }}>{product.precio}</span>}
+          {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>{product.precio}</span>}
         </div>
       </div>
     </Link>
