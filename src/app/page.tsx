@@ -14,43 +14,17 @@ const CONTACT_EMAIL = 'contacto@estampadospatron.com';
 export default function HomePage() {
   const { totalItems, toggleCart } = useCart();
   const { theme, toggleTheme } = useTheme();
-  const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
   const [slideIdx, setSlideIdx] = useState(0);
   const [toast, setToast] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [navOpen, setNavOpen] = useState(false);
+  const [catMenuOpen, setCatMenuOpen] = useState(false);
 
   // Slider auto
   useEffect(() => {
     const t = setInterval(() => setSlideIdx(i => (i + 1) % 3), 5000);
     return () => clearInterval(t);
   }, []);
-
-  // Si llegamos desde /producto/[slug] con ?cat=, filtramos esa categoría
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get('cat') as Categoria | null;
-    if (cat && CATEGORIES.some(cc => cc.c === cat)) {
-      setActiveCat(cat);
-      setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 100);
-    }
-  }, []);
-
-  const filteredProducts = (() => {
-    let products = activeCat === 'todos'
-      ? PRODUCTS
-      : PRODUCTS.filter(p => p.c === activeCat);
-    
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      products = products.filter(p => 
-        p.n.toLowerCase().includes(term) || 
-        p.desc.toLowerCase().includes(term) ||
-        p.ref.toLowerCase().includes(term)
-      );
-    }
-    return products;
-  })();
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -64,7 +38,7 @@ export default function HomePage() {
       h1: <><span>Estampados</span><br />con tu diseño</>,
       p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad, sin mínimos.',
       cta: 'Ver poleras',
-      onCta: () => { setActiveCat('poleras'); scrollToCat(); },
+      onCta: () => window.location.href = '/?cat=poleras',
     },
     {
       bg: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-primary) 100%)',
@@ -83,10 +57,6 @@ export default function HomePage() {
       onCta: () => window.open(WHATSAPP_URL, '_blank'),
     },
   ];
-
-  const scrollToCat = () => {
-    setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 50);
-  };
 
   return (
     <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
@@ -108,9 +78,6 @@ export default function HomePage() {
           .nav-drawer.open { transform: translateX(0) !important; }
           .nav-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
         }
-        /* Scrollbar hide para categorías en mobile */
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
         /* Touch targets */
         @media (max-width: 640px) {
           .touch-target { min-height: 44px; min-width: 44px; }
@@ -239,31 +206,59 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* ── NAV ── */}
+      {/* ── NAV (Desktop + Mobile Drawer) ── */}
       <nav style={{ background: 'var(--bg-card)', borderBottom: '2px solid var(--text-primary)', position: 'relative', zIndex: 100 }}>
         {/* Desktop nav */}
-        <div style={{ display: 'flex', alignItems: 'center', maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', gap: '0', minHeight: '56px' }}>
-          {[
-            { label: 'Inicio', onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-            { label: 'Poleras', onClick: () => { setActiveCat('poleras'); scrollToCat(); } },
-            { label: 'Polerones', onClick: () => { setActiveCat('polerones'); scrollToCat(); } },
-            { label: 'Tazas', onClick: () => { setActiveCat('tazas'); scrollToCat(); } },
-            { label: 'Deportiva', onClick: () => { setActiveCat('deportiva'); scrollToCat(); } },
-            { label: 'Accesorios', onClick: () => { setActiveCat('accesorios'); scrollToCat(); } },
-          ].map(item => (
+        <div style={{ display: 'flex', alignItems: 'center', maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', gap: '0', justifyContent: 'center', minHeight: '56px' }}>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
+          >
+            Inicio
+          </button>
+          
+          {/* Categorías dropdown en desktop */}
+          <div style={{ position: 'relative' }}>
             <button
-              key={item.label}
-              onClick={item.onClick}
-              style={{
-                padding: '14px 20px', fontSize: '13px', fontWeight: 600,
-                letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)',
-                background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-                whiteSpace: 'nowrap', position: 'relative',
-              }}
+              onClick={() => setCatMenuOpen(!catMenuOpen)}
+              onMouseEnter={() => setCatMenuOpen(true)}
+              onMouseLeave={() => setCatMenuOpen(false)}
+              style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              {item.label}
+              Categorías
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transition: 'transform 0.2s', transform: catMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
+                <path d="M6 9l6 6 6-6" />
+              </svg>
             </button>
-          ))}
+            
+            {/* Dropdown menu */}
+            {catMenuOpen && (
+              <div 
+                onMouseEnter={() => setCatMenuOpen(true)}
+                onMouseLeave={() => setCatMenuOpen(false)}
+                style={{ position: 'absolute', top: '100%', left: 0, minWidth: '220px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', zIndex: 1000, padding: '8px 0' }}
+              >
+                {[
+                  { label: 'Poleras', cat: 'poleras' as Categoria },
+                  { label: 'Polerones', cat: 'polerones' as Categoria },
+                  { label: 'Tazas', cat: 'tazas' as Categoria },
+                  { label: 'Deportiva', cat: 'deportiva' as Categoria },
+                  { label: 'Accesorios', cat: 'accesorios' as Categoria },
+                ].map(item => (
+                  <button
+                    key={item.label}
+                    onClick={() => { window.location.href = `/?cat=${item.cat}`; setCatMenuOpen(false); }}
+                    style={{ width: '100%', padding: '12px 16px', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', transition: 'background 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
             style={{ marginLeft: '8px', background: 'var(--color-accent)', color: '#fff', padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase', transition: 'background 0.2s' }}
@@ -281,7 +276,7 @@ export default function HomePage() {
             zIndex: 999, opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s',
           }}
         />
-<div
+        <div
           className={`nav-drawer ${navOpen ? 'open' : ''}`}
           style={{
             position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '320px',
@@ -303,30 +298,37 @@ export default function HomePage() {
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.5rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {[
-                { label: 'Inicio', onClick: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setNavOpen(false); } },
-                { label: 'Poleras', onClick: () => { setActiveCat('poleras'); scrollToCat(); setNavOpen(false); } },
-                { label: 'Polerones', onClick: () => { setActiveCat('polerones'); scrollToCat(); setNavOpen(false); } },
-                { label: 'Tazas', onClick: () => { setActiveCat('tazas'); scrollToCat(); setNavOpen(false); } },
-                { label: 'Deportiva', onClick: () => { setActiveCat('deportiva'); scrollToCat(); setNavOpen(false); } },
-                { label: 'Accesorios', onClick: () => { setActiveCat('accesorios'); scrollToCat(); setNavOpen(false); } },
-              ].map(item => (
-                <button
-                  key={item.label}
-                  onClick={item.onClick}
-                  style={{
-                    padding: '14px 16px', fontSize: '15px', fontWeight: 600,
-                    letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)',
-                    background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
-                    textAlign: 'left', borderRadius: 'var(--radius-sm)',
-                    transition: 'background 0.2s',
-                  }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-                >
-                  {item.label}
-                </button>
-              ))}
+              <button
+                onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setNavOpen(false); }}
+                style={{ padding: '14px 16px', fontSize: '15px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+              >
+                Inicio
+              </button>
+              
+              {/* Categorías en mobile drawer */}
+              <div style={{ borderTop: '1px solid var(--border-light)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
+                <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem', paddingLeft: '4px' }}>CATEGORÍAS</div>
+                {[
+                  { label: 'Poleras', cat: 'poleras' as Categoria },
+                  { label: 'Polerones', cat: 'polerones' as Categoria },
+                  { label: 'Tazas', cat: 'tazas' as Categoria },
+                  { label: 'Deportiva', cat: 'deportiva' as Categoria },
+                  { label: 'Accesorios', cat: 'accesorios' as Categoria },
+                ].map(item => (
+                  <button
+                    key={item.label}
+                    onClick={() => { window.location.href = `/?cat=${item.cat}`; setNavOpen(false); }}
+                    style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.15s' }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
               <button
                 onClick={() => { document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }); setNavOpen(false); }}
                 style={{ marginTop: '8px', background: 'var(--color-accent)', color: '#fff', padding: '12px 16px', border: 'none', borderRadius: 'var(--radius-md)', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase' }}
@@ -403,87 +405,24 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── CATEGORIES ── */}
-      <div style={{ padding: '2.5rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
-        <SectionTitle text="Explorar categorías" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '16px' }}>
-          {CATEGORIES.map(cat => (
-            <div
-              key={cat.c}
-              onClick={() => { setActiveCat(cat.c); scrollToCat(); }}
-              style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', aspectRatio: '3/4', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
-            >
-              <div style={{ position: 'absolute', inset: 0, background: cat.bg }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%)' }} />
-              <div style={{ position: 'relative', zIndex: 2, padding: '1.2rem 1rem' }}>
-                <div style={{ fontSize: '2.2rem', marginBottom: '8px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>{cat.icon}</div>
-                <div style={{ fontSize: '14px', fontWeight: 700, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{cat.count}</div>
-                <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', marginTop: '8px' }}>Ver productos →</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── CATALOGUE ── */}
-      <div style={{ padding: '0 1.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }} id="catalogo">
-        <SectionTitle text="Catálogo de productos" />
-        
-        {/* Filtros */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', flexWrap: 'wrap', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {([['todos', 'Todos'], ['poleras', 'Poleras'], ['polerones', 'Polerones'], ['tazas', 'Tazas'], ['accesorios', 'Accesorios'], ['deportiva', 'Deportiva'], ['impresion', 'Impresión']] as const).map(([c, label]) => (
-            <button
-              key={c}
-              onClick={() => setActiveCat(c)}
-              style={{
-                fontSize: '12px', fontWeight: 500, padding: '8px 16px',
-                border: '1px solid ' + (activeCat === c ? 'var(--text-primary)' : 'var(--border-medium)'),
-                background: activeCat === c ? 'var(--text-primary)' : 'var(--bg-card)',
-                color: activeCat === c ? (theme === 'dark' ? '#fff' : '#fff') : 'var(--text-secondary)',
-                cursor: 'pointer', borderRadius: '6px', fontFamily: 'inherit', whiteSpace: 'nowrap',
-                transition: 'all 0.2s',
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: '20px' }}>
-          {filteredProducts.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-        
-        {filteredProducts.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-muted)' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔍</div>
-            <p style={{ fontSize: '16px', fontWeight: 500 }}>No hay productos en esta categoría</p>
-            <p style={{ fontSize: '14px', marginTop: '0.5rem' }}>Prueba con otra categoría o busca otro término</p>
-          </div>
-        )}
-      </div>
-
-      {/* ── PROMO BANNERS ── */}
-      <div style={{ padding: '0 1.5rem 2.5rem', maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+      {/* ── PROMO BANNERS (AMPLIADOS) ── */}
+      <div style={{ padding: '0 1.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <PromoCard
             bg="linear-gradient(135deg, var(--bg-primary) 0%, #166534 100%)"
             label="Ideal para equipos"
             title={<>Polerones<br />Personalizados</>}
             cta="Ver polerones"
-            onClick={() => { setActiveCat('polerones'); scrollToCat(); }}
+            onClick={() => window.location.href = '/?cat=polerones'}
+            large
           />
           <PromoCard
-            bg="linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)"
+            bg="linear-gradient(135deg, var(--color-primary) 0%, #1e3a8a 100%)"
             label="Descuento por volumen"
             title={<>Venta<br />Corporativa</>}
             cta="Cotizar empresa"
             onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
+            large
           />
         </div>
       </div>
@@ -565,7 +504,7 @@ export default function HomePage() {
               </p>
             </div>
             {[
-              { title: 'Productos', links: [['Poleras', () => { setActiveCat('poleras'); scrollToCat(); }], ['Polerones', () => { setActiveCat('polerones'); scrollToCat(); }], ['Tazas', () => { setActiveCat('tazas'); scrollToCat(); }], ['Deportiva', () => { setActiveCat('deportiva'); scrollToCat(); }]] },
+              { title: 'Productos', links: [['Poleras', () => window.location.href = '/?cat=poleras'], ['Polerones', () => window.location.href = '/?cat=polerones'], ['Tazas', () => window.location.href = '/?cat=tazas'], ['Deportiva', () => window.location.href = '/?cat=deportiva']] },
               { title: 'Tienda', links: [['Cómo funciona', () => document.getElementById('proceso')?.scrollIntoView({ behavior: 'smooth' })], ['Cotizar', () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })]] },
               { title: 'Contacto', links: [['WhatsApp', () => window.open(WHATSAPP_URL)], ['Email', () => window.open(`mailto:${CONTACT_EMAIL}`)]] },
             ].map(col => (
@@ -668,55 +607,15 @@ function FormField({ label, type, placeholder }: { label: string; type: string; 
   );
 }
 
-function ProductCard({ product }: { product: Product }) {
-  const badgeColors: Record<string, string> = {
-    popular: '#ef4444', eco: '#22c55e', pack: '#3b82f6', nuevo: '#111',
-  };
+function PromoCard({ bg, label, title, cta, onClick, large }: { bg: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean }) {
   return (
-    <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-    <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: '8px', overflow: 'hidden', cursor: 'pointer', position: 'relative', transition: 'box-shadow 0.2s, transform 0.2s', boxShadow: 'var(--shadow-sm)' }}>
-      <div style={{ aspectRatio: '1', background: 'linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-        {product.img ? (
-          <img src={product.img} alt={product.n} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }} />
-        ) : (
-          <span style={{ fontSize: '3rem', opacity: 0.5 }}>■</span>
-        )}
-        {product.badge && (
-          <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
-            {product.badge}
-          </div>
-        )}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(17,17,17,0.9)', color: '#fff', fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px', textAlign: 'center', opacity: 0, transition: 'opacity 0.2s' }}>
-          Ver producto
-        </div>
-      </div>
-      <div style={{ padding: '12px 14px 14px' }}>
-        <div style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '4px' }}>{catLabel(product.c)}</div>
-        <div style={{ fontSize: '13px', fontWeight: 600, lineHeight: 1.3, color: 'var(--text-primary)', marginBottom: '6px' }}>{product.n}</div>
-        <div style={{ fontSize: '10px', color: 'var(--text-light)', fontWeight: 500, letterSpacing: '0.06em', marginBottom: '8px' }}>Ref: {product.ref}</div>
-        {product.v.col && (
-          <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '8px' }}>
-            {product.v.col.map(c => (
-              <div key={c.n} title={c.n} style={{ width: '16px', height: '16px', borderRadius: '50%', background: c.h, border: '1.5px solid var(--border-light)', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }} />
-            ))}
-          </div>
-        )}
-        {product.precio && <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>{product.precio}</span>}
-      </div>
-    </div>
-    </Link>
-  );
-}
-
-function PromoCard({ bg, label, title, cta, onClick }: { bg: string; label: string; title: React.ReactNode; cta: string; onClick: () => void }) {
-  return (
-    <div onClick={onClick} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', minHeight: '200px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer' }}>
+    <div onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
       <div style={{ position: 'absolute', inset: 0, background: bg }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,rgba(0,0,0,0.7) 0%,transparent 70%)' }} />
-      <div style={{ position: 'relative', zIndex: 2, padding: '1.8rem 2rem', color: '#fff' }}>
-        <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '6px' }}>{label}</div>
-        <div style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '10px' }}>{title}</div>
-        <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '9px 18px', borderRadius: '3px', display: 'inline-block' }}>{cta}</span>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)' }} />
+      <div style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff' }}>
+        <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{label}</div>
+        <div style={{ fontSize: large ? '1.8rem' : '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '12px' }}>{title}</div>
+        <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '10px 22px', borderRadius: '6px', display: 'inline-block', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>{cta}</span>
       </div>
     </div>
   );
