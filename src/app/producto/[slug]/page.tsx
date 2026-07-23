@@ -4,16 +4,14 @@
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { findBySlug, PRODUCTS, slugify } from '@/data/products';
+import { findBySlug } from '@/data/products';
 import ProductoPageClient from './ProductoPageClient';
+
+export const dynamic = 'force-dynamic';
 
 type ProductoPageProps = {
   params: { slug: string };
 };
-
-export function generateStaticParams() {
-  return PRODUCTS.map(product => ({ slug: slugify(product) }));
-}
 
 export function generateMetadata({ params }: ProductoPageProps): Metadata {
   const product = findBySlug(params.slug);
