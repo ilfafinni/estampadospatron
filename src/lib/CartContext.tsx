@@ -22,6 +22,7 @@ interface CartState {
 
 type CartAction =
   | { type: 'ADD'; item: CartItem }
+  | { type: 'RESTORE'; item: CartItem }
   | { type: 'REMOVE'; index: number }
   | { type: 'UPDATE_QTY'; index: number; qty: number }
   | { type: 'CLEAR' }
@@ -47,6 +48,22 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         return { ...state, items: updated, isOpen: true };
       }
       return { ...state, items: [...state.items, action.item], isOpen: true };
+    }
+    case 'RESTORE': {
+      // Igual que ADD pero sin abrir el carrito
+      const key = (it: CartItem) => `${it.talla}|${it.color}|${it.tipo}|${(it.estampados || []).map(e => `${e.ubicacion}:${e.id}`).sort().join(',')}`;
+      const existingIdx = state.items.findIndex(
+        (i) => i.product.id === action.item.product.id && key(i) === key(action.item)
+      );
+      if (existingIdx >= 0) {
+        const updated = [...state.items];
+        updated[existingIdx] = {
+          ...updated[existingIdx],
+          qty: updated[existingIdx].qty + action.item.qty,
+        };
+        return { ...state, items: updated };
+      }
+      return { ...state, items: [...state.items, action.item] };
     }
     case 'REMOVE':
       return { ...state, items: state.items.filter((_, i) => i !== action.index) };
@@ -100,7 +117,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as CartItem[];
-        parsed.forEach((item) => dispatch({ type: 'ADD', item }));
+        parsed.forEach((item) => dispatch({ type: 'RESTORE', item }));
       }
     } catch {
       // Si falla, ignorar

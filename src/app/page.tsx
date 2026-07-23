@@ -18,6 +18,7 @@ export default function HomePage() {
   const [slideIdx, setSlideIdx] = useState(0);
   const [toast, setToast] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [navOpen, setNavOpen] = useState(false);
 
   // Slider auto
   useEffect(() => {
@@ -91,16 +92,28 @@ export default function HomePage() {
     <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
       <style>{`
         @media (min-width: 769px) {
-          .hero-outer { height: calc(100vh - 144px) !important; }
-          .hero-slide { height: calc(100vh - 144px) !important; }
+          .hero-outer { height: calc(100vh - 168px) !important; }
+          .hero-slide { height: calc(100vh - 168px) !important; }
         }
         @media (max-width: 768px) {
-          .hero-outer { min-height: 500px !important; }
-          .hero-slide { min-height: 500px !important; }
+          .hero-outer { min-height: 480px !important; }
+          .hero-slide { min-height: 480px !important; }
         }
         @media (max-width: 640px) {
           .hero-outer { min-height: 420px !important; }
           .hero-slide { min-height: 420px !important; }
+        }
+        /* Nav drawer */
+        @media (max-width: 900px) {
+          .nav-drawer.open { transform: translateX(0) !important; }
+          .nav-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
+        }
+        /* Scrollbar hide para categorías en mobile */
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        /* Touch targets */
+        @media (max-width: 640px) {
+          .touch-target { min-height: 44px; min-width: 44px; }
         }
       `}</style>
 
@@ -121,7 +134,7 @@ export default function HomePage() {
 
       {/* ── HEADER ── */}
       <header style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border-light)', position: 'sticky', top: 0, zIndex: 200 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '0 2rem', height: '72px', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '0 1.5rem', height: '72px', maxWidth: '1400px', margin: '0 auto' }}>
           {/* Logo */}
           <Link href="/" style={{ textDecoration: 'none', color: 'inherit', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
             <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '40px', width: 'auto' }} onError={(e) => { const img = e.currentTarget; img.style.display = 'none'; const next = img.nextElementSibling as HTMLElement; if (next) next.style.display = 'block'; }} />
@@ -133,7 +146,7 @@ export default function HomePage() {
             </div>
           </Link>
 
-          {/* Search */}
+          {/* Search - hidden on mobile, shown on desktop */}
           <div style={{ flex: 1, maxWidth: '520px', position: 'relative', display: 'none' }}>
             <input
               placeholder="Buscar productos, referencias..."
@@ -208,13 +221,28 @@ export default function HomePage() {
               )}
               Carrito
             </button>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setNavOpen(true)}
+              style={{ display: 'none', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-md)', cursor: 'pointer', color: 'var(--text-primary)' }}
+              aria-label="Abrir menú"
+              className="touch-target"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
           </div>
         </div>
       </header>
 
       {/* ── NAV ── */}
-      <nav style={{ background: 'var(--bg-card)', borderBottom: '2px solid var(--text-primary)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', gap: '0' }}>
+      <nav style={{ background: 'var(--bg-card)', borderBottom: '2px solid var(--text-primary)', position: 'relative', zIndex: 100 }}>
+        {/* Desktop nav */}
+        <div style={{ display: 'flex', alignItems: 'center', maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', gap: '0', minHeight: '56px' }}>
           {[
             { label: 'Inicio', onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
             { label: 'Poleras', onClick: () => { setActiveCat('poleras'); scrollToCat(); } },
@@ -243,6 +271,71 @@ export default function HomePage() {
             COTIZAR
           </button>
         </div>
+
+        {/* Mobile nav drawer */}
+        <div
+          className={`nav-overlay ${navOpen ? 'open' : ''}`}
+          onClick={() => setNavOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+            zIndex: 999, opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s',
+          }}
+        />
+<div
+          className={`nav-drawer ${navOpen ? 'open' : ''}`}
+          style={{
+            position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '320px',
+            background: 'var(--bg-card)', zIndex: 1000,
+            display: 'flex', flexDirection: 'column',
+            boxShadow: 'var(--shadow-lg)',
+            transform: 'translateX(100%)', transition: 'transform 0.3s ease',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
+            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Menú</div>
+            <button
+              onClick={() => setNavOpen(false)}
+              style={{ width: '36px', height: '36px', border: '1px solid var(--border-medium)', background: 'var(--bg-tertiary)', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-sm)', color: 'var(--text-muted)', transition: 'background 0.2s, border-color 0.2s' }}
+              aria-label="Cerrar menú"
+            >
+              ✕
+            </button>
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {[
+                { label: 'Inicio', onClick: () => { window.scrollTo({ top: 0, behavior: 'smooth' }); setNavOpen(false); } },
+                { label: 'Poleras', onClick: () => { setActiveCat('poleras'); scrollToCat(); setNavOpen(false); } },
+                { label: 'Polerones', onClick: () => { setActiveCat('polerones'); scrollToCat(); setNavOpen(false); } },
+                { label: 'Tazas', onClick: () => { setActiveCat('tazas'); scrollToCat(); setNavOpen(false); } },
+                { label: 'Deportiva', onClick: () => { setActiveCat('deportiva'); scrollToCat(); setNavOpen(false); } },
+                { label: 'Accesorios', onClick: () => { setActiveCat('accesorios'); scrollToCat(); setNavOpen(false); } },
+              ].map(item => (
+                <button
+                  key={item.label}
+                  onClick={item.onClick}
+                  style={{
+                    padding: '14px 16px', fontSize: '15px', fontWeight: 600,
+                    letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)',
+                    background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+                    textAlign: 'left', borderRadius: 'var(--radius-sm)',
+                    transition: 'background 0.2s',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                >
+                  {item.label}
+                </button>
+              ))}
+              <button
+                onClick={() => { document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }); setNavOpen(false); }}
+                style={{ marginTop: '8px', background: 'var(--color-accent)', color: '#fff', padding: '12px 16px', border: 'none', borderRadius: 'var(--radius-md)', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase' }}
+              >
+                COTIZAR
+              </button>
+            </div>
+          </div>
+        </div>
       </nav>
 
       {/* ── HERO SLIDER ── */}
@@ -258,14 +351,14 @@ export default function HomePage() {
           >
             <div style={{ position: 'absolute', inset: 0, background: slide.bg }} />
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
-            <div style={{ position: 'relative', zIndex: 2, padding: '4rem 5rem', maxWidth: '640px', color: '#fff' }}>
+            <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff' }}>
               <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: '#fca5a5', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
                 {slide.tag}
               </div>
-              <h1 style={{ fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
+              <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 3.2rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
                 {slide.h1}
               </h1>
-              <p style={{ fontSize: '15px', opacity: 0.9, marginBottom: '2rem', lineHeight: 1.7, maxWidth: '500px' }}>
+              <p style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', opacity: 0.9, marginBottom: '2rem', lineHeight: 1.7, maxWidth: '500px' }}>
                 {slide.p}
               </p>
               <button
@@ -292,7 +385,7 @@ export default function HomePage() {
 
       {/* ── INFO STRIP ── */}
       <div style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-light)', borderBottom: '1px solid var(--border-light)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', padding: '1.5rem 2rem', gap: '1rem' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', padding: '1.5rem 1.5rem', gap: '1rem' }}>
           {[
             { icon: '🚀', title: 'Retiro Express 4 hrs', sub: 'Disponible en Curicó' },
             { icon: '📦', title: 'Despacho a todo Chile', sub: 'Coordinamos envío a tu puerta' },
@@ -311,7 +404,7 @@ export default function HomePage() {
       </div>
 
       {/* ── CATEGORIES ── */}
-      <div style={{ padding: '3rem 2rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
+      <div style={{ padding: '2.5rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
         <SectionTitle text="Explorar categorías" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '16px' }}>
           {CATEGORIES.map(cat => (
@@ -336,11 +429,11 @@ export default function HomePage() {
       </div>
 
       {/* ── CATALOGUE ── */}
-      <div style={{ padding: '0 2rem 3.5rem', maxWidth: '1400px', margin: '0 auto' }} id="catalogo">
+      <div style={{ padding: '0 1.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }} id="catalogo">
         <SectionTitle text="Catálogo de productos" />
         
         {/* Filtros */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1.5rem', flexWrap: 'wrap', overflowX: 'auto', paddingBottom: '8px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {([['todos', 'Todos'], ['poleras', 'Poleras'], ['polerones', 'Polerones'], ['tazas', 'Tazas'], ['accesorios', 'Accesorios'], ['deportiva', 'Deportiva'], ['impresion', 'Impresión']] as const).map(([c, label]) => (
             <button
               key={c}
@@ -376,7 +469,7 @@ export default function HomePage() {
       </div>
 
       {/* ── PROMO BANNERS ── */}
-      <div style={{ padding: '0 2rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ padding: '0 1.5rem 2.5rem', maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
           <PromoCard
             bg="linear-gradient(135deg, var(--bg-primary) 0%, #166534 100%)"
@@ -396,7 +489,7 @@ export default function HomePage() {
       </div>
 
       {/* ── PROCESO ── */}
-      <div style={{ padding: '3.5rem 2rem', maxWidth: '1400px', margin: '0 auto' }} id="proceso">
+      <div style={{ padding: '3rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="proceso">
         <SectionTitle text="Cómo funciona" />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '24px', marginTop: '2rem' }}>
           {[
@@ -415,7 +508,7 @@ export default function HomePage() {
       </div>
 
       {/* ── CONTACTO ── */}
-      <div style={{ background: 'var(--bg-secondary)', padding: '3.5rem 2rem' }} id="contacto">
+      <div style={{ background: 'var(--bg-secondary)', padding: '3rem 1.5rem' }} id="contacto">
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
           <div>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Cotiza tu pedido</h2>
@@ -459,7 +552,7 @@ export default function HomePage() {
       </div>
 
       {/* ── FOOTER ── */}
-      <footer style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', padding: '3.5rem 2rem 2rem', borderTop: '1px solid var(--border-light)' }}>
+      <footer style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', padding: '3rem 1.5rem 1.5rem', borderTop: '1px solid var(--border-light)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: '2.5rem', paddingBottom: '2.5rem', borderBottom: '1px solid var(--border-light)' }}>
             <div>
@@ -589,7 +682,7 @@ function ProductCard({ product }: { product: Product }) {
           <span style={{ fontSize: '3rem', opacity: 0.5 }}>■</span>
         )}
         {product.badge && (
-          <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff' }}>
+          <div style={{ position: 'absolute', top: '8px', left: '8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: '2px', background: badgeColors[product.badge] || '#111', color: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
             {product.badge}
           </div>
         )}
