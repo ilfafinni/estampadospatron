@@ -180,9 +180,9 @@ export function findBySlug(slug: string): Product | undefined {
 }
 export function tieneRecargoEstampado(c: Categoria): boolean { return c === 'poleras' || c === 'polerones'; }
 export function parsePrecio(precio: string): number {
-  const match = precio.match(/[d.]+/);
+  const match = precio.match(/[\d.]+/);
   if (!match) return 0;
-  return parseInt(match[0].replace(/./g, ''), 10);
+  return parseInt(match[0].replace(/\./g, ''), 10);
 }
 export function catLabel(c: Categoria): string {
   const map: Record<Categoria,string> = { poleras:'Poleras', polerones:'Polerones', tazas:'Tazas', accesorios:'Accesorios', deportiva:'Deportiva', impresion:'Impresión' };
