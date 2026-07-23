@@ -49,8 +49,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             --color-primary: #1e40af;
             --color-primary-hover: #1e3a8a;
             --color-primary-light: #dbeafe;
-            --color-accent: #dc2626;
-            --color-accent-hover: #b91c1c;
+            --color-accent: #1e40af;
+            --color-accent-hover: #1e3a8a;
             --color-success: #22c55e;
             --color-whatsapp: #25D366;
             --bg-primary: #ffffff;
@@ -77,8 +77,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             --color-primary: #3b82f6;
             --color-primary-hover: #2563eb;
             --color-primary-light: #1e3a5f;
-            --color-accent: #ef4444;
-            --color-accent-hover: #dc2626;
+            --color-accent: #3b82f6;
+            --color-accent-hover: #2563eb;
             --color-success: #22c55e;
             --color-whatsapp: #25D366;
             --bg-primary: #0f172a;

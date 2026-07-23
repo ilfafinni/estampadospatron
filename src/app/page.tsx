@@ -137,7 +137,7 @@ export default function HomePage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '0 1.5rem', height: '72px', maxWidth: '1400px', margin: '0 auto' }}>
           {/* Logo */}
           <Link href="/" style={{ textDecoration: 'none', color: 'inherit', flexShrink: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '40px', width: 'auto' }} onError={(e) => { const img = e.currentTarget; img.style.display = 'none'; const next = img.nextElementSibling as HTMLElement; if (next) next.style.display = 'block'; }} />
+            <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '40px', width: 'auto', borderRadius: '8px' }} onError={(e) => { const img = e.currentTarget; img.style.display = 'none'; const next = img.nextElementSibling as HTMLElement; if (next) next.style.display = 'block'; }} />
             <div style={{ display: 'none', fontSize: '22px', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)', lineHeight: 1 }}>
               ESTAMPADOS <span style={{ color: 'var(--color-accent)' }}>PATRÓN</span>
             </div>
@@ -557,7 +557,7 @@ export default function HomePage() {
           <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: '2.5rem', paddingBottom: '2.5rem', borderBottom: '1px solid var(--border-light)' }}>
             <div>
               <div style={{ fontSize: '24px', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '32px' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '32px', borderRadius: '8px' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
                 <span>ESTAMPADOS <span style={{ color: 'var(--color-accent)' }}>PATRÓN</span></span>
               </div>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.7, marginTop: '1rem', maxWidth: '300px' }}>
