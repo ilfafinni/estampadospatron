@@ -90,8 +90,16 @@ export default function ProductDetail({ product }: { product: Product }) {
 
   return (
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem 1.5rem 3rem', background: 'var(--bg-primary)', minHeight: 'calc(100vh - 216px)' }}>
+      <style>{`
+        .pd-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.5rem; align-items: start; }
+        @media (max-width: 768px) { .pd-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
+        @media (max-width: 640px) {
+          .pd-cta-grid { grid-template-columns: 1fr !important; }
+          .pd-breadcrumb { font-size: 11px !important; }
+        }
+      `}</style>
       {/* Breadcrumb + compartir */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '10px' }}>
+      <div className="pd-breadcrumb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.2rem', flexWrap: 'wrap', gap: '10px' }}>
         <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
           <Link href="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}>Inicio</Link>
           {' / '}
@@ -114,7 +122,7 @@ export default function ProductDetail({ product }: { product: Product }) {
       </div>
 
       {/* Grid principal: foto/editor | info y compra */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: '2.5rem', alignItems: 'start' }}>
+      <div className="pd-grid">
 
         {/* ── COLUMNA IZQUIERDA: foto + editor de estampado ── */}
         <div>
@@ -287,7 +295,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           </div>
 
           {/* CTA */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '16px' }}>
+          <div className="pd-cta-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '16px' }}>
             <button
               onClick={handleAddToCart}
               style={{
