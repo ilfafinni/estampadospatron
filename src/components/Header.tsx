@@ -2,12 +2,11 @@
 // src/components/Header.tsx
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useCart } from '@/lib/CartContext';
 import { useTheme } from '@/components/ThemeProvider';
-import { CATEGORIES, type Categoria } from '@/data/products';
-
-const WHATSAPP_URL = 'https://wa.me/56966389299';
+import { type Categoria } from '@/data/products';
 
 interface HeaderProps {
   showSearch?: boolean;
@@ -15,17 +14,17 @@ interface HeaderProps {
   onNavClick?: () => void;
 }
 
-export default function Header({ 
-  showSearch = true, 
+export default function Header({
+  showSearch = true,
   showHamburger = true,
-  onNavClick 
+  onNavClick,
 }: HeaderProps) {
+  const router = useRouter();
   const { totalItems, toggleCart } = useCart();
   const { theme, toggleTheme } = useTheme();
-  const [navOpen, setNavOpen] = useState(false);
   const [catMenuOpen, setCatMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -41,8 +40,14 @@ export default function Header({
     { label: 'Accesorios', cat: 'accesorios' as Categoria },
   ];
 
+  const handleHome = () => {
+    setMobileCatOpen(false);
+    setCatMenuOpen(false);
+    router.push('/');
+  };
+
   const goToCategory = (cat: Categoria) => {
-    window.location.href = `/catalogo?cat=${cat}`;
+    router.push(`/catalogo?cat=${cat}`);
     setMobileCatOpen(false);
     setCatMenuOpen(false);
   };
@@ -52,41 +57,55 @@ export default function Header({
       <style>{`
         .cat-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
         .cat-panel.open { transform: translateX(0) !important; }
-        .nav-drawer.open { transform: translateX(0) !important; }
-        .nav-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
         @media (max-width: 900px) {
           .cat-panel { transform: translateX(100%); }
           .cat-overlay { opacity: 0; pointer-events: none; }
         }
+        @media (max-width: 640px) {
+          .header-inner { padding: 0 0.75rem !important; height: 52px !important; }
+          .header-brand-link { gap: 0.3rem !important; min-width: 0 !important; }
+          .header-brand-text { font-size: 10px !important; line-height: 1 !important; }
+          .header-brand-link img { height: 26px !important; }
+          .header-brand-subtitle { display: none !important; }
+          .header-actions { gap: 0.3rem !important; }
+          .header-icon-btn { width: 34px !important; height: 34px !important; }
+          .hamburger-btn { width: 34px !important; height: 34px !important; }
+          .hamburger-btn svg { width: 20px !important; height: 20px !important; }
+        }
       `}</style>
 
-      {/* ── HEADER FIJO ── */}
-      <header style={{ 
-        position: 'sticky', top: 0, zIndex: 500,
-        background: scrolled ? 'rgba(var(--bg-card-rgb, 255,255,255), 0.95)' : 'var(--bg-card)',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border-light)' : 'none',
-        transition: 'background 0.3s, border 0.3s, box-shadow 0.3s',
-        boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', height: '64px', maxWidth: '1400px', margin: '0 auto' }}>
-          
-          {/* LEFT: Hamburger + Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+      <header
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 500,
+          background: scrolled ? 'rgba(255,255,255,0.95)' : 'var(--bg-card)',
+          backdropFilter: scrolled ? 'blur(12px)' : 'none',
+          borderBottom: scrolled ? '1px solid var(--border-light)' : 'none',
+          transition: 'background 0.3s, border 0.3s, box-shadow 0.3s',
+          boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
+        }}
+      >
+        <div className="header-inner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1rem', height: '64px', maxWidth: '1400px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, minWidth: 0 }}>
             {showHamburger && (
               <button
-                onClick={() => setMobileCatOpen(true)}
-                style={{ 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                  width: '44px', height: '44px', 
-                  background: 'var(--bg-tertiary)', border: '1px solid var(--border-medium)', 
-                  borderRadius: 'var(--radius-md)', cursor: 'pointer', 
-                  color: 'var(--text-primary)', transition: 'background 0.2s, border-color 0.2s' 
+                onClick={() => {
+                  setMobileCatOpen(true);
+                  onNavClick?.();
+                }}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: '44px', height: '44px',
+                  background: 'var(--bg-tertiary)', border: '1px solid var(--border-medium)',
+                  borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                  color: 'var(--text-primary)', transition: 'background 0.2s, border-color 0.2s',
+                  flexShrink: 0,
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--border-light)'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
                 aria-label="Abrir categorías"
-                className="touch-target"
+                className="touch-target hamburger-btn"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="3" y1="6" x2="21" y2="6" />
@@ -96,20 +115,19 @@ export default function Header({
               </button>
             )}
 
-            <Link href="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '36px', width: 'auto', borderRadius: '8px', objectFit: 'contain' }} onError={(e) => { const img = e.currentTarget; img.style.display = 'none'; }} />
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-                <span style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+            <Link href="/" className="header-brand-link" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, overflow: 'hidden', flexShrink: 1 }}>
+              <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '34px', width: 'auto', borderRadius: '8px', objectFit: 'contain', flexShrink: 0 }} onError={(e) => { const img = e.currentTarget; img.style.display = 'none'; }} />
+              <div className="header-brand-group" style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.05, minWidth: 0, overflow: 'hidden' }}>
+                <span className="header-brand-text" style={{ fontSize: 'clamp(10px, 2vw, 16px)', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   ESTAMPADOS <span style={{ color: 'var(--color-accent)' }}>PATRÓN</span>
                 </span>
-                <span style={{ fontSize: '8px', fontWeight: 600, letterSpacing: '0.12em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                <span className="header-brand-subtitle" style={{ fontSize: '8px', fontWeight: 600, letterSpacing: '0.12em', color: 'var(--text-muted)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
                   Estampados Personalizados
                 </span>
               </div>
             </Link>
           </div>
 
-          {/* CENTER: Search (desktop) */}
           {showSearch && (
             <div style={{ flex: 1, maxWidth: '520px', position: 'relative', display: 'none' }}>
               <input
@@ -129,18 +147,11 @@ export default function Header({
             </div>
           )}
 
-          {/* RIGHT: Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
-              <button style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 18px', borderRadius: '6px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}>
-                Cotizar
-              </button>
-            </a>
-
-            {/* Theme Toggle */}
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
             <button
               onClick={toggleTheme}
               aria-label={theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
+              className="header-icon-btn"
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-md)', cursor: 'pointer', color: 'var(--text-primary)', transition: 'background 0.2s, border-color 0.2s' }}
               onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--border-light)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
@@ -164,7 +175,6 @@ export default function Header({
               )}
             </button>
 
-            {/* Carrito */}
             <button
               onClick={toggleCart}
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '9px', fontWeight: 500, background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 6px', borderRadius: '6px', position: 'relative', transition: 'background 0.2s' }}
@@ -188,7 +198,6 @@ export default function Header({
         </div>
       </header>
 
-      {/* ── MOBILE CATEGORIES SIDE PANEL (Right side slide) ── */}
       {showHamburger && (
         <>
           <div
@@ -222,14 +231,14 @@ export default function Header({
             <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <button
-                  onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileCatOpen(false); }}
+                  onClick={handleHome}
                   style={{ padding: '14px 16px', fontSize: '15px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.2s' }}
                   onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
                   onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
                 >
                   Inicio
                 </button>
-                
+
                 <div style={{ borderTop: '1px solid var(--border-light)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
                   {navCategories.map(item => (
                     <button
@@ -243,30 +252,21 @@ export default function Header({
                     </button>
                   ))}
                 </div>
-
-                <button
-                  onClick={() => { document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }); setMobileCatOpen(false); }}
-                  style={{ marginTop: '1rem', background: 'var(--color-accent)', color: '#fff', padding: '14px 16px', border: 'none', borderRadius: 'var(--radius-md)', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase' }}
-                >
-                  COTIZAR
-                </button>
               </div>
             </div>
           </div>
         </>
       )}
 
-      {/* ── DESKTOP NAV ── */}
       <nav style={{ background: 'var(--bg-card)', borderBottom: '2px solid var(--text-primary)', position: 'relative', zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', gap: '0', justifyContent: 'center', minHeight: '56px' }}>
           <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={handleHome}
             style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
           >
             Inicio
           </button>
-          
-          {/* Categorías dropdown en desktop */}
+
           <div style={{ position: 'relative' }}>
             <button
               onClick={() => setCatMenuOpen(!catMenuOpen)}
@@ -279,9 +279,9 @@ export default function Header({
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </button>
-            
+
             {catMenuOpen && (
-              <div 
+              <div
                 onMouseEnter={() => setCatMenuOpen(true)}
                 onMouseLeave={() => setCatMenuOpen(false)}
                 style={{ position: 'absolute', top: '100%', left: 0, minWidth: '220px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', zIndex: 1000, padding: '8px 0' }}
@@ -300,13 +300,6 @@ export default function Header({
               </div>
             )}
           </div>
-
-          <button
-            onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ marginLeft: '8px', background: 'var(--color-accent)', color: '#fff', padding: '6px 14px', border: 'none', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase', transition: 'background 0.2s' }}
-          >
-            COTIZAR
-          </button>
         </div>
       </nav>
     </>

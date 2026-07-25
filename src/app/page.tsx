@@ -4,34 +4,22 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PRODUCTS, CATEGORIES, catLabel, slugify, type Product, type Categoria } from '@/data/products';
-import { useCart } from '@/lib/CartContext';
-import { useTheme } from '@/components/ThemeProvider';
+import Header from '@/components/Header';
 
 const WHATSAPP_NUMBER_DISPLAY = '+56 9 6638 9299';
 const WHATSAPP_URL = 'https://wa.me/56966389299';
 const CONTACT_EMAIL = 'contacto@estampadospatron.com';
 
 export default function HomePage() {
-  const { totalItems, toggleCart } = useCart();
-  const { theme, toggleTheme } = useTheme();
   const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
   const [slideIdx, setSlideIdx] = useState(0);
   const [toast, setToast] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [navOpen, setNavOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   // Slider auto
   useEffect(() => {
     const t = setInterval(() => setSlideIdx(i => (i + 1) % 3), 5000);
     return () => clearInterval(t);
-  }, []);
-
-  // Scroll detection for header shadow
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const showToast = (msg: string) => {
@@ -85,11 +73,6 @@ export default function HomePage() {
           .hero-outer { min-height: 420px !important; }
           .hero-slide { min-height: 420px !important; }
         }
-        /* Nav drawer */
-        @media (max-width: 900px) {
-          .nav-drawer.open { transform: translateX(0) !important; }
-          .nav-overlay.open { opacity: 1 !important; pointer-events: auto !important; }
-        }
         /* Scrollbar hide para filtros */
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -99,204 +82,7 @@ export default function HomePage() {
         }
       `}</style>
 
-      {/* ── HEADER FIJO ── */}
-      <header style={{ 
-        position: 'sticky', top: 0, zIndex: 500,
-        background: scrolled ? 'rgba(var(--bg-card-rgb, 255,255,255), 0.95)' : 'var(--bg-card)',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border-light)' : 'none',
-        transition: 'background 0.3s, border 0.3s, box-shadow 0.3s',
-        boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem', height: '64px', maxWidth: '1400px', margin: '0 auto' }}>
-          
-          {/* LEFT: Hamburger + Logo */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
-            {/* Hamburger menu */}
-            <button
-              onClick={() => setNavOpen(true)}
-              style={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                width: '44px', height: '44px', 
-                background: 'var(--bg-tertiary)', border: '1px solid var(--border-medium)', 
-                borderRadius: 'var(--radius-md)', cursor: 'pointer', 
-                color: 'var(--text-primary)', transition: 'background 0.2s, border-color 0.2s' 
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--border-light)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
-              aria-label="Abrir menú"
-              className="touch-target"
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-            </button>
-
-            {/* Logo + Nombre */}
-            <Link href="/" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src="/images/logo.png" alt="Estampados Patrón" style={{ height: '36px', width: 'auto', borderRadius: '8px', objectFit: 'contain' }} onError={(e) => { const img = e.currentTarget; img.style.display = 'none'; }} />
-              <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-                <span style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
-                  ESTAMPADOS <span style={{ color: 'var(--color-accent)' }}>PATRÓN</span>
-                </span>
-                <span style={{ fontSize: '8px', fontWeight: 600, letterSpacing: '0.12em', color: 'var(--text-muted)', textTransform: 'uppercase' }}>
-                  Estampados Personalizados
-                </span>
-              </div>
-            </Link>
-          </div>
-
-          {/* RIGHT: Actions */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            {/* Search - desktop only */}
-            <div style={{ display: 'none', maxWidth: '320px', position: 'relative' }}>
-              <input
-                placeholder="Buscar..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%', padding: '8px 14px 8px 38px', border: '1px solid var(--border-medium)',
-                  borderRadius: '6px', fontSize: '13px', fontFamily: 'inherit', outline: 'none',
-                  background: 'var(--bg-tertiary)', transition: 'border-color 0.2s, box-shadow 0.2s',
-                  color: 'var(--text-primary)',
-                }}
-                onFocus={(e) => { e.target.style.borderColor = 'var(--color-primary)'; e.target.style.boxShadow = '0 0 0 3px var(--color-primary-light)'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'var(--border-medium)'; e.target.style.boxShadow = 'none'; }}
-              />
-              <svg style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-              </svg>
-            </div>
-
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
-              <button style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '12px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '10px 18px', borderRadius: '6px', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s' }}>
-                Cotizar
-              </button>
-            </a>
-
-            {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              aria-label={theme === 'light' ? 'Modo oscuro' : 'Modo claro'}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', background: 'var(--bg-tertiary)', border: '1px solid var(--border-medium)', borderRadius: 'var(--radius-md)', cursor: 'pointer', color: 'var(--text-primary)', transition: 'background 0.2s, border-color 0.2s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--border-light)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
-            >
-              {theme === 'light' ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                </svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-                </svg>
-              )}
-            </button>
-
-            {/* Carrito */}
-            <button
-              onClick={toggleCart}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', cursor: 'pointer', color: 'var(--text-primary)', fontSize: '9px', fontWeight: 500, background: 'none', border: 'none', fontFamily: 'inherit', padding: '4px 6px', borderRadius: '6px', position: 'relative', transition: 'background 0.2s' }}
-            >
-              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" x2="21" y1="6" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
-              </svg>
-              {totalItems > 0 && (
-                <span style={{
-                  position: 'absolute', top: '-4px', right: '-4px',
-                  background: 'var(--color-accent)', color: '#fff', borderRadius: '50%',
-                  width: '16px', height: '16px', fontSize: '9px', fontWeight: 700,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {totalItems > 9 ? '9+' : totalItems}
-                </span>
-              )}
-              <span style={{ display: 'none' }}>Carrito</span>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* ── MOBILE NAV DRAWER ── */}
-      <div
-        className={`nav-overlay ${navOpen ? 'open' : ''}`}
-        onClick={() => setNavOpen(false)}
-        style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-          zIndex: 999, opacity: 0, pointerEvents: 'none', transition: 'opacity 0.2s',
-        }}
-      />
-      <div
-        className={`nav-drawer ${navOpen ? 'open' : ''}`}
-        style={{
-          position: 'fixed', top: 0, right: 0, bottom: 0, width: '100%', maxWidth: '320px',
-          background: 'var(--bg-card)', zIndex: 1000,
-          display: 'flex', flexDirection: 'column',
-          boxShadow: 'var(--shadow-lg)',
-          transform: 'translateX(100%)', transition: 'transform 0.3s ease',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 1.5rem', borderBottom: '1px solid var(--border-light)' }}>
-          <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Menú</div>
-          <button
-            onClick={() => setNavOpen(false)}
-            style={{ width: '36px', height: '36px', border: '1px solid var(--border-medium)', background: 'var(--bg-tertiary)', cursor: 'pointer', fontSize: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 'var(--radius-sm)', color: 'var(--text-muted)', transition: 'background 0.2s, border-color 0.2s' }}
-            aria-label="Cerrar menú"
-          >
-            ✕
-          </button>
-        </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <button
-              onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setNavOpen(false); }}
-              style={{ padding: '14px 16px', fontSize: '15px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.2s' }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-            >
-              Inicio
-            </button>
-            
-            <div style={{ borderTop: '1px solid var(--border-light)', marginTop: '0.5rem', paddingTop: '0.5rem' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem', paddingLeft: '4px' }}>CATEGORÍAS</div>
-              {[
-                { label: 'Poleras', cat: 'poleras' as Categoria },
-                { label: 'Polerones', cat: 'polerones' as Categoria },
-                { label: 'Tazas', cat: 'tazas' as Categoria },
-                { label: 'Deportiva', cat: 'deportiva' as Categoria },
-                { label: 'Accesorios', cat: 'accesorios' as Categoria },
-              ].map(item => (
-                <button
-                  key={item.label}
-                  onClick={() => { window.location.href = `/?cat=${item.cat}`; setNavOpen(false); }}
-                  style={{ padding: '12px 16px', fontSize: '14px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', borderRadius: 'var(--radius-sm)', transition: 'background 0.15s' }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() => { document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }); setNavOpen(false); }}
-              style={{ marginTop: '1rem', background: 'var(--color-accent)', color: '#fff', padding: '14px 16px', border: 'none', borderRadius: 'var(--radius-md)', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.06em', textTransform: 'uppercase' }}
-            >
-              COTIZAR
-            </button>
-          </div>
-        </div>
-      </div>
+      <Header showSearch={true} showHamburger={true} />
 
       {/* ── HERO SLIDER ── */}
       <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-tertiary)', minHeight: '480px' }}>

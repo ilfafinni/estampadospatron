@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart, formatPrice } from '@/lib/CartContext';
 import { parsePrecio, tieneRecargoEstampado } from '@/data/products';
+import Header from '@/components/Header';
 
 export default function CheckoutPage() {
   const { state, totalPrice, clearCart } = useCart();
@@ -70,18 +71,7 @@ export default function CheckoutPage() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", minHeight: '100vh', background: '#f5f5f5' }}>
 
-      {/* Header */}
-      <header style={{ background: '#111', padding: '1rem 2rem', display: 'flex', alignItems: 'center', gap: 16 }}>
-        <button
-          onClick={() => router.push('/')}
-          style={{ background: 'none', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: 20, lineHeight: 1 }}
-        >
-          ←
-        </button>
-        <div style={{ fontSize: 18, fontWeight: 800, color: '#fff' }}>
-          PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
-        </div>
-      </header>
+      <Header showSearch={false} showHamburger={true} />
 
       <div style={{ maxWidth: 600, margin: '0 auto', padding: '2rem 1rem' }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: '1.5rem', color: '#111' }}>

@@ -5,6 +5,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/lib/CartContext';
 import { formatPrice } from '@/lib/CartContext';
+import Header from '@/components/Header';
 
 interface PaymentResult {
   status: string;
@@ -139,11 +140,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 export default function ResultadoPage() {
   return (
     <div style={{ fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f5f5f5', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ background: '#111', padding: '1rem 2rem' }}>
-        <div style={{ fontSize: '18px', fontWeight: 800, color: '#fff' }}>
-          PATRÓN<span style={{ color: '#e53935' }}>.</span>CL
-        </div>
-      </header>
+      <Header showSearch={false} showHamburger={true} />
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
         <div style={{ background: '#fff', borderRadius: '8px', padding: '3rem', maxWidth: '560px', width: '100%', border: '1px solid #e0e0e0' }}>
           <Suspense fallback={<div style={{ textAlign: 'center', color: '#666' }}>Cargando...</div>}>
