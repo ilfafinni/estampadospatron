@@ -4,13 +4,21 @@
 import { useState, useRef, useCallback } from 'react';
 import { PRODUCTS, CATEGORIES, catLabel, type Product, type Categoria } from '@/data/products';
 
+interface CategoryDef {
+  c: string;
+  name: string;
+  count: string;
+  icon: string;
+  bg: string;
+}
+
 const ADMIN_PASSWORD = 'JasperDante.26';
 
 // ── tipos ─────────────────────────────────────────────────────────────────────
 type Tab = 'fotos' | 'productos' | 'categorias';
 type UploadState = 'idle' | 'uploading' | 'done' | 'error';
 interface UploadResult { url: string; publicId: string; productId: number; }
-interface EditableProduct extends Product { _dirty?: boolean; _new?: boolean; _deleted?: boolean; }
+interface EditableProduct extends Omit<Product,'c'> { c: string; _dirty?: boolean; _new?: boolean; _deleted?: boolean; }
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 function fileToBase64(file: File): Promise<string> {
@@ -29,7 +37,7 @@ function copyToClipboard(text: string) {
   });
 }
 
-function generateProductsTs(products: EditableProduct[]): string {
+function generateProductsTs(products: EditableProduct[], cats: CategoryDef[]): string {
   const rows = products.filter(p => !p._deleted).map(p => {
     const t    = p.v.t?.length    ? `t:[${p.v.t.map((s:string) => `'${s}'`).join(',')}]` : '';
     const col  = p.v.col?.length  ? `col:[${p.v.col.map((c:{n:string;h:string}) => `{n:'${c.n}',h:'${c.h}'}`).join(',')}]` : '';
@@ -40,32 +48,36 @@ function generateProductsTs(products: EditableProduct[]): string {
     return `  {\n  id: ${p.id}, c: '${p.c}', n: '${p.n.replace(/'/g,"\\'")}', ref: '${p.ref}',\n${img}  desc: '${p.desc.replace(/'/g,"\\'")}', v: {${v}}, precio: '${p.precio}',\n${bdg}  }`;
   });
 
-  const polCount  = products.filter(p=>!p._deleted&&p.c==='poleras').length;
-  const polrCount = products.filter(p=>!p._deleted&&p.c==='polerones').length;
-  const tazCount  = products.filter(p=>!p._deleted&&p.c==='tazas').length;
-  const accCount  = products.filter(p=>!p._deleted&&p.c==='accesorios').length;
-  const depCount  = products.filter(p=>!p._deleted&&p.c==='deportiva').length;
-  const impCount  = products.filter(p=>!p._deleted&&p.c==='impresion').length;
+  const catCodes = cats.map(c => c.c);
+  const catUnion = catCodes.map(c => `'${c}'`).join(' | ');
+
+  const catsArr = cats.map(c => {
+    const count = products.filter(p => !p._deleted && p.c === c.c).length;
+    const label = count === 1 ? 'producto' : 'productos';
+    return `  {c:'${c.c}' as Categoria, name:'${c.name.replace(/'/g,"\\'")}', count:'${count} ${label}', icon:'${c.icon}', bg:'${c.bg}'}`;
+  }).join(',\n');
+
+  const recargoConds = catCodes.filter(c => c === 'poleras' || c === 'polerones');
+  const tieneRecargoBody = recargoConds.length > 0
+    ? `return c === '${recargoConds.join(`' || c === '`)}';`
+    : 'return false;';
+
+  const labelMap = cats.map(c => `  '${c.c}':'${c.name.replace(/'/g,"\\'")}'`).join(',\n');
 
   return `// src/data/products.ts
-export type Categoria = 'poleras' | 'polerones' | 'tazas' | 'accesorios' | 'deportiva' | 'impresion';
+export type Categoria = ${catUnion};
 export type Badge = 'popular' | 'eco' | 'pack' | 'nuevo';
 export interface ColorVariant { n: string; h: string; }
 export interface ProductVariants { t?: string[]; col?: ColorVariant[]; tipo?: string[]; }
 export interface Product {
-  id: number; c: Categoria; n: string; ref: string; e: string;
+  id: number; c: Categoria; n: string; ref: string; e?: string;
   img?: string; desc: string; v: ProductVariants; precio: string; badge?: Badge;
 }
 export const PRODUCTS: Product[] = [
 ${rows.join(',\n')}
 ];
 export const CATEGORIES = [
-  {c:'poleras' as Categoria,   name:'Poleras',    count:'${polCount} productos',    icon:'👕', bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
-  {c:'polerones' as Categoria, name:'Polerones',  count:'${polrCount} productos',   icon:'🧥', bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
-  {c:'tazas' as Categoria,     name:'Tazas',      count:'${tazCount} modelos',      icon:'☕', bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
-  {c:'accesorios' as Categoria,name:'Accesorios', count:'${accCount} productos',    icon:'📱', bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
-  {c:'deportiva' as Categoria, name:'Deportiva',  count:'${depCount} productos',    icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
-  {c:'impresion' as Categoria, name:'Impresión',  count:'${impCount} productos',    icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'},
+${catsArr}
 ];
 export interface EstampadoSize { id: string; label: string; precio: number; }
 export const ESTAMPADO_SIZES: EstampadoSize[] = [
@@ -77,21 +89,21 @@ export const ESTAMPADO_SIZES: EstampadoSize[] = [
 export type Ubicacion = 'Frente' | 'Espalda';
 export interface EstampadoSeleccion { ubicacion: Ubicacion; id: string; label: string; precio: number; }
 export function slugify(p: Product): string {
-  const base = p.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  const base = p.n.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   return \`\${base}-\${p.id}\`;
 }
 export function findBySlug(slug: string): Product | undefined {
   const id = Number(slug.split('-').pop());
   return PRODUCTS.find(p => p.id === id);
 }
-export function tieneRecargoEstampado(c: Categoria): boolean { return c === 'poleras' || c === 'polerones'; }
+export function tieneRecargoEstampado(c: Categoria): boolean { ${tieneRecargoBody} }
 export function parsePrecio(precio: string): number {
-  const match = precio.match(/[\d.]+/);
+  const match = precio.match(/[\\d.]+/);
   if (!match) return 0;
-  return parseInt(match[0].replace(/\./g, ''), 10);
+  return parseInt(match[0].replace(/\\./g, ''), 10);
 }
 export function catLabel(c: Categoria): string {
-  const map: Record<Categoria,string> = { poleras:'Poleras', polerones:'Polerones', tazas:'Tazas', accesorios:'Accesorios', deportiva:'Deportiva', impresion:'Impresión' };
+  const map: Record<Categoria,string> = {\n${labelMap}\n};
   return map[c] || c;
 }`;
 }
@@ -132,7 +144,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 }
 
 // ── Tarjeta foto ──────────────────────────────────────────────────────────────
-function PhotoCard({ product, uploadedUrl, onUploaded }: { product: Product; uploadedUrl?: string; onUploaded: (r: UploadResult) => void }) {
+function PhotoCard({ product, uploadedUrl, onUploaded }: { product: EditableProduct; uploadedUrl?: string; onUploaded: (r: UploadResult) => void }) {
   const [state, setState] = useState<UploadState>('idle');
   const [preview, setPreview] = useState(uploadedUrl || product.img || '');
   const [error, setError] = useState('');
@@ -185,7 +197,7 @@ function PhotoCard({ product, uploadedUrl, onUploaded }: { product: Product; upl
       </div>
       <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:5 }}>
         <div style={{ fontWeight:600, fontSize:12, color:'#111' }}>{product.n}</div>
-        <div style={{ fontSize:10, color:'#aaa' }}>ID {product.id} · {catLabel(product.c)}</div>
+        <div style={{ fontSize:10, color:'#aaa' }}>ID {product.id} · {catLabel(product.c as Categoria)}</div>
         {error && <div style={{ background:'#fef2f2', color:'#dc2626', fontSize:11, padding:'4px 8px', borderRadius:5, border:'1px solid #fecaca' }}>⚠ {error}</div>}
         {preview && state==='done' && (
           <div style={{ background:'#f8f9fa', border:'1px solid #e8e8e8', borderRadius:5, padding:'4px 7px', fontSize:10, display:'flex', gap:5, alignItems:'center' }}>
@@ -209,9 +221,9 @@ function PhotoCard({ product, uploadedUrl, onUploaded }: { product: Product; upl
 const lbl: React.CSSProperties = { display:'flex', flexDirection:'column', gap:5, fontSize:12, fontWeight:600, color:'#555' };
 const inp: React.CSSProperties = { padding:'8px 10px', border:'1px solid #e0e0e0', borderRadius:7, fontSize:13, fontFamily:'inherit', outline:'none', width:'100%', boxSizing:'border-box' };
 
-function ProductModal({ product, onSave, onClose }: { product: EditableProduct | null; onSave:(p:EditableProduct)=>void; onClose:()=>void }) {
-  const cats: Categoria[] = ['poleras','polerones','tazas','accesorios','deportiva','impresion'];
-  const blank: EditableProduct = { id:Date.now(), c:'poleras', n:'', ref:'', desc:'', v:{}, precio:'$0', _new:true };
+function ProductModal({ product, onSave, onClose, catList }: { product: EditableProduct | null; onSave:(p:EditableProduct)=>void; onClose:()=>void; catList: CategoryDef[] }) {
+  const cats = catList;
+  const blank: EditableProduct = { id:Date.now(), c:catList[0]?.c||'', n:'', ref:'', desc:'', v:{}, precio:'$0', _new:true };
   const [form, setForm] = useState<EditableProduct>(product || blank);
   const set = (k: keyof EditableProduct, v: unknown) => setForm(f=>({...f,[k]:v,_dirty:true}));
 
@@ -227,8 +239,8 @@ function ProductModal({ product, onSave, onClose }: { product: EditableProduct |
           <label style={lbl}>Referencia<input value={form.ref} onChange={e=>set('ref',e.target.value)} style={inp} placeholder="PAT-0001"/></label>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
             <label style={lbl}>Categoría
-              <select value={form.c} onChange={e=>set('c',e.target.value as Categoria)} style={inp}>
-                {cats.map(c=><option key={c} value={c}>{catLabel(c)}</option>)}
+              <select value={form.c} onChange={e=>set('c',e.target.value)} style={inp}>
+                {cats.map(c=><option key={c.c} value={c.c}>{c.name}</option>)}
               </select>
             </label>
             <label style={lbl}>Precio<input value={form.precio} onChange={e=>set('precio',e.target.value)} style={inp} placeholder="$6.000"/></label>
@@ -258,13 +270,67 @@ function ProductModal({ product, onSave, onClose }: { product: EditableProduct |
   );
 }
 
+// ── Modal categoría ────────────────────────────────────────────────────────────
+const catInp: React.CSSProperties = { padding:'8px 10px', border:'1px solid #e0e0e0', borderRadius:7, fontSize:13, fontFamily:'inherit', outline:'none', width:'100%', boxSizing:'border-box' };
+const catLbl: React.CSSProperties = { display:'flex', flexDirection:'column', gap:5, fontSize:12, fontWeight:600, color:'#555' };
+
+function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryDef | null; existingCodes: string[]; onSave:(c:CategoryDef)=>void; onClose:()=>void }) {
+  const blank: CategoryDef = { c:'', name:'', count:'', icon:'', bg:'linear-gradient(160deg,#111 0%,#333 60%,#555 100%)' };
+  const [form, setForm] = useState<CategoryDef>(cat || blank);
+  const [codeError, setCodeError] = useState('');
+  const set = (k: keyof CategoryDef, v: string) => setForm(f=>({...f,[k]:v}));
+
+  const handleSave = () => {
+    if(!form.c.trim()||!form.name.trim()){ alert('Código y nombre son obligatorios.'); return; }
+    const code = form.c.trim().toLowerCase().replace(/[^a-z0-9]/g,'');
+    if(!code){ alert('El código debe contener al menos una letra o número.'); return; }
+    if(code!==cat?.c&&existingCodes.includes(code)){ setCodeError('Ya existe una categoría con este código.'); return; }
+    setCodeError('');
+    onSave({...form,c:code});
+  };
+
+  return (
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.6)', zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
+      <div style={{ background:'#fff', borderRadius:16, padding:28, width:'100%', maxWidth:460, maxHeight:'90vh', overflowY:'auto' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:20 }}>
+          <h2 style={{ margin:0, fontSize:18, fontWeight:800 }}>{cat?'Editar categoría':'Nueva categoría'}</h2>
+          <button onClick={onClose} style={{ background:'none', border:'none', fontSize:22, cursor:'pointer', color:'#999' }}>×</button>
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+          <label style={catLbl}>Código interno
+            <input value={form.c} onChange={e=>{setCodeError('');set('c',e.target.value);}} style={{...catInp,borderColor:codeError?'#dc2626':'#e0e0e0'}} placeholder="ej: poleras, tazas, accesorios"/>
+            {codeError&&<span style={{ color:'#dc2626', fontSize:11 }}>{codeError}</span>}
+            <span style={{ color:'#999', fontSize:10 }}>Solo minúsculas, sin espacios ni caracteres especiales. Se normalizará automáticamente.</span>
+          </label>
+          <label style={catLbl}>Nombre visible
+            <input value={form.name} onChange={e=>set('name',e.target.value)} style={catInp} placeholder="Ej: Poleras, Tazas, Accesorios"/>
+          </label>
+          <label style={catLbl}>Icono (emoji)
+            <input value={form.icon} onChange={e=>set('icon',e.target.value)} style={catInp} placeholder="Ej: 👕, ☕, 🧥"/>
+          </label>
+          <label style={catLbl}>Gradiente de fondo
+            <input value={form.bg} onChange={e=>set('bg',e.target.value)} style={catInp} placeholder="linear-gradient(...)"/>
+          </label>
+          <div style={{ borderRadius:8, overflow:'hidden', minHeight:60, display:'flex', alignItems:'center', justifyContent:'center', background:form.bg||'#eee', fontSize:28 }}>
+            {form.icon||'📁'} <span style={{ color:'#fff', marginLeft:8, fontWeight:700, fontSize:14 }}>{form.name||'Vista previa'}</span>
+          </div>
+        </div>
+        <div style={{ display:'flex', gap:10, marginTop:22 }}>
+          <button onClick={onClose} style={{ flex:1, background:'#f3f4f6', color:'#555', border:'1px solid #ddd', borderRadius:8, padding:'10px', fontSize:13, cursor:'pointer' }}>Cancelar</button>
+          <button onClick={handleSave} style={{ flex:2, background:'#111', color:'#fff', border:'none', borderRadius:8, padding:'10px', fontSize:13, fontWeight:700, cursor:'pointer' }}>Guardar categoría</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────────
 export default function AdminPage() {
   const [authed, setAuthed]   = useState(false);
   const [tab, setTab]         = useState<Tab>('fotos');
 
   // Tab fotos
-  const [filterCat,    setFilterCat]    = useState<'todos'|Categoria>('todos');
+  const [filterCat,    setFilterCat]    = useState<'todos'|string>('todos');
   const [filterStatus, setFilterStatus] = useState<'todos'|'con-foto'|'sin-foto'>('todos');
   const [uploads, setUploads]           = useState<UploadResult[]>([]);
 
@@ -273,9 +339,15 @@ export default function AdminPage() {
   const [editingProd, setEditingProd]   = useState<EditableProduct|null>(null);
   const [showModal, setShowModal]       = useState(false);
   const [searchQ, setSearchQ]           = useState('');
-  const [prodFilter, setProdFilter]     = useState<'todos'|Categoria>('todos');
+  const [prodFilter, setProdFilter]     = useState<'todos'|string>('todos');
   const [saving, setSaving]             = useState(false);
   const [saveMsg, setSaveMsg]           = useState('');
+
+  // Tab categorias
+  const [categories, setCategories]     = useState<CategoryDef[]>(()=>CATEGORIES.map(c=>({...c})));
+  const [editingCat, setEditingCat]     = useState<CategoryDef|null>(null);
+  const [showCatModal, setShowCatModal] = useState(false);
+  const [catDirty, setCatDirty]         = useState(0);
 
   const handleUploaded = useCallback((result: UploadResult) => {
     setUploads(prev=>{
@@ -303,7 +375,7 @@ export default function AdminPage() {
   const handleSaveToGitHub = async () => {
     setSaving(true); setSaveMsg('');
     try {
-      const content = generateProductsTs(products);
+      const content = generateProductsTs(products, categories);
       const res = await fetch('/api/github/save-products',{
         method:'POST', headers:{'Content-Type':'application/json'},
         body:JSON.stringify({content}),
@@ -313,6 +385,7 @@ export default function AdminPage() {
       setSaveMsg('✓ Guardado en GitHub — Vercel está redesplegando (1-2 min)');
       setUploads([]);
       setProducts(prev=>prev.filter(p=>!p._deleted).map(p=>({...p,_dirty:false,_new:false})));
+      setCatDirty(0);
     } catch(err: unknown){
       setSaveMsg('⚠ '+(err instanceof Error?err.message:'Error desconocido'));
     } finally { setSaving(false); }
@@ -320,9 +393,9 @@ export default function AdminPage() {
 
   if(!authed) return <LoginScreen onLogin={()=>setAuthed(true)}/>;
 
-  const cats: Array<{value:'todos'|Categoria;label:string}> = [
-    {value:'todos',label:'Todos'},{value:'poleras',label:'Poleras'},{value:'polerones',label:'Polerones'},
-    {value:'tazas',label:'Tazas'},{value:'accesorios',label:'Accesorios'},{value:'deportiva',label:'Deportiva'},{value:'impresion',label:'Impresión'},
+  const cats: Array<{value:'todos'|string;label:string}> = [
+    {value:'todos',label:'Todos'},
+    ...categories.map(c=>({value:c.c,label:c.name})),
   ];
 
   const filteredPhotos = products.filter(p=>{
@@ -338,7 +411,7 @@ export default function AdminPage() {
     return catOk&&(!q||p.n.toLowerCase().includes(q)||p.ref.toLowerCase().includes(q)||p.precio.includes(q));
   });
 
-  const dirtyCount = products.filter(p=>p._dirty||p._new||p._deleted).length;
+  const dirtyCount = products.filter(p=>p._dirty||p._new||p._deleted).length + catDirty;
   const totalConFoto = products.filter(p=>!p._deleted&&p.img).length;
 
   const tabBtn = (t:Tab,label:string):React.CSSProperties => ({
@@ -465,7 +538,7 @@ export default function AdminPage() {
                         {p._dirty&&!p._new&&<span style={{ background:'#fef9c3', color:'#ca8a04', fontSize:10, padding:'1px 6px', borderRadius:10 }}>Modificado</span>}
                       </td>
                       <td style={td}><span style={{ fontFamily:'monospace', fontSize:11, color:'#888' }}>{p.ref}</span></td>
-                      <td style={td}><span style={{ background:'#f3f4f6', padding:'2px 8px', borderRadius:12, fontSize:11 }}>{catLabel(p.c)}</span></td>
+                      <td style={td}><span style={{ background:'#f3f4f6', padding:'2px 8px', borderRadius:12, fontSize:11 }}>{catLabel(p.c as Categoria)}</span></td>
                       <td style={td}><span style={{ fontWeight:700 }}>{p.precio}</span></td>
                       <td style={td}>{p.badge?<span style={{ background:'#e0e7ff', color:'#4338ca', padding:'2px 8px', borderRadius:12, fontSize:11 }}>{p.badge}</span>:<span style={{ color:'#ddd' }}>—</span>}</td>
                       <td style={td}>{p.img?<span style={{ color:'#16a34a', fontSize:12 }}>✓</span>:<span style={{ color:'#ddd', fontSize:12 }}>—</span>}</td>
@@ -492,15 +565,24 @@ export default function AdminPage() {
         {tab==='categorias'&&(
           <>
             <SaveChangesPanel compact />
+            <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:12 }}>
+              <button onClick={()=>{
+                setEditingCat({c:'',name:'',count:'',icon:'',bg:'linear-gradient(160deg,#111 0%,#333 60%,#555 100%)'});
+                setShowCatModal(true);
+              }}
+                style={{ background:'#e53935', color:'#fff', border:'none', borderRadius:8, padding:'8px 16px', fontSize:13, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap' }}>
+                + Nueva categoría
+              </button>
+            </div>
             <div style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', marginBottom:20 }}>
               <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
                 <thead>
                   <tr style={{ background:'#f8f9fa', borderBottom:'1px solid #e8e8e8' }}>
-                    <th style={th}>Categoría</th><th style={th}>Código</th><th style={th}>Productos activos</th><th style={th}>Con foto</th>
+                    <th style={th}>Categoría</th><th style={th}>Código</th><th style={th}>Productos activos</th><th style={th}>Con foto</th><th style={th}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {CATEGORIES.map((cat,idx)=>{
+                  {categories.map((cat,idx)=>{
                     const total   = products.filter(p=>!p._deleted&&p.c===cat.c).length;
                     const conFoto = products.filter(p=>!p._deleted&&p.c===cat.c&&p.img).length;
                     return (
@@ -516,20 +598,50 @@ export default function AdminPage() {
                             <span style={{ fontSize:11, color:'#555' }}>{conFoto}/{total}</span>
                           </div>
                         </td>
+                        <td style={td}>
+                          <div style={{ display:'flex', gap:6 }}>
+                            <button onClick={()=>{setEditingCat(cat);setShowCatModal(true);}}
+                              style={{ background:'#f3f4f6', border:'1px solid #ddd', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}>✏️</button>
+                            <button onClick={()=>{
+                              if(products.some(p=>!p._deleted&&p.c===cat.c)){
+                                alert(`No puedes eliminar "${cat.name}" porque tiene ${total} producto${total>1?'s':''} asociado${total>1?'s':''}. Cambia los productos a otra categoría primero.`);
+                                return;
+                              }
+                              if(!confirm(`¿Eliminar la categoría "${cat.name}"?`))return;
+                              setCategories(prev=>prev.filter(c=>c.c!==cat.c));
+                              setCatDirty(prev=>prev+1);
+                            }}
+                              style={{ background:'#fef2f2', border:'1px solid #fecaca', color:'#dc2626', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}>🗑️</button>
+                          </div>
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
-            <div style={{ background:'#f0fdf4', border:'1px solid #bbf7d0', borderRadius:10, padding:'14px 18px', fontSize:13, color:'#166534' }}>
-              💡 Para agregar o renombrar categorías, edita el tipo <code>Categoria</code> y el array <code>CATEGORIES</code> en <code>src/data/products.ts</code> — usa la tab <strong>Productos</strong> para guardar los cambios automáticamente en GitHub.
-            </div>
+            {showCatModal&&(
+              <CategoryModal
+                cat={editingCat}
+                existingCodes={categories.map(c=>c.c).filter(c=>c!==editingCat?.c)}
+                onSave={(c:CategoryDef)=>{
+                  setCategories(prev=>{
+                    const idx=prev.findIndex(x=>x.c===editingCat?.c);
+                    if(idx>=0){const u=[...prev];u[idx]=c;return u;}
+                    return [...prev,c];
+                  });
+                  setCatDirty(prev=>prev+1);
+                  setShowCatModal(false);
+                  setEditingCat(null);
+                }}
+                onClose={()=>{setShowCatModal(false);setEditingCat(null);}}
+              />
+            )}
           </>
         )}
       </div>
 
-      {showModal&&<ProductModal product={editingProd} onSave={handleSaveProd} onClose={()=>{setShowModal(false);setEditingProd(null);}}/>}
+      {showModal&&<ProductModal product={editingProd} onSave={handleSaveProd} onClose={()=>{setShowModal(false);setEditingProd(null);}} catList={categories}/>}
     </div>
   );
 }
