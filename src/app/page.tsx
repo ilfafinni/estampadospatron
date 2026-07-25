@@ -151,30 +151,38 @@ export default function HomePage() {
 
       {/* ── CATEGORÍAS DESTACADAS ── */}
       <div style={{ padding: '2.5rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="categorias">
+        <style>{`
+          .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+          .cat-card { position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; text-decoration: none; box-shadow: var(--shadow-md); transition: transform 0.3s, box-shadow 0.3s; }
+          .cat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+          @media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+          @media (max-width: 640px) {
+            .cat-grid { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; scrollbar-width: none; }
+            .cat-grid::-webkit-scrollbar { display: none; }
+            .cat-card { scroll-snap-align: start; min-width: 230px; width: 230px; min-height: 200px; }
+          }
+        `}</style>
         <SectionTitle text="Explorar categorías" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '18px' }}>
+        <div className="cat-grid">
           {CATEGORIES.map(cat => (
             <Link
               key={cat.c}
               href={`/catalogo?cat=${cat.c}`}
-              style={{ position: 'relative', borderRadius: '14px', overflow: 'hidden', cursor: 'pointer', minHeight: '240px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', textDecoration: 'none', boxShadow: 'var(--shadow-md)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = 'var(--shadow-lg)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'var(--shadow-md)'; }}
+              className="cat-card"
             >
               <div style={{ position: 'absolute', inset: 0, background: cat.bg }} />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.8) 100%)' }} />
-              <div style={{ position: 'relative', zIndex: 2, padding: '1.4rem 1.2rem' }}>
-                <div style={{ fontSize: '2.6rem', marginBottom: '10px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }}>
-                  {cat.c === 'poleras' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M8 3h8a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 13h8"/><path d="M12 5v14"/></svg>}
-                  {cat.c === 'polerones' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 10h6"/><path d="M12 7v6"/></svg>}
-                  {cat.c === 'tazas' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 2h18v20H3V2z"/><path d="M7 8h10"/><path d="M9 12h6"/></svg>}
-                  {cat.c === 'accesorios' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg>}
-                  {cat.c === 'deportiva' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>}
-                  {cat.c === 'impresion' && <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3z"/><polyline points="17 3 17 9 23 9"/></svg>}
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.85) 100%)' }} />
+              <div style={{ position: 'absolute', top: '-5px', right: '-5px', fontSize: '90px', opacity: 0.12, transform: 'rotate(12deg)', userSelect: 'none', pointerEvents: 'none', lineHeight: 1 }}>
+                {cat.icon}
+              </div>
+              <div style={{ position: 'relative', zIndex: 2, padding: '1.5rem' }}>
+                <div style={{ fontSize: '2rem', marginBottom: '6px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}>{cat.icon}</div>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
+                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>{cat.count}</div>
+                <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '999px', border: '1.5px solid rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
+                  Ver productos
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </div>
-                <div style={{ fontSize: '16px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
-                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.8)', marginTop: '4px' }}>{cat.count}</div>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '12px', display: 'inline-block', padding: '8px 12px', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.4)' }}>Ver productos →</div>
               </div>
             </Link>
           ))}
