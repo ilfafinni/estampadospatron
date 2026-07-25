@@ -22,7 +22,6 @@ export default function Header({
   const router = useRouter();
   const { totalItems, toggleCart } = useCart();
   const { theme, toggleTheme } = useTheme();
-  const [catMenuOpen, setCatMenuOpen] = useState(false);
   const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -42,14 +41,12 @@ export default function Header({
 
   const handleHome = () => {
     setMobileCatOpen(false);
-    setCatMenuOpen(false);
     router.push('/');
   };
 
   const goToCategory = (cat: Categoria) => {
     router.push(`/catalogo?cat=${cat}`);
     setMobileCatOpen(false);
-    setCatMenuOpen(false);
   };
 
   return (
@@ -258,50 +255,7 @@ export default function Header({
         </>
       )}
 
-      <nav style={{ background: 'var(--bg-card)', borderBottom: '2px solid var(--text-primary)', position: 'relative', zIndex: 100 }}>
-        <div style={{ display: 'flex', alignItems: 'center', maxWidth: '1400px', margin: '0 auto', padding: '0 2rem', gap: '0', justifyContent: 'center', minHeight: '56px' }}>
-          <button
-            onClick={handleHome}
-            style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}
-          >
-            Inicio
-          </button>
 
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={() => setCatMenuOpen(!catMenuOpen)}
-              onMouseEnter={() => setCatMenuOpen(true)}
-              onMouseLeave={() => setCatMenuOpen(false)}
-              style={{ padding: '14px 20px', fontSize: '13px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
-            >
-              Categorías
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transition: 'transform 0.2s', transform: catMenuOpen ? 'rotate(180deg)' : 'rotate(0)' }}>
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </button>
-
-            {catMenuOpen && (
-              <div
-                onMouseEnter={() => setCatMenuOpen(true)}
-                onMouseLeave={() => setCatMenuOpen(false)}
-                style={{ position: 'absolute', top: '100%', left: 0, minWidth: '220px', background: 'var(--bg-card)', border: '1px solid var(--border-light)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)', zIndex: 1000, padding: '8px 0' }}
-              >
-                {navCategories.map(item => (
-                  <button
-                    key={item.label}
-                    onClick={() => goToCategory(item.cat)}
-                    style={{ width: '100%', padding: '12px 16px', fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', transition: 'background 0.15s' }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-tertiary)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
     </>
   );
 }
