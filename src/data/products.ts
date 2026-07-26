@@ -15,13 +15,12 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 2, c: 'poleras', n: 'Polera Premium Cuello V', ref: 'PAT-6635',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785041969/patronestampados/productos/producto-2.jpg',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040099/patronestampados/productos/producto-2.jpg',
   desc: 'Corte slim fit. Cuello V reforzado. Ideal para impresión de alta definición.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris Jaspe',h:'#95a5a6'}]}, precio: '$7.000',
   badge: 'popular',
   },
   {
   id: 3, c: 'poleras', n: 'Polera Técnica Dry-Fit', ref: 'PAT-0420',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785042168/patronestampados/productos/producto-3.jpg',
   desc: 'Poliéster 100% con tratamiento humedad. Para uniformes deportivos y eventos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Amarillo',h:'#f1c40f'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#27ae60'}]}, precio: '$6.000',
   },
   {
@@ -42,7 +41,6 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 8, c: 'poleras', n: 'Estilo Jeans MC', ref: 'PAT-6645',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785042104/patronestampados/productos/producto-8.jpg',
   desc: 'Textura denim con comodidad de tejido deportivo. Muy solicitada para regalos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Azul Jean',h:'#2471a3'},{n:'Negro',h:'#111'}]}, precio: '$8.000',
   },
   {
@@ -57,7 +55,7 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 11, c: 'polerones', n: 'Polerón Canguro', ref: 'PAT-6960',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785042040/patronestampados/productos/producto-11.jpg',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040145/patronestampados/productos/producto-11.jpg',
   desc: 'Con bolsillo frontal canguro. Diseño urbano y funcional. Tela premium 300 g.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde Oscuro',h:'#145a32'}]}, precio: '$15.000',
   badge: 'popular',
   },
@@ -68,7 +66,7 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 13, c: 'polerones', n: 'Cortavientos Glasgow', ref: 'PAT-7630',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785041865/patronestampados/productos/producto-13.jpg',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040122/patronestampados/productos/producto-13.jpg',
   desc: 'Chaqueta ligera con capucha, resistente al viento y agua. Muy popular para eventos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#145a32'}]}, precio: '$15.000',
   },
   {
