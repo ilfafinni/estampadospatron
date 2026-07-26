@@ -198,7 +198,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
     <div style={{ minHeight:'100vh', background:'#111', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Inter',sans-serif" }}>
       <div style={{ background:'#1a1a1a', border:'1px solid #333', borderRadius:16, padding:'40px 36px', width:'100%', maxWidth:360, boxShadow:'0 24px 64px rgba(0,0,0,.6)' }}>
         <div style={{ textAlign:'center', marginBottom:28 }}>
-          <div style={{ fontSize:36, marginBottom:8 }}>🔒</div>
+          
           <div style={{ fontWeight:800, fontSize:18, color:'#fff' }}>Panel Admin</div>
           <div style={{ fontSize:13, color:'#666', marginTop:4 }}>Estampados Patrón</div>
         </div>
@@ -208,7 +208,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
               style={{ width:'100%', padding:'12px 44px 12px 14px', background:error?'#2a1010':'#222', border:`1px solid ${error?'#e53935':'#333'}`, borderRadius:8, color:'#fff', fontSize:14, outline:'none', boxSizing:'border-box' }} />
             <button type="button" onClick={()=>setShow(!show)}
               style={{ position:'absolute', right:12, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', color:'#666', cursor:'pointer', fontSize:16 }}>
-              {show?'🙈':'👁'}
+              {show?'Ocultar':'Mostrar'}
             </button>
           </div>
           {error && <div style={{ color:'#e53935', fontSize:12, textAlign:'center' }}>Contraseña incorrecta</div>}
@@ -268,19 +268,19 @@ function PhotoCard({ product, uploadedUrl, onUploaded }: { product: EditableProd
             <span style={{ color:'#fff', fontSize:12 }}>Subiendo…</span>
           </div>
         )}
-        {state==='done' && <div style={{ position:'absolute', top:7, right:7, background:'#16a34a', color:'#fff', borderRadius:20, padding:'2px 9px', fontSize:10, fontWeight:700 }}>✓ Lista</div>}
+        {state==='done' && <div style={{ position:'absolute', top:7, right:7, background:'#16a34a', color:'#fff', borderRadius:20, padding:'2px 9px', fontSize:10, fontWeight:700 }}> Lista</div>}
         <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{if(e.target.files?.[0])upload(e.target.files[0]);}} />
       </div>
       <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:5 }}>
         <div style={{ fontWeight:600, fontSize:12, color:'#111' }}>{product.n}</div>
         <div style={{ fontSize:10, color:'#aaa' }}>ID {product.id} · {catLabel(product.c as Categoria)}</div>
-        {error && <div style={{ background:'#fef2f2', color:'#dc2626', fontSize:11, padding:'4px 8px', borderRadius:5, border:'1px solid #fecaca' }}>⚠ {error}</div>}
+        {error && <div style={{ background:'#fef2f2', color:'#dc2626', fontSize:11, padding:'4px 8px', borderRadius:5, border:'1px solid #fecaca' }}> {error}</div>}
         {preview && state==='done' && (
           <div style={{ background:'#f8f9fa', border:'1px solid #e8e8e8', borderRadius:5, padding:'4px 7px', fontSize:10, display:'flex', gap:5, alignItems:'center' }}>
             <span style={{ flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontFamily:'monospace', color:'#444' }}>{preview}</span>
             <button onClick={e=>{e.stopPropagation();copyToClipboard(preview);setCopied(true);setTimeout(()=>setCopied(false),1500);}}
               style={{ background:copied?'#16a34a':'#6366f1', color:'#fff', border:'none', borderRadius:4, padding:'2px 7px', fontSize:9, cursor:'pointer', whiteSpace:'nowrap' }}>
-              {copied?'✓':'Copiar'}
+              {copied?'':'Copiar'}
             </button>
           </div>
         )}
@@ -332,8 +332,8 @@ function ProductModal({ product, onSave, onClose, catList }: { product: Editable
               <option value="">Sin badge</option>
               <option value="popular">⭐ Popular</option>
               <option value="nuevo">🆕 Nuevo</option>
-              <option value="eco">🌿 Eco</option>
-              <option value="pack">📦 Pack</option>
+              <option value="eco"> Eco</option>
+              <option value="pack"> Pack</option>
             </select>
           </label>
         </div>
@@ -405,7 +405,7 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
             <input value={form.name} onChange={e=>set('name',e.target.value)} style={catInp} placeholder="Ej: Poleras, Tazas, Accesorios"/>
           </label>
           <label style={catLbl}>Icono (emoji)
-            <input value={form.icon} onChange={e=>set('icon',e.target.value)} style={catInp} placeholder="Ej: 👕, ☕, 🧥"/>
+            <input value={form.icon} onChange={e=>set('icon',e.target.value)} style={catInp} placeholder="Ej: , , "/>
           </label>
           <label style={catLbl}>Imagen de fondo
             <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{const f=e.target.files?.[0];if(f)handleFile(f);}} />
@@ -415,7 +415,7 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
               </button>
               {form.img&&<button onClick={()=>set('img','')} style={{ background:'none', border:'none', color:'#dc2626', fontSize:11, cursor:'pointer', textDecoration:'underline' }}>Eliminar</button>}
               {uploadError&&<span style={{ color:'#dc2626', fontSize:11 }}>{uploadError}</span>}
-              {uploadState==='done'&&<span style={{ color:'#16a34a', fontSize:11 }}>✓ Imagen subida</span>}
+              {uploadState==='done'&&<span style={{ color:'#16a34a', fontSize:11 }}> Imagen subida</span>}
             </div>
           </label>
           <label style={catLbl}>Gradiente de fondo
@@ -424,7 +424,7 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
           <div style={{ borderRadius:8, overflow:'hidden', minHeight:160, display:'flex', alignItems:'center', justifyContent:'center', position:'relative', background:form.bg||'#eee', fontSize:28 }}>
             {form.img&&<div style={{ position:'absolute', inset:0, background:`url(${form.img}) center/cover no-repeat` }} />}
             <div style={{ position:'relative', zIndex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
-              <span style={{ fontSize:32 }}>{form.icon||'📁'}</span>
+              <span style={{ fontSize:32 }}>{form.icon||''}</span>
               <span style={{ color:'#fff', fontWeight:700, fontSize:14, textShadow:'0 2px 8px rgba(0,0,0,.5)' }}>{form.name||'Vista previa'}</span>
             </div>
           </div>
@@ -515,8 +515,8 @@ function BannerEditorModal({
   const bgImgCss = form.img
     ? `${form.bg || ''}, url(${form.img}) ${form.imgPosition || 'center'} / ${form.imgFit || 'cover'} no-repeat`
     : form.bg || (type === 'hero'
-        ? 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%)'
-        : 'linear-gradient(135deg, #111 0%, #333 100%)');
+        ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%)'
+        : 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)');
 
   const overlayCss = form.overlayStyle || (type === 'hero'
     ? 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)'
@@ -646,16 +646,16 @@ function BannerEditorModal({
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <button onClick={onClose} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:'#999' }}>←</button>
             <span style={{ fontWeight:700, fontSize:16 }}>
-              {isHero ? `🎠 Slide ${form.id}` : `📢 Banner ${form.id}`}
+              {isHero ? ` Slide ${form.id}` : ` Banner ${form.id}`}
               <span style={{ fontWeight:400, color:'#999', fontSize:13, marginLeft:8 }}>
                 {isHero ? 'Hero Slider' : 'Promocional'}
               </span>
             </span>
-            {savedLocally && <span style={{ background:'#16a34a', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 10px', borderRadius:10 }}>✓ Guardado</span>}
+            {savedLocally && <span style={{ background:'#16a34a', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 10px', borderRadius:10 }}> Guardado</span>}
           </div>
           <div style={{ display:'flex', gap:8 }}>
             <button onClick={onClose} style={{ background:'#f3f4f6', color:'#555', border:'1px solid #ddd', borderRadius:8, padding:'8px 16px', fontSize:12, cursor:'pointer' }}>Cancelar</button>
-            <button onClick={handleSave} style={{ background:'#111', color:'#fff', border:'none', borderRadius:8, padding:'8px 20px', fontSize:12, fontWeight:700, cursor:'pointer' }}>💾 Guardar</button>
+            <button onClick={handleSave} style={{ background:'#111', color:'#fff', border:'none', borderRadius:8, padding:'8px 20px', fontSize:12, fontWeight:700, cursor:'pointer' }}> Guardar</button>
           </div>
         </div>
 
@@ -765,7 +765,7 @@ function BannerEditorModal({
           <div style={bannerEditorStyles.controlsPanel}>
             {/* IMAGEN */}
             <div style={{ marginBottom:24 }}>
-              <div style={bannerEditorStyles.sectionTitle}>📷 Imagen de fondo</div>
+              <div style={bannerEditorStyles.sectionTitle}> Imagen de fondo</div>
               <div
                 style={{ border:'2px dashed #ddd', borderRadius:8, padding:16, background:'#fafafa', cursor:'pointer', textAlign:'center', marginBottom:12 }}
                 onClick={() => inputRef.current?.click()}
@@ -775,7 +775,7 @@ function BannerEditorModal({
                 {form.img
                   ? <div style={{ display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}>
                       <img src={form.img} alt="" style={{ height:48, width:48, borderRadius:6, objectFit:'cover' }} />
-                      <span style={{ fontSize:12, color:'#16a34a', fontWeight:600 }}>✓ Imagen asignada</span>
+                      <span style={{ fontSize:12, color:'#16a34a', fontWeight:600 }}> Imagen asignada</span>
                     </div>
                   : <span style={{ fontSize:12, color:'#aaa' }}>Arrastra una imagen o haz clic para subir</span>}
                 {uploadState === 'uploading' && <span style={{ fontSize:11, color:'#6366f1', display:'block', marginTop:4 }}>Subiendo…</span>}
@@ -788,7 +788,7 @@ function BannerEditorModal({
                 </button>
               )}
               <div style={{ marginTop:12, paddingTop:12, borderTop:'1px solid #eee' }}>
-                <div style={{ fontSize:10, fontWeight:700, color:'#888', marginBottom:8 }}>📱 Imagen para móvil (opcional)</div>
+                <div style={{ fontSize:10, fontWeight:700, color:'#888', marginBottom:8 }}> Imagen para móvil (opcional)</div>
                 <div
                   style={{ border:'2px dashed #ddd', borderRadius:8, padding:12, background:'#fafafa', cursor:'pointer', textAlign:'center' }}
                   onClick={() => inputMobRef.current?.click()}
@@ -798,7 +798,7 @@ function BannerEditorModal({
                   {form.imgMob
                     ? <div style={{ display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}>
                         <img src={form.imgMob} alt="" style={{ height:48, width:48, borderRadius:6, objectFit:'cover' }} />
-                        <span style={{ fontSize:12, color:'#16a34a', fontWeight:600 }}>✓ Imagen móvil asignada</span>
+                        <span style={{ fontSize:12, color:'#16a34a', fontWeight:600 }}> Imagen móvil asignada</span>
                       </div>
                     : <span style={{ fontSize:12, color:'#aaa' }}>Arrastra o haz clic para subir imagen para móvil</span>}
                   {uploadStateMob === 'uploading' && <span style={{ fontSize:11, color:'#6366f1', display:'block', marginTop:4 }}>Subiendo…</span>}
@@ -813,7 +813,7 @@ function BannerEditorModal({
                 {form.imgMob && (
                   <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginTop:8 }}>
                     <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                      <span>📱 Ajustes de imagen móvil</span>
+                      <span> Ajustes de imagen móvil</span>
                       <button onClick={resetTransformMob} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
                     </div>
                     <div style={{ aspectRatio:'9/16', maxHeight:220, borderRadius:8, overflow:'hidden', position:'relative', background:'#000', marginBottom:8, border:'1px solid #ddd' }}>
@@ -834,7 +834,7 @@ function BannerEditorModal({
               {form.img && (
                 <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span>🖱️ Arrastra la imagen en la vista previa para mover · Rueda para zoom</span>
+                    <span>Arrastra la imagen en la vista previa para mover · Rueda para zoom</span>
                     <button onClick={resetTransform} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
                   </div>
                   <div style={{ fontSize:10, color:'#888', textAlign:'center', padding:'4px 0' }}>
@@ -870,7 +870,7 @@ function BannerEditorModal({
 
             {/* TEXTO */}
             <div style={{ marginBottom:24 }}>
-              <div style={bannerEditorStyles.sectionTitle}>✏️ Texto</div>
+              <div style={bannerEditorStyles.sectionTitle}> Texto</div>
               {isHero ? (
                 <>
                   <label style={bannerEditorStyles.label}>
@@ -961,7 +961,7 @@ function BannerEditorModal({
 
             {/* OVERLAY */}
             <div style={{ marginBottom:24 }}>
-              <div style={bannerEditorStyles.sectionTitle}>🎨 Overlay oscuro</div>
+              <div style={bannerEditorStyles.sectionTitle}> Overlay oscuro</div>
               <label style={bannerEditorStyles.label}>
                 Gradiente CSS (capa oscura sobre la imagen)
                 <textarea value={form.overlayStyle||''} onChange={(e) => set('overlayStyle', e.target.value)} rows={2} style={{...bannerEditorStyles.input, fontFamily:'monospace', fontSize:11}} placeholder={isHero?'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)':'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)'} />
@@ -1012,10 +1012,10 @@ function BannerImageUpload({ currentUrl, label, bannerKey, onUploaded }: { curre
       <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
         <span style={{ fontSize:11, fontWeight:600, color:'#555', minWidth:80 }}>{label}</span>
         {currentUrl
-          ? <span style={{ fontSize:10, color:'#16a34a', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>✓ Imagen asignada</span>
+          ? <span style={{ fontSize:10, color:'#16a34a', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}> Imagen asignada</span>
           : <span style={{ fontSize:10, color:dragOver?'#6366f1':'#bbb', flex:1 }}>{dragOver?'Suelta aquí':'Arrastra o clic para subir'}</span>}
         {state==='uploading'&&<span style={{ fontSize:10, color:'#6366f1' }}>Subiendo…</span>}
-        {error&&<span style={{ fontSize:10, color:'#dc2626' }}>⚠ {error}</span>}
+        {error&&<span style={{ fontSize:10, color:'#dc2626' }}> {error}</span>}
       </div>
       <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{if(e.target.files?.[0])upload(e.target.files[0]);}} />
     </div>
@@ -1094,12 +1094,12 @@ export default function AdminPage() {
       });
       const data = await res.json();
       if(!res.ok) throw new Error(data.error||'Error al guardar');
-      setSaveMsg('✓ Guardado en GitHub — Vercel está redesplegando (1-2 min)');
+      setSaveMsg('OK Guardado en GitHub — Vercel está redesplegando (1-2 min)');
       setUploads([]);
       setProducts(prev=>prev.filter(p=>!p._deleted).map(p=>({...p,_dirty:false,_new:false})));
       setCatDirty(0);
     } catch(err: unknown){
-      setSaveMsg('⚠ '+(err instanceof Error?err.message:'Error desconocido'));
+      setSaveMsg('ERR '+(err instanceof Error?err.message:'Error desconocido'));
     } finally { setSaving(false); }
   };
 
@@ -1138,16 +1138,16 @@ export default function AdminPage() {
     <div style={{ marginTop:compact?0:20, marginBottom:compact?16:0, background:dirtyCount>0?'#fffbeb':'#fff', border:`1px solid ${dirtyCount>0?'#fde68a':'#e8e8e8'}`, borderRadius:12, padding:compact?'12px 16px':'16px 20px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
       <div>
         <div style={{ fontWeight:700, fontSize:14 }}>
-          {dirtyCount>0?`⚠ ${dirtyCount} cambio${dirtyCount>1?'s':''} sin guardar`:'✓ Todo guardado'}
+          {dirtyCount>0?` ${dirtyCount} cambio${dirtyCount>1?'s':''} sin guardar`:' Todo guardado'}
         </div>
         <div style={{ fontSize:12, color:'#888', marginTop:3 }}>
           {dirtyCount>0?'Guarda para que las fotos y cambios se publiquen en la tienda.':'No hay cambios pendientes por publicar.'}
         </div>
-        {saveMsg&&<div style={{ fontSize:12, marginTop:6, color:saveMsg.startsWith('✓')?'#16a34a':'#dc2626', fontWeight:600 }}>{saveMsg}</div>}
+        {saveMsg&&<div style={{ fontSize:12, marginTop:6, color:saveMsg.startsWith('OK')?'#16a34a':'#dc2626', fontWeight:600 }}>{saveMsg}</div>}
       </div>
       <button onClick={handleSaveToGitHub} disabled={saving||dirtyCount===0}
         style={{ background:saving?'#ccc':dirtyCount===0?'#e5e7eb':'#111', color:dirtyCount===0?'#999':'#fff', border:'none', borderRadius:8, padding:'10px 24px', fontSize:13, fontWeight:700, cursor:saving||dirtyCount===0?'not-allowed':'pointer', whiteSpace:'nowrap' }}>
-        {saving?'Guardando…':'💾 Guardar cambios'}
+        {saving?'Guardando…':' Guardar cambios'}
       </button>
     </div>
   );
@@ -1161,19 +1161,19 @@ export default function AdminPage() {
           <span style={{ background:'#333', color:'#aaa', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:20 }}>ADMIN</span>
         </div>
         <div style={{ display:'flex', gap:14, fontSize:12, color:'#888', alignItems:'center' }}>
-          <span>📦 {products.filter(p=>!p._deleted).length} productos</span>
-          <span style={{ color:'#4ade80' }}>✓ {totalConFoto} con foto</span>
-          {dirtyCount>0&&<span style={{ color:'#fbbf24' }}>⚠ {dirtyCount} sin guardar</span>}
+          <span> {products.filter(p=>!p._deleted).length} productos</span>
+          <span style={{ color:'#4ade80' }}> {totalConFoto} con foto</span>
+          {dirtyCount>0&&<span style={{ color:'#fbbf24' }}> {dirtyCount} sin guardar</span>}
           <button onClick={()=>setAuthed(false)} style={{ background:'none', border:'1px solid #333', color:'#888', borderRadius:6, padding:'2px 10px', fontSize:11, cursor:'pointer' }}>Salir</button>
         </div>
       </div>
 
       {/* Tabs */}
       <div style={{ background:'#111', padding:'0 24px', display:'flex', gap:2 }}>
-        <button style={tabBtn('fotos','📷 Fotos')}   onClick={()=>setTab('fotos')}>📷 Fotos</button>
-        <button style={tabBtn('productos','📦')}      onClick={()=>setTab('productos')}>📦 Productos</button>
-        <button style={tabBtn('categorias','🏷️')}    onClick={()=>setTab('categorias')}>🏷️ Categorías</button>
-        <button style={tabBtn('banners','🖼️')}       onClick={()=>setTab('banners')}>🖼️ Banners</button>
+        <button style={tabBtn('fotos',' Fotos')}   onClick={()=>setTab('fotos')}> Fotos</button>
+        <button style={tabBtn('productos','')}      onClick={()=>setTab('productos')}> Productos</button>
+        <button style={tabBtn('categorias','')}    onClick={()=>setTab('categorias')}> Categorías</button>
+        <button style={tabBtn('banners','')}       onClick={()=>setTab('banners')}> Banners</button>
       </div>
 
       <div style={{ maxWidth:1200, margin:'0 auto', padding:'20px 16px' }}>
@@ -1183,10 +1183,10 @@ export default function AdminPage() {
           <>
             <SaveChangesPanel compact />
             <div style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, padding:'14px 18px', marginBottom:20, display:'flex', gap:14 }}>
-              <span style={{ fontSize:24 }}>☁️</span>
+              <span style={{ fontSize:24 }}></span>
               <ol style={{ margin:0, padding:'0 0 0 14px', fontSize:13, color:'#555', lineHeight:1.8 }}>
                 <li>Arrastra o haz clic para subir la foto a Cloudinary.</li>
-                <li>La foto queda lista en el panel, pero para publicarla debes hacer clic en <strong>💾 Guardar cambios</strong>.</li>
+                <li>La foto queda lista en el panel, pero para publicarla debes hacer clic en <strong> Guardar cambios</strong>.</li>
               </ol>
             </div>
             <div style={{ display:'flex', gap:6, flexWrap:'wrap', marginBottom:16, alignItems:'center' }}>
@@ -1200,7 +1200,7 @@ export default function AdminPage() {
               {(['todos','sin-foto','con-foto'] as const).map(s=>(
                 <button key={s} onClick={()=>setFilterStatus(s)}
                   style={{ background:filterStatus===s?'#6366f1':'#fff', color:filterStatus===s?'#fff':'#555', border:'1px solid', borderColor:filterStatus===s?'#6366f1':'#ddd', borderRadius:20, padding:'3px 13px', fontSize:11, cursor:'pointer' }}>
-                  {s==='todos'?'Todos':s==='sin-foto'?'○ Sin foto':'✓ Con foto'}
+                  {s==='todos'?'Todos':s==='sin-foto'?'○ Sin foto':' Con foto'}
                 </button>
               ))}
               <span style={{ marginLeft:'auto', fontSize:11, color:'#bbb' }}>{filteredPhotos.length} de {products.filter(p=>!p._deleted).length}</span>
@@ -1254,13 +1254,13 @@ export default function AdminPage() {
                       <td style={td}><span style={{ background:'#f3f4f6', padding:'2px 8px', borderRadius:12, fontSize:11 }}>{catLabel(p.c as Categoria)}</span></td>
                       <td style={td}><span style={{ fontWeight:700 }}>{p.precio}</span></td>
                       <td style={td}>{p.badge?<span style={{ background:'#e0e7ff', color:'#4338ca', padding:'2px 8px', borderRadius:12, fontSize:11 }}>{p.badge}</span>:<span style={{ color:'#ddd' }}>—</span>}</td>
-                      <td style={td}>{p.img?<span style={{ color:'#16a34a', fontSize:12 }}>✓</span>:<span style={{ color:'#ddd', fontSize:12 }}>—</span>}</td>
+                      <td style={td}>{p.img?<span style={{ color:'#16a34a', fontSize:12 }}></span>:<span style={{ color:'#ddd', fontSize:12 }}>—</span>}</td>
                       <td style={td}>
                         <div style={{ display:'flex', gap:6 }}>
                           <button onClick={()=>{setEditingProd(p);setShowModal(true);}}
-                            style={{ background:'#f3f4f6', border:'1px solid #ddd', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}>✏️</button>
+                            style={{ background:'#f3f4f6', border:'1px solid #ddd', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}></button>
                           <button onClick={()=>handleDelete(p.id)}
-                            style={{ background:'#fef2f2', border:'1px solid #fecaca', color:'#dc2626', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}>🗑️</button>
+                            style={{ background:'#fef2f2', border:'1px solid #fecaca', color:'#dc2626', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}></button>
                         </div>
                       </td>
                     </tr>
@@ -1331,7 +1331,7 @@ export default function AdminPage() {
                         <td style={td}>
                           <div style={{ display:'flex', gap:6 }}>
                             <button onClick={()=>{setEditingCat(cat);setShowCatModal(true);}}
-                              style={{ background:'#f3f4f6', border:'1px solid #ddd', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}>✏️</button>
+                              style={{ background:'#f3f4f6', border:'1px solid #ddd', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}></button>
                             <button onClick={()=>{
                               if(products.some(p=>!p._deleted&&p.c===cat.c)){
                                 alert(`No puedes eliminar "${cat.name}" porque tiene ${total} producto${total>1?'s':''} asociado${total>1?'s':''}. Cambia los productos a otra categoría primero.`);
@@ -1341,7 +1341,7 @@ export default function AdminPage() {
                               setCategories(prev=>prev.filter(c=>c.c!==cat.c));
                               setCatDirty(prev=>prev+1);
                             }}
-                              style={{ background:'#fef2f2', border:'1px solid #fecaca', color:'#dc2626', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}>🗑️</button>
+                              style={{ background:'#fef2f2', border:'1px solid #fecaca', color:'#dc2626', borderRadius:6, padding:'4px 10px', fontSize:11, cursor:'pointer' }}></button>
                           </div>
                         </td>
                       </tr>
@@ -1374,7 +1374,7 @@ export default function AdminPage() {
         {tab==='banners'&&(
           <>
             <div style={{ background:'#fffbeb', border:'1px solid #fde68a', borderRadius:12, padding:'14px 18px', marginBottom:20, display:'flex', gap:14, alignItems:'flex-start' }}>
-              <span style={{ fontSize:20 }}>🖼️</span>
+              <span style={{ fontSize:20 }}></span>
               <div style={{ fontSize:13, color:'#92400e', lineHeight:1.7 }}>
                 <strong>Banners del landing page</strong><br />
                 Sube imágenes de fondo para los slides del hero y los banners promocionales. Si no hay imagen, se usará el gradiente por defecto.
@@ -1382,11 +1382,11 @@ export default function AdminPage() {
             </div>
 
             <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:20 }}>
-              {bannerMsg&&<div style={{ fontSize:12, color:bannerMsg.startsWith('✓')?'#16a34a':'#dc2626', fontWeight:600, width:'100%' }}>{bannerMsg}</div>}
+              {bannerMsg&&<div style={{ fontSize:12, color:bannerMsg.startsWith('OK')?'#16a34a':'#dc2626', fontWeight:600, width:'100%' }}>{bannerMsg}</div>}
             </div>
 
             <div style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center', marginBottom:16 }}>
-              <h3 style={{ fontSize:14, fontWeight:700, margin:0, color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>🎠 Hero Slider</h3>
+              <h3 style={{ fontSize:14, fontWeight:700, margin:0, color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}> Hero Slider</h3>
               <span style={{ fontSize:11, color:'#bbb' }}>{banners.heroSlides.length} slides</span>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16, marginBottom:40 }}>
@@ -1404,14 +1404,14 @@ export default function AdminPage() {
                       <div style={{ fontSize:11, color:'#666' }}>{'\u201C'}{slide.h1Line1} {slide.h1Line2}{'\u201D'}</div>
                       <div style={{ fontSize:10, color:'#999', marginTop:'auto', display:'flex', gap:8 }}>
                         <span>CTA: {slide.cta}</span>
-                        {slide.img ? <span>📷</span> : <span>🎨 gradiente</span>}
-                        {slide.imgMob && <span>📱+</span>}
+                        {slide.img ? <span></span> : <span> gradiente</span>}
+                        {slide.imgMob && <span>+</span>}
                       </div>
                     </div>
                     <div style={{ borderTop:'1px solid #f0f0f0', padding:'8px 12px', display:'flex', justifyContent:'flex-end' }}>
                       <button onClick={()=>setBannerEditor({type:'hero',data:{...slide},index:idx})}
                         style={{ background:'#111', color:'#fff', border:'none', borderRadius:6, padding:'5px 14px', fontSize:11, fontWeight:600, cursor:'pointer' }}>
-                        ✏️ Editar
+                         Editar
                       </button>
                     </div>
                   </div>
@@ -1420,7 +1420,7 @@ export default function AdminPage() {
             </div>
 
             <div style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center', marginBottom:16 }}>
-              <h3 style={{ fontSize:14, fontWeight:700, margin:0, color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>📢 Banners Promocionales</h3>
+              <h3 style={{ fontSize:14, fontWeight:700, margin:0, color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}> Banners Promocionales</h3>
               <span style={{ fontSize:11, color:'#bbb' }}>{banners.promoBanners.length} banners</span>
             </div>
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16, marginBottom:24 }}>
@@ -1438,14 +1438,14 @@ export default function AdminPage() {
                       <div style={{ fontSize:11, color:'#666' }}>{'\u201C'}{banner.titleLine1} {banner.titleLine2}{'\u201D'}</div>
                       <div style={{ fontSize:10, color:'#999', marginTop:'auto', display:'flex', gap:8 }}>
                         <span>CTA: {banner.cta}</span>
-                        {banner.img ? <span>📷</span> : <span>🎨 gradiente</span>}
-                        {banner.imgMob && <span>📱+</span>}
+                        {banner.img ? <span></span> : <span> gradiente</span>}
+                        {banner.imgMob && <span>+</span>}
                       </div>
                     </div>
                     <div style={{ borderTop:'1px solid #f0f0f0', padding:'8px 12px', display:'flex', justifyContent:'flex-end' }}>
                       <button onClick={()=>setBannerEditor({type:'promo',data:{...banner},index:idx})}
                         style={{ background:'#111', color:'#fff', border:'none', borderRadius:6, padding:'5px 14px', fontSize:11, fontWeight:600, cursor:'pointer' }}>
-                        ✏️ Editar
+                         Editar
                       </button>
                     </div>
                   </div>
@@ -1455,7 +1455,7 @@ export default function AdminPage() {
 
             <div style={{ marginTop:20, marginBottom:20, background:bannerDirty?'#fffbeb':'#fff', border:`1px solid ${bannerDirty?'#fde68a':'#e8e8e8'}`, borderRadius:12, padding:'14px 18px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
               <div>
-                <div style={{ fontWeight:700, fontSize:14 }}>{bannerDirty?'⚠ Cambios sin guardar':'✓ Todo guardado'}</div>
+                <div style={{ fontWeight:700, fontSize:14 }}>{bannerDirty?' Cambios sin guardar':' Todo guardado'}</div>
                 <div style={{ fontSize:12, color:'#888', marginTop:3 }}>Los cambios en banners se publican al guardar.</div>
               </div>
               <button onClick={async()=>{
@@ -1468,15 +1468,15 @@ export default function AdminPage() {
                   });
                   const data = await res.json();
                   if(!res.ok) throw new Error(data.error||'Error al guardar');
-                  setBannerMsg('✓ Banners guardados — Vercel está redesplegando (1-2 min)');
+                  setBannerMsg('OK Banners guardados — Vercel está redesplegando (1-2 min)');
                   setBannerDirty(false);
                   setBannerUploads({});
                 } catch(err:unknown){
-                  setBannerMsg('⚠ '+(err instanceof Error?err.message:'Error desconocido'));
+                  setBannerMsg('ERR '+(err instanceof Error?err.message:'Error desconocido'));
                 } finally { setBannerSaving(false); }
               }} disabled={bannerSaving||!bannerDirty}
                 style={{ background:bannerSaving?'#ccc':!bannerDirty?'#e5e7eb':'#111', color:!bannerDirty?'#999':'#fff', border:'none', borderRadius:8, padding:'10px 24px', fontSize:13, fontWeight:700, cursor:bannerSaving||!bannerDirty?'not-allowed':'pointer', whiteSpace:'nowrap' }}>
-                {bannerSaving?'Guardando…':'💾 Guardar banners'}
+                {bannerSaving?'Guardando…':' Guardar banners'}
               </button>
             </div>
           </>

@@ -73,7 +73,7 @@ export const BANNERS: BannerConfig = {
     imgPanYMob: 0,
     imgZoomMob: 1,
     ctaParam: 'poleras',
-    bg: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%)',
+    bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%)',
   },
   {
     id: 2,
@@ -83,7 +83,7 @@ export const BANNERS: BannerConfig = {
     p: 'Serigrafía, sublimación y bordado. El mejor acabado para tu empresa o evento corporativo.',
     cta: 'Cotizar ahora',
     ctaType: 'contacto',
-    bg: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-primary) 100%)',
+    bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%)',
   },
   {
     id: 3,
@@ -93,7 +93,7 @@ export const BANNERS: BannerConfig = {
     p: '¿Necesitas urgente? Contáctanos y coordinamos entrega express el mismo día en Curicó.',
     cta: 'WhatsApp',
     ctaType: 'whatsapp',
-    bg: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #166534 100%)',
+    bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%)',
   }
   ],
   promoBanners: [
@@ -105,7 +105,7 @@ export const BANNERS: BannerConfig = {
     cta: 'Ver polerones',
     ctaType: 'categoria',
     ctaParam: 'polerones',
-    bg: 'linear-gradient(135deg, var(--bg-primary) 0%, #166534 100%)',
+    bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
   },
   {
     id: 2,
@@ -114,7 +114,7 @@ export const BANNERS: BannerConfig = {
     titleLine2: 'Corporativa',
     cta: 'Cotizar empresa',
     ctaType: 'contacto',
-    bg: 'linear-gradient(135deg, var(--color-primary) 0%, #1e3a8a 100%)',
+    bg: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
   }
   ],
 };

@@ -220,11 +220,7 @@ export default function HomePage() {
               {cat.img&&<div style={{ position:'absolute', inset:0, background:`url(${cat.img}) center/cover no-repeat` }}/>}
               <div style={{ position: 'absolute', inset: 0, background: cat.bg, opacity: cat.img ? 0.5 : 1 }} />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.85) 100%)' }} />
-              <div style={{ position: 'absolute', top: '-5px', right: '-5px', fontSize: '90px', opacity: 0.12, transform: 'rotate(12deg)', userSelect: 'none', pointerEvents: 'none', lineHeight: 1 }}>
-                {cat.icon}
-              </div>
               <div className="cat-card-content" style={{ position: 'relative', zIndex: 2, padding: '1.5rem' }}>
-                <div className="cat-card-icon" style={{ fontSize: '2rem', marginBottom: '6px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}>{cat.icon}</div>
                 <div className="cat-card-title" style={{ fontSize: '18px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
                 <div className="cat-card-count" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>{cat.count}</div>
                 <div className="cat-card-btn" style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '999px', border: '1.5px solid rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
