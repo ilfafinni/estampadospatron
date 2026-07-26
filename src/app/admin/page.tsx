@@ -1395,15 +1395,17 @@ export default function AdminPage() {
                 const bgCss = imgUrl ? `url(${imgUrl}) ${slide.imgPosition||'center'} / ${slide.imgFit||'cover'} no-repeat, ${slide.bg}` : slide.bg;
                 return (
                   <div key={`hero-${slide.id}`} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', display:'flex', flexDirection:'column' }}>
-                    <div style={{ height:140, background:bgCss, backgroundSize:'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
+                    <div style={{ height:140, background:bgCss, backgroundSize:slide.imgFit||'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
                       <div style={{ position:'absolute', inset:0, background:slide.overlayStyle||'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%)' }} />
                       <span style={{ position:'relative', zIndex:2, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>Slide {idx+1}</span>
                     </div>
                     <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:4 }}>
                       <div style={{ fontSize:12, fontWeight:600 }}>{slide.tag}</div>
                       <div style={{ fontSize:11, color:'#666' }}>{'\u201C'}{slide.h1Line1} {slide.h1Line2}{'\u201D'}</div>
-                      <div style={{ fontSize:10, color:'#999', marginTop:'auto' }}>
-                        CTA: {slide.cta} · {slide.img ? '📷' : '🎨 gradiente'}
+                      <div style={{ fontSize:10, color:'#999', marginTop:'auto', display:'flex', gap:8 }}>
+                        <span>CTA: {slide.cta}</span>
+                        {slide.img ? <span>📷</span> : <span>🎨 gradiente</span>}
+                        {slide.imgMob && <span>📱+</span>}
                       </div>
                     </div>
                     <div style={{ borderTop:'1px solid #f0f0f0', padding:'8px 12px', display:'flex', justifyContent:'flex-end' }}>
@@ -1427,15 +1429,17 @@ export default function AdminPage() {
                 const bgCss = imgUrl ? `url(${imgUrl}) ${banner.imgPosition||'center'} / ${banner.imgFit||'cover'} no-repeat, ${banner.bg}` : banner.bg;
                 return (
                   <div key={`promo-${banner.id}`} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', display:'flex', flexDirection:'column' }}>
-                    <div style={{ height:120, background:bgCss, backgroundSize:'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
+                    <div style={{ height:120, background:bgCss, backgroundSize:banner.imgFit||'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
                       <div style={{ position:'absolute', inset:0, background:banner.overlayStyle||'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%)' }} />
                       <span style={{ position:'relative', zIndex:2, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>Banner {idx+1}</span>
                     </div>
                     <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:4 }}>
                       <div style={{ fontSize:12, fontWeight:600 }}>{banner.label}</div>
                       <div style={{ fontSize:11, color:'#666' }}>{'\u201C'}{banner.titleLine1} {banner.titleLine2}{'\u201D'}</div>
-                      <div style={{ fontSize:10, color:'#999', marginTop:'auto' }}>
-                        CTA: {banner.cta} · {banner.img ? '📷' : '🎨 gradiente'}
+                      <div style={{ fontSize:10, color:'#999', marginTop:'auto', display:'flex', gap:8 }}>
+                        <span>CTA: {banner.cta}</span>
+                        {banner.img ? <span>📷</span> : <span>🎨 gradiente</span>}
+                        {banner.imgMob && <span>📱+</span>}
                       </div>
                     </div>
                     <div style={{ borderTop:'1px solid #f0f0f0', padding:'8px 12px', display:'flex', justifyContent:'flex-end' }}>
