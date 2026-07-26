@@ -404,8 +404,8 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
           <label style={catLbl}>Nombre visible
             <input value={form.name} onChange={e=>set('name',e.target.value)} style={catInp} placeholder="Ej: Poleras, Tazas, Accesorios"/>
           </label>
-          <label style={catLbl}>Icono (emoji)
-            <input value={form.icon} onChange={e=>set('icon',e.target.value)} style={catInp} placeholder="Ej: , , "/>
+          <label style={catLbl}>Icono
+            <input value={form.icon} onChange={e=>set('icon',e.target.value)} style={catInp} placeholder="Ej: polera, taza"/>
           </label>
           <label style={catLbl}>Imagen de fondo
             <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{const f=e.target.files?.[0];if(f)handleFile(f);}} />
@@ -515,7 +515,7 @@ function BannerEditorModal({
   const bgImgCss = form.img
     ? `${form.bg || ''}, url(${form.img}) ${form.imgPosition || 'center'} / ${form.imgFit || 'cover'} no-repeat`
     : form.bg || (type === 'hero'
-        ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%)'
+        ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)'
         : 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)');
 
   const overlayCss = form.overlayStyle || (type === 'hero'
@@ -1297,7 +1297,7 @@ export default function AdminPage() {
                   <div style={{ position:'absolute', inset:0, background:cat.bg, opacity:cat.img?0.5:1 }}/>
                   <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.85) 100%)' }}/>
                   <div style={{ position:'relative', zIndex:2, padding:'1rem' }}>
-                    <div style={{ fontSize:24, marginBottom:4 }}>{cat.icon}</div>
+                    
                     <div style={{ fontSize:14, fontWeight:800, color:'#fff', textTransform:'uppercase', letterSpacing:'0.04em' }}>{cat.name}</div>
                     <div style={{ fontSize:11, color:'rgba(255,255,255,0.7)', marginTop:2 }}>{cat.count}</div>
                   </div>
@@ -1317,7 +1317,7 @@ export default function AdminPage() {
                     const conFoto = products.filter(p=>!p._deleted&&p.c===cat.c&&p.img).length;
                     return (
                       <tr key={cat.c} style={{ borderBottom:'1px solid #f0f0f0', background:idx%2===0?'#fff':'#fafafa' }}>
-                        <td style={td}><span style={{ fontWeight:600 }}>{cat.icon} {cat.name}</span></td>
+                        <td style={td}><span style={{ fontWeight:600 }}>{cat.name}</span></td>
                         <td style={td}><span style={{ fontFamily:'monospace', fontSize:11, color:'#888' }}>{cat.c}</span></td>
                         <td style={td}><span style={{ background:'#f3f4f6', padding:'2px 10px', borderRadius:12 }}>{total}</span></td>
                         <td style={td}>
