@@ -157,9 +157,14 @@ export default function HomePage() {
           .cat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
           @media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
           @media (max-width: 640px) {
-            .cat-grid { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 8px; scrollbar-width: none; }
+            .cat-grid { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 12px; scrollbar-width: none; margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 0.5rem; width: auto; }
             .cat-grid::-webkit-scrollbar { display: none; }
-            .cat-card { scroll-snap-align: start; min-width: 230px; width: 230px; min-height: 200px; }
+            .cat-card { scroll-snap-align: start; min-width: 200px; width: 200px; min-height: 180px; flex-shrink: 0; }
+            .cat-card .cat-card-content { padding: 1.2rem !important; }
+            .cat-card .cat-card-icon { font-size: 1.5rem !important; margin-bottom: 4px !important; }
+            .cat-card .cat-card-title { font-size: 14px !important; }
+            .cat-card .cat-card-count { font-size: 10px !important; }
+            .cat-card .cat-card-btn { font-size: 10px !important; padding: 6px 12px !important; }
           }
         `}</style>
         <SectionTitle text="Explorar categorías" />
@@ -175,11 +180,11 @@ export default function HomePage() {
               <div style={{ position: 'absolute', top: '-5px', right: '-5px', fontSize: '90px', opacity: 0.12, transform: 'rotate(12deg)', userSelect: 'none', pointerEvents: 'none', lineHeight: 1 }}>
                 {cat.icon}
               </div>
-              <div style={{ position: 'relative', zIndex: 2, padding: '1.5rem' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '6px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}>{cat.icon}</div>
-                <div style={{ fontSize: '18px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
-                <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>{cat.count}</div>
-                <div style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '999px', border: '1.5px solid rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
+              <div className="cat-card-content" style={{ position: 'relative', zIndex: 2, padding: '1.5rem' }}>
+                <div className="cat-card-icon" style={{ fontSize: '2rem', marginBottom: '6px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }}>{cat.icon}</div>
+                <div className="cat-card-title" style={{ fontSize: '18px', fontWeight: 800, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{cat.name}</div>
+                <div className="cat-card-count" style={{ fontSize: '12px', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>{cat.count}</div>
+                <div className="cat-card-btn" style={{ fontSize: '12px', fontWeight: 700, color: '#fff', marginTop: '14px', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '999px', border: '1.5px solid rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)' }}>
                   Ver productos
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
                 </div>
@@ -197,7 +202,8 @@ export default function HomePage() {
 
       {/* ── PROMO BANNERS (AMPLIADOS) ── */}
       <div style={{ padding: '0 1.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+        <style>{`@media (max-width: 640px) { .promo-grid { grid-template-columns: 1fr !important; gap: 16px !important; } .promo-card { min-height: 220px !important; } .promo-card-content { padding: 1.8rem 1.5rem !important; } .promo-card-title { font-size: 1.4rem !important; } }`}</style>
+        <div className="promo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           <PromoCard
             bg="linear-gradient(135deg, var(--bg-primary) 0%, #166534 100%)"
             label="Ideal para equipos"
@@ -219,21 +225,36 @@ export default function HomePage() {
 
       {/* ── PROCESO ── */}
       <div style={{ padding: '3rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="proceso">
+        <style>{`
+          .pasos-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-top: 2rem; }
+          @media (max-width: 768px) {
+            .pasos-grid { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 16px; scrollbar-width: none; margin: 2rem -1.5rem 0; padding-left: 1.5rem; padding-right: 0.5rem; width: auto; }
+            .pasos-grid::-webkit-scrollbar { display: none; }
+            .paso-card { scroll-snap-align: start; min-width: 260px; width: 260px; flex-shrink: 0; padding: 1.5rem 1.2rem !important; }
+          }
+        `}</style>
         <SectionTitle text="Cómo funciona" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '24px', marginTop: '2rem' }}>
+        <div className="pasos-grid">
           {[
             { n: '01', h: 'Elige el producto', p: 'Selecciona de nuestro catálogo. Más de 34 artículos disponibles.' },
             { n: '02', h: 'Sube tu diseño', p: 'Usa el previsualizador para ver cómo queda tu logo en la prenda.' },
             { n: '03', h: 'Confirmamos juntos', p: 'Revisamos tallas, colores y acabado contigo antes de producir.' },
             { n: '04', h: 'Retiro o envío', p: 'Retira en Curicó en 4 hrs o enviamos a todo Chile.' },
           ].map(paso => (
-            <div key={paso.n} style={{ textAlign: 'center', padding: '2rem 1.5rem', border: '1px solid var(--border-light)', borderRadius: '8px', background: 'var(--bg-card)', transition: 'border-color 0.2s, box-shadow 0.2s' }}>
+            <div key={paso.n} className="paso-card" style={{ textAlign: 'center', padding: '2rem 1.5rem', border: '1px solid var(--border-light)', borderRadius: '8px', background: 'var(--bg-card)', transition: 'border-color 0.2s, box-shadow 0.2s' }}>
               <div style={{ width: '48px', height: '48px', background: 'var(--text-primary)', color: 'var(--bg-primary)', borderRadius: '50%', fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.2rem' }}>{paso.n}</div>
               <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>{paso.h}</h3>
               <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>{paso.p}</p>
             </div>
           ))}
         </div>
+        {/* Mobile hint dots */}
+        <div className="pasos-dots" style={{ display: 'none', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
+          {[0,1,2,3].map(i => (
+            <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--text-muted)', opacity: 0.3 }} />
+          ))}
+        </div>
+        <style>{`@media (max-width: 768px) { .pasos-dots { display: flex !important; } }`}</style>
       </div>
 
       {/* ── CONTACTO ── */}
@@ -430,12 +451,12 @@ function ProductCard({ product }: { product: Product }) {
 
 function PromoCard({ bg, label, title, cta, onClick, large }: { bg: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean }) {
   return (
-    <div onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
+    <div className="promo-card" onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
       <div style={{ position: 'absolute', inset: 0, background: bg }} />
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)' }} />
-      <div style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff' }}>
+      <div className="promo-card-content" style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff' }}>
         <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{label}</div>
-        <div style={{ fontSize: large ? '1.8rem' : '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '12px' }}>{title}</div>
+        <div className="promo-card-title" style={{ fontSize: large ? '1.8rem' : '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '12px' }}>{title}</div>
         <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '10px 22px', borderRadius: '6px', display: 'inline-block', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>{cta}</span>
       </div>
     </div>
