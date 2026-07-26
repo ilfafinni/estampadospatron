@@ -9,37 +9,37 @@ export interface HeroSlideData {
   ctaParam?: string;
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
-  imgPosition?: string;
-  imgPanX?: number;
-  imgPanY?: number;
-  imgZoom?: number;
-  imgMob?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textVertical?: 'top' | 'middle' | 'bottom';
-  overlayStyle?: string;
-  bg: string;
-}
+   imgPosition?: string;
+    imgPanX?: number;
+    imgPanY?: number;
+    imgZoom?: number;
+    imgMob?: string;
+    textAlign?: 'left' | 'center' | 'right';
+    textVertical?: 'top' | 'middle' | 'bottom';
+    overlayStyle?: string;
+    bg: string;
+  }
 
-export interface PromoBannerData {
-  id: number;
-  label: string;
-  titleLine1: string;
-  titleLine2: string;
-  cta: string;
-  ctaType: 'categoria' | 'contacto';
-  ctaParam?: string;
-  img?: string;
-  imgFit?: 'cover' | 'contain' | 'fill';
-  imgPosition?: string;
-  imgPanX?: number;
-  imgPanY?: number;
-  imgZoom?: number;
-  imgMob?: string;
-  textAlign?: 'left' | 'center' | 'right';
-  textVertical?: 'top' | 'middle' | 'bottom';
-  overlayStyle?: string;
-  bg: string;
-}
+  export interface PromoBannerData {
+    id: number;
+    label: string;
+    titleLine1: string;
+    titleLine2: string;
+    cta: string;
+    ctaType: 'categoria' | 'contacto';
+    ctaParam?: string;
+    img?: string;
+    imgFit?: 'cover' | 'contain' | 'fill';
+    imgPosition?: string;
+    imgPanX?: number;
+    imgPanY?: number;
+    imgZoom?: number;
+    imgMob?: string;
+    textAlign?: 'left' | 'center' | 'right';
+    textVertical?: 'top' | 'middle' | 'bottom';
+    overlayStyle?: string;
+    bg: string;
+  }
 
 export interface BannerConfig {
   heroSlides: HeroSlideData[];
@@ -56,7 +56,7 @@ export const BANNERS: BannerConfig = {
     p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad, sin mínimos.',
     cta: 'Ver poleras',
     ctaType: 'catalogo',
-    img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785038773/patronestampados/banners/cx4lkfls89vtzszxxmso.jpg',
+    img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785043812/patronestampados/banners/nt0zhtyrdt5zcbkrgdr5.jpg',
     imgFit: 'cover',
     imgPosition: 'right',
     imgPanX: 0,
