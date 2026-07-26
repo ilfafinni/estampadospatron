@@ -1,7 +1,7 @@
 'use client';
 // src/app/page.tsx
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { PRODUCTS, CATEGORIES, catLabel, slugify, type Product, type Categoria } from '@/data/products';
 import { BANNERS } from '@/data/banners';
@@ -22,11 +22,8 @@ export default function HomePage() {
   const [toast, setToast] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Slider auto
-  useEffect(() => {
-    const t = setInterval(() => setSlideIdx(i => (i + 1) % 3), 5000);
-    return () => clearInterval(t);
-  }, []);
+  const pauseRef = useRef(false);
+  const touchStartX = useRef(0);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -72,6 +69,13 @@ export default function HomePage() {
     setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 50);
   };
 
+  useEffect(() => {
+    const t = setInterval(() => {
+      if (!pauseRef.current) setSlideIdx(i => (i + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(t);
+  }, [slides.length]);
+
   return (
     <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
       <style>{`
@@ -104,7 +108,18 @@ export default function HomePage() {
       <Header showSearch={true} showHamburger={true} />
 
       {/* ── HERO SLIDER ── */}
-      <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-tertiary)', minHeight: '480px' }}>
+      <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-tertiary)', minHeight: '480px' }}
+        onMouseEnter={() => { pauseRef.current = true; }}
+        onMouseLeave={() => { pauseRef.current = false; }}
+        onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          if (Math.abs(dx) > 50) {
+            if (dx > 0) setSlideIdx(i => (i - 1 + slides.length) % slides.length);
+            else setSlideIdx(i => (i + 1) % slides.length);
+          }
+        }}
+      >
         {slides.map((slide, i) => {
           const vAlign = slide.textVertical === 'middle' ? 'center' : slide.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
           return (
@@ -112,8 +127,11 @@ export default function HomePage() {
             key={i}
             className="hero-slide"
             style={{
-              display: i === slideIdx ? 'flex' : 'none',
-              alignItems: vAlign, minHeight: '480px', position: 'relative',
+              position: 'absolute', inset: 0, display: 'flex',
+              alignItems: vAlign,
+              opacity: i === slideIdx ? 1 : 0,
+              transition: 'opacity 0.5s ease-in-out',
+              pointerEvents: i === slideIdx ? 'auto' : 'none',
             }}
           >
             <div style={{ position: 'absolute', inset: 0, background: slide.bgGradient }} />
@@ -143,11 +161,11 @@ export default function HomePage() {
           );
         })}
         {/* Arrows */}
-        <button onClick={() => setSlideIdx(i => (i - 1 + 3) % 3)} style={arrowStyle('left')}>‹</button>
-        <button onClick={() => setSlideIdx(i => (i + 1) % 3)} style={arrowStyle('right')}>›</button>
+        <button onClick={() => setSlideIdx(i => (i - 1 + slides.length) % slides.length)} style={arrowStyle('left')}>‹</button>
+        <button onClick={() => setSlideIdx(i => (i + 1) % slides.length)} style={arrowStyle('right')}>›</button>
         {/* Dots */}
         <div style={{ position: 'absolute', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px', zIndex: 10 }}>
-          {[0, 1, 2].map(i => (
+          {slides.map((_, i) => (
             <div key={i} onClick={() => setSlideIdx(i)} style={{ width: '10px', height: '10px', borderRadius: '50%', background: i === slideIdx ? '#fff' : 'rgba(255,255,255,0.4)', cursor: 'pointer', transition: 'all 0.2s' }} />
           ))}
         </div>

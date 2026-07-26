@@ -409,9 +409,9 @@ function EstampadoEditor({ product, color }: { product: Product; color?: string 
     reader.readAsDataURL(f);
   };
 
-  const updateTransform = (patch: Partial<DesignTransform>) => {
+  const updateTransform = useCallback((patch: Partial<DesignTransform>) => {
     setTransforms(prev => ({ ...prev, [vista]: { ...prev[vista], ...patch } }));
-  };
+  }, [vista]);
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (!containerRef.current) return;
@@ -429,7 +429,7 @@ function EstampadoEditor({ product, color }: { product: Product; color?: string 
     const newX = Math.min(95, Math.max(5, dragState.current.origX + dx));
     const newY = Math.min(95, Math.max(5, dragState.current.origY + dy));
     updateTransform({ x: newX, y: newY });
-  }, [vista]);
+  }, [updateTransform]);
 
   const onPointerUp = () => { dragState.current = null; };
 

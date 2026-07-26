@@ -507,6 +507,7 @@ function BannerEditorModal({
   const inputRef = useRef<HTMLInputElement>(null);
   const inputMobRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
@@ -576,6 +577,7 @@ function BannerEditorModal({
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!form.img) return;
     e.preventDefault();
+    setIsDragging(true);
     dragRef.current = { startX: e.clientX, startY: e.clientY, panX: form.imgPanX, panY: form.imgPanY };
     const onMove = (ev: MouseEvent) => {
       if (!dragRef.current) return;
@@ -584,7 +586,7 @@ function BannerEditorModal({
       set('imgPanX', Math.round((dragRef.current.panX + dx) * 10) / 10);
       set('imgPanY', Math.round((dragRef.current.panY + dy) * 10) / 10);
     };
-    const onUp = () => { dragRef.current = null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    const onUp = () => { setIsDragging(false); dragRef.current = null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   };
@@ -612,6 +614,7 @@ function BannerEditorModal({
   const handleMouseDownMob = (e: React.MouseEvent) => {
     if (!form.imgMob) return;
     e.preventDefault();
+    setIsDragging(true);
     dragRef.current = { startX: e.clientX, startY: e.clientY, panX: form.imgPanXMob??0, panY: form.imgPanYMob??0 };
     const onMove = (ev: MouseEvent) => {
       if (!dragRef.current) return;
@@ -620,7 +623,7 @@ function BannerEditorModal({
       set('imgPanXMob', Math.round((dragRef.current.panX + dx) * 10) / 10);
       set('imgPanYMob', Math.round((dragRef.current.panY + dy) * 10) / 10);
     };
-    const onUp = () => { dragRef.current = null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    const onUp = () => { setIsDragging(false); dragRef.current = null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   };
@@ -674,7 +677,7 @@ function BannerEditorModal({
                 {form.img && <img ref={previewRef as any} src={form.img} alt=""
                   onMouseDown={handleMouseDown}
                   onWheel={handleWheel}
-                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
+                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
                 {/* Fallback gradient cuando no hay imagen */}
                 {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' }} />}
                 {/* Overlay oscuro */}
@@ -727,7 +730,7 @@ function BannerEditorModal({
                 {form.img && <img src={form.img} alt=""
                   onMouseDown={handleMouseDown}
                   onWheel={handleWheel}
-                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
+                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
                 {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #166534 0%, #14532d 100%)' }} />}
                 <div style={{ position:'absolute', inset:0, background: overlayCss }} />
                 <div style={{
@@ -817,7 +820,7 @@ function BannerEditorModal({
                       <img src={form.imgMob} alt=""
                         onMouseDown={handleMouseDownMob}
                         onWheel={handleWheelMob}
-                        style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanXMob??0}px, ${form.imgPanYMob??0}px) scale(${form.imgZoomMob??1})`, cursor:'grab', transition:'transform 0.05s', transformOrigin:'center' }} />
+                        style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanXMob??0}px, ${form.imgPanYMob??0}px) scale(${form.imgZoomMob??1})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />
                       <div style={{ position:'absolute', bottom:4, left:4, background:'rgba(0,0,0,0.65)', color:'#fff', fontSize:9, padding:'2px 6px', borderRadius:3, pointerEvents:'none' }}>
                         Arrastra · Rueda zoom
                       </div>
