@@ -8,6 +8,11 @@ export interface HeroSlideData {
   ctaType: 'catalogo' | 'contacto' | 'whatsapp';
   ctaParam?: string;
   img?: string;
+  imgFit?: 'cover' | 'contain' | 'fill';
+  imgPosition?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textVertical?: 'top' | 'middle' | 'bottom';
+  overlayStyle?: string;
   bg: string;
 }
 
@@ -20,6 +25,11 @@ export interface PromoBannerData {
   ctaType: 'categoria' | 'contacto';
   ctaParam?: string;
   img?: string;
+  imgFit?: 'cover' | 'contain' | 'fill';
+  imgPosition?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textVertical?: 'top' | 'middle' | 'bottom';
+  overlayStyle?: string;
   bg: string;
 }
 

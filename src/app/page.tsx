@@ -28,18 +28,25 @@ export default function HomePage() {
     setTimeout(() => setToast(''), 3500);
   };
 
-  const slides = BANNERS.heroSlides.map(s => ({
-    bg: s.img ? `url(${s.img}) center/cover no-repeat` : s.bg,
-    tag: s.tag,
-    h1: <><span>{s.h1Line1}</span><br />{s.h1Line2}</>,
-    p: s.p,
-    cta: s.cta,
-    onCta: s.ctaType === 'catalogo'
-      ? () => { window.location.href = s.ctaParam ? `/catalogo?cat=${s.ctaParam}` : '/catalogo'; }
-      : s.ctaType === 'whatsapp'
-        ? () => window.open(WHATSAPP_URL, '_blank')
-        : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }),
-  }));
+  const slides = BANNERS.heroSlides.map(s => {
+    const imgPos = s.imgPosition || 'center';
+    const imgFit = s.imgFit || 'cover';
+    return {
+      bg: s.img ? `${s.bg}, url(${s.img}) ${imgPos} / ${imgFit} no-repeat` : s.bg,
+      tag: s.tag,
+      h1: <><span>{s.h1Line1}</span><br />{s.h1Line2}</>,
+      p: s.p,
+      cta: s.cta,
+      textAlign: s.textAlign || 'left',
+      textVertical: s.textVertical || 'top',
+      overlayStyle: s.overlayStyle || 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
+      onCta: s.ctaType === 'catalogo'
+        ? () => { window.location.href = s.ctaParam ? `/catalogo?cat=${s.ctaParam}` : '/catalogo'; }
+        : s.ctaType === 'whatsapp'
+          ? () => window.open(WHATSAPP_URL, '_blank')
+          : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }),
+    };
+  });
 
   const scrollToCat = () => {
     setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 50);
@@ -73,25 +80,27 @@ export default function HomePage() {
 
       {/* ── HERO SLIDER ── */}
       <div className="hero-outer" style={{ position: 'relative', overflow: 'hidden', background: 'var(--bg-tertiary)', minHeight: '480px' }}>
-        {slides.map((slide, i) => (
+        {slides.map((slide, i) => {
+          const vAlign = slide.textVertical === 'middle' ? 'center' : slide.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
+          return (
           <div
             key={i}
             className="hero-slide"
             style={{
               display: i === slideIdx ? 'flex' : 'none',
-              alignItems: 'center', minHeight: '480px', position: 'relative',
+              alignItems: vAlign, minHeight: '480px', position: 'relative',
             }}
           >
             <div style={{ position: 'absolute', inset: 0, background: slide.bg }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
-            <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff' }}>
-              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-primary-light)', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
+            <div style={{ position: 'absolute', inset: 0, background: slide.overlayStyle }} />
+            <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff', textAlign: slide.textAlign as React.CSSProperties['textAlign'] }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-primary-light)', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: slide.textAlign === 'center' ? 'inline-block' : 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
                 {slide.tag}
               </div>
               <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 3.2rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '1rem', letterSpacing: '-0.02em' }}>
                 {slide.h1}
               </h1>
-              <p style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', opacity: 0.9, marginBottom: '2rem', lineHeight: 1.7, maxWidth: '500px' }}>
+              <p style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', opacity: 0.9, marginBottom: '2rem', lineHeight: 1.7, maxWidth: slide.textAlign === 'center' ? '500px' : '500px', marginLeft: slide.textAlign === 'center' ? 'auto' : '0', marginRight: slide.textAlign === 'center' ? 'auto' : '0' }}>
                 {slide.p}
               </p>
               <button
@@ -104,7 +113,8 @@ export default function HomePage() {
               </button>
             </div>
           </div>
-        ))}
+          );
+        })}
         {/* Arrows */}
         <button onClick={() => setSlideIdx(i => (i - 1 + 3) % 3)} style={arrowStyle('left')}>‹</button>
         <button onClick={() => setSlideIdx(i => (i + 1) % 3)} style={arrowStyle('right')}>›</button>
@@ -192,7 +202,12 @@ export default function HomePage() {
         <style>{`@media (max-width: 640px) { .promo-grid { grid-template-columns: 1fr !important; gap: 16px !important; } .promo-card { min-height: 220px !important; } .promo-card-content { padding: 1.8rem 1.5rem !important; } .promo-card-title { font-size: 1.4rem !important; } }`}</style>
         <div className="promo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           {BANNERS.promoBanners.map(b => {
-            const bg = b.img ? `url(${b.img}) center/cover no-repeat` : b.bg;
+            const imgPos = b.imgPosition || 'center';
+            const imgFit = b.imgFit || 'cover';
+            const bg = b.img ? `${b.bg}, url(${b.img}) ${imgPos} / ${imgFit} no-repeat` : b.bg;
+            const textAlign = b.textAlign || 'left';
+            const textVertical = b.textVertical || 'bottom';
+            const overlayStyle = b.overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)';
             const onClick = b.ctaType === 'categoria'
               ? () => { setActiveCat((b.ctaParam || 'polerones') as Categoria); scrollToCat(); }
               : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' });
@@ -200,9 +215,12 @@ export default function HomePage() {
               <PromoCard
                 key={b.id}
                 bg={bg}
+                overlayStyle={overlayStyle}
                 label={b.label}
                 title={<>{b.titleLine1}<br />{b.titleLine2}</>}
                 cta={b.cta}
+                textAlign={textAlign}
+                textVertical={textVertical}
                 onClick={onClick}
                 large
               />
@@ -437,12 +455,14 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-function PromoCard({ bg, label, title, cta, onClick, large }: { bg: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean }) {
+function PromoCard({ bg, overlayStyle, label, title, cta, onClick, large, textAlign, textVertical }: { bg: string; overlayStyle?: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean; textAlign?: string; textVertical?: string }) {
+  const vAlign = textVertical === 'top' ? 'flex-start' : textVertical === 'middle' ? 'center' : 'flex-end';
+  const hAlign = textAlign || 'left';
   return (
-    <div className="promo-card" onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: 'flex-end', cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
+    <div className="promo-card" onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: vAlign, cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
       <div style={{ position: 'absolute', inset: 0, background: bg }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)' }} />
-      <div className="promo-card-content" style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff' }}>
+      <div style={{ position: 'absolute', inset: 0, background: overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)' }} />
+      <div className="promo-card-content" style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff', textAlign: hAlign as React.CSSProperties['textAlign'], width: '100%', boxSizing: 'border-box' }}>
         <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{label}</div>
         <div className="promo-card-title" style={{ fontSize: large ? '1.8rem' : '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '12px' }}>{title}</div>
         <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '10px 22px', borderRadius: '6px', display: 'inline-block', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>{cta}</span>

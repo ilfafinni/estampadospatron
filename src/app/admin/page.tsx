@@ -109,13 +109,14 @@ export function catLabel(c: Categoria): string {
 }
 
 function generateBannersTs(banners: import('@/data/banners').BannerConfig): string {
+  const opt = (val: unknown, key: string) => val ? `\n    ${key}: '${String(val).replace(/'/g,"\\'")}',` : '';
   const heroSlides = banners.heroSlides.map(s => {
-    const img = s.img ? `\n    img: '${s.img}',` : '';
-    return `  {\n    id: ${s.id},\n    tag: '${s.tag.replace(/'/g,"\\'")}',\n    h1Line1: '${s.h1Line1.replace(/'/g,"\\'")}',\n    h1Line2: '${s.h1Line2.replace(/'/g,"\\'")}',\n    p: '${s.p.replace(/'/g,"\\'")}',\n    cta: '${s.cta.replace(/'/g,"\\'")}',\n    ctaType: '${s.ctaType}',${s.ctaParam ? `\n    ctaParam: '${s.ctaParam}',` : ''}${img}\n    bg: '${s.bg.replace(/'/g,"\\'")}',\n  }`;
+    const extra = [s.img&&opt(s.img,'img'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
+    return `  {\n    id: ${s.id},\n    tag: '${s.tag.replace(/'/g,"\\'")}',\n    h1Line1: '${s.h1Line1.replace(/'/g,"\\'")}',\n    h1Line2: '${s.h1Line2.replace(/'/g,"\\'")}',\n    p: '${s.p.replace(/'/g,"\\'")}',\n    cta: '${s.cta.replace(/'/g,"\\'")}',\n    ctaType: '${s.ctaType}',${extra}\n    bg: '${s.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   const promoBanners = banners.promoBanners.map(b => {
-    const img = b.img ? `\n    img: '${b.img}',` : '';
-    return `  {\n    id: ${b.id},\n    label: '${b.label.replace(/'/g,"\\'")}',\n    titleLine1: '${b.titleLine1.replace(/'/g,"\\'")}',\n    titleLine2: '${b.titleLine2.replace(/'/g,"\\'")}',\n    cta: '${b.cta.replace(/'/g,"\\'")}',\n    ctaType: '${b.ctaType}',${b.ctaParam ? `\n    ctaParam: '${b.ctaParam}',` : ''}${img}\n    bg: '${b.bg.replace(/'/g,"\\'")}',\n  }`;
+    const extra = [b.img&&opt(b.img,'img'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
+    return `  {\n    id: ${b.id},\n    label: '${b.label.replace(/'/g,"\\'")}',\n    titleLine1: '${b.titleLine1.replace(/'/g,"\\'")}',\n    titleLine2: '${b.titleLine2.replace(/'/g,"\\'")}',\n    cta: '${b.cta.replace(/'/g,"\\'")}',\n    ctaType: '${b.ctaType}',${extra}\n    bg: '${b.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   return `export interface HeroSlideData {
   id: number;
@@ -127,6 +128,11 @@ function generateBannersTs(banners: import('@/data/banners').BannerConfig): stri
   ctaType: 'catalogo' | 'contacto' | 'whatsapp';
   ctaParam?: string;
   img?: string;
+  imgFit?: 'cover' | 'contain' | 'fill';
+  imgPosition?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textVertical?: 'top' | 'middle' | 'bottom';
+  overlayStyle?: string;
   bg: string;
 }
 
@@ -139,6 +145,11 @@ export interface PromoBannerData {
   ctaType: 'categoria' | 'contacto';
   ctaParam?: string;
   img?: string;
+  imgFit?: 'cover' | 'contain' | 'fill';
+  imgPosition?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  textVertical?: 'top' | 'middle' | 'bottom';
+  overlayStyle?: string;
   bg: string;
 }
 
@@ -810,6 +821,57 @@ export default function AdminPage() {
                           <input value={slide.ctaParam||''} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],ctaParam:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} placeholder="poleras" style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
                         </label>
                       )}
+                      <details style={{ marginTop:4 }}>
+                        <summary style={{ fontSize:11, fontWeight:600, color:'#6366f1', cursor:'pointer' }}>⚙️ Ajustes de imagen y texto</summary>
+                        <div style={{ display:'flex', flexDirection:'column', gap:8, marginTop:8, padding:'8px', background:'#f8f9fa', borderRadius:6, border:'1px solid #e8e8e8' }}>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Ajuste imagen
+                              <select value={slide.imgFit||'cover'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],imgFit:e.target.value as 'cover'|'contain'|'fill'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="cover">Cover (recortar)</option>
+                                <option value="contain">Contain (completa)</option>
+                                <option value="fill">Fill (estirar)</option>
+                              </select>
+                            </label>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Posición imagen
+                              <select value={slide.imgPosition||'center'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],imgPosition:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="center">Centro</option>
+                                <option value="top">Arriba</option>
+                                <option value="bottom">Abajo</option>
+                                <option value="left">Izquierda</option>
+                                <option value="right">Derecha</option>
+                                <option value="top left">Sup. izq.</option>
+                                <option value="top right">Sup. der.</option>
+                                <option value="bottom left">Inf. izq.</option>
+                                <option value="bottom right">Inf. der.</option>
+                              </select>
+                            </label>
+                          </div>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Alineación texto
+                              <select value={slide.textAlign||'left'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],textAlign:e.target.value as 'left'|'center'|'right'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="left">Izquierda</option>
+                                <option value="center">Centrado</option>
+                                <option value="right">Derecha</option>
+                              </select>
+                            </label>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Posición vertical
+                              <select value={slide.textVertical||'top'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],textVertical:e.target.value as 'top'|'middle'|'bottom'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="top">Arriba</option>
+                                <option value="middle">Centro</option>
+                                <option value="bottom">Abajo</option>
+                              </select>
+                            </label>
+                          </div>
+                          <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                            Overlay oscuro (CSS gradient)
+                            <input value={slide.overlayStyle||''} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],overlayStyle:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} placeholder="linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)" style={{ width:'100%', padding:'5px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:10, marginTop:3, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }} />
+                          </label>
+                        </div>
+                      </details>
                       <BannerImageUpload
                         currentUrl={imgUrl}
                         label="Imagen de fondo"
@@ -872,6 +934,57 @@ export default function AdminPage() {
                           <input value={banner.ctaParam||''} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],ctaParam:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} placeholder="polerones" style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
                         </label>
                       )}
+                      <details style={{ marginTop:4 }}>
+                        <summary style={{ fontSize:11, fontWeight:600, color:'#6366f1', cursor:'pointer' }}>⚙️ Ajustes de imagen y texto</summary>
+                        <div style={{ display:'flex', flexDirection:'column', gap:8, marginTop:8, padding:'8px', background:'#f8f9fa', borderRadius:6, border:'1px solid #e8e8e8' }}>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Ajuste imagen
+                              <select value={banner.imgFit||'cover'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],imgFit:e.target.value as 'cover'|'contain'|'fill'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="cover">Cover (recortar)</option>
+                                <option value="contain">Contain (completa)</option>
+                                <option value="fill">Fill (estirar)</option>
+                              </select>
+                            </label>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Posición imagen
+                              <select value={banner.imgPosition||'center'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],imgPosition:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="center">Centro</option>
+                                <option value="top">Arriba</option>
+                                <option value="bottom">Abajo</option>
+                                <option value="left">Izquierda</option>
+                                <option value="right">Derecha</option>
+                                <option value="top left">Sup. izq.</option>
+                                <option value="top right">Sup. der.</option>
+                                <option value="bottom left">Inf. izq.</option>
+                                <option value="bottom right">Inf. der.</option>
+                              </select>
+                            </label>
+                          </div>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Alineación texto
+                              <select value={banner.textAlign||'left'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],textAlign:e.target.value as 'left'|'center'|'right'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="left">Izquierda</option>
+                                <option value="center">Centrado</option>
+                                <option value="right">Derecha</option>
+                              </select>
+                            </label>
+                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                              Posición vertical
+                              <select value={banner.textVertical||'bottom'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],textVertical:e.target.value as 'top'|'middle'|'bottom'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
+                                <option value="top">Arriba</option>
+                                <option value="middle">Centro</option>
+                                <option value="bottom">Abajo</option>
+                              </select>
+                            </label>
+                          </div>
+                          <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                            Overlay oscuro (CSS gradient)
+                            <input value={banner.overlayStyle||''} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],overlayStyle:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} placeholder="linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)" style={{ width:'100%', padding:'5px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:10, marginTop:3, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }} />
+                          </label>
+                        </div>
+                      </details>
                       <BannerImageUpload
                         currentUrl={imgUrl}
                         label="Imagen de fondo"
