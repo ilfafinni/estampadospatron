@@ -31,8 +31,15 @@ export default function HomePage() {
   const slides = BANNERS.heroSlides.map(s => {
     const imgPos = s.imgPosition || 'center';
     const imgFit = s.imgFit || 'cover';
+    const bgImg = s.img ? `url(${s.img}) ${imgPos} / ${imgFit} no-repeat` : '';
+    const panX = s.imgPanX ?? 0;
+    const panY = s.imgPanY ?? 0;
+    const zoom = s.imgZoom ?? 1;
     return {
-      bg: s.img ? `url(${s.img}) ${imgPos} / ${imgFit} no-repeat, ${s.bg}` : s.bg,
+      bg: s.img ? `${bgImg}, ${s.bg}` : s.bg,
+      bgGradient: s.bg,
+      bgImg,
+      imgTransform: s.img ? `translate(${panX}px, ${panY}px) scale(${zoom})` : '',
       tag: s.tag,
       h1: <><span>{s.h1Line1}</span><br />{s.h1Line2}</>,
       p: s.p,
@@ -91,7 +98,8 @@ export default function HomePage() {
               alignItems: vAlign, minHeight: '480px', position: 'relative',
             }}
           >
-            <div style={{ position: 'absolute', inset: 0, background: slide.bg }} />
+            {slide.bgImg && <div style={{ position: 'absolute', inset: 0, background: slide.bgImg, transform: slide.imgTransform, transformOrigin:'center' }} />}
+            <div style={{ position: 'absolute', inset: 0, background: slide.bgGradient }} />
             <div style={{ position: 'absolute', inset: 0, background: slide.overlayStyle }} />
             <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff', textAlign: slide.textAlign as React.CSSProperties['textAlign'] }}>
               <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-primary-light)', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: slide.textAlign === 'center' ? 'inline-block' : 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
@@ -204,7 +212,10 @@ export default function HomePage() {
           {BANNERS.promoBanners.map(b => {
             const imgPos = b.imgPosition || 'center';
             const imgFit = b.imgFit || 'cover';
-            const bg = b.img ? `url(${b.img}) ${imgPos} / ${imgFit} no-repeat, ${b.bg}` : b.bg;
+            const bgImg = b.img ? `url(${b.img}) ${imgPos} / ${imgFit} no-repeat` : '';
+            const panX = b.imgPanX ?? 0;
+            const panY = b.imgPanY ?? 0;
+            const zoom = b.imgZoom ?? 1;
             const textAlign = b.textAlign || 'left';
             const textVertical = b.textVertical || 'bottom';
             const overlayStyle = b.overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)';
@@ -214,7 +225,9 @@ export default function HomePage() {
             return (
               <PromoCard
                 key={b.id}
-                bg={bg}
+                bgGradient={b.bg}
+                bgImg={bgImg}
+                imgTransform={bgImg ? `translate(${panX}px, ${panY}px) scale(${zoom})` : ''}
                 overlayStyle={overlayStyle}
                 label={b.label}
                 title={<>{b.titleLine1}<br />{b.titleLine2}</>}
@@ -455,12 +468,13 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-function PromoCard({ bg, overlayStyle, label, title, cta, onClick, large, textAlign, textVertical }: { bg: string; overlayStyle?: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean; textAlign?: string; textVertical?: string }) {
+function PromoCard({ bgGradient, bgImg, imgTransform, overlayStyle, label, title, cta, onClick, large, textAlign, textVertical }: { bgGradient: string; bgImg?: string; imgTransform?: string; overlayStyle?: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean; textAlign?: string; textVertical?: string }) {
   const vAlign = textVertical === 'top' ? 'flex-start' : textVertical === 'middle' ? 'center' : 'flex-end';
   const hAlign = textAlign || 'left';
   return (
     <div className="promo-card" onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: vAlign, cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
-      <div style={{ position: 'absolute', inset: 0, background: bg }} />
+      {bgImg && <div style={{ position: 'absolute', inset: 0, background: bgImg, transform: imgTransform, transformOrigin:'center' }} />}
+      <div style={{ position: 'absolute', inset: 0, background: bgGradient }} />
       <div style={{ position: 'absolute', inset: 0, background: overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)' }} />
       <div className="promo-card-content" style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff', textAlign: hAlign as React.CSSProperties['textAlign'], width: '100%', boxSizing: 'border-box' }}>
         <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{label}</div>

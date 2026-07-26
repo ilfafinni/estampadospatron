@@ -111,11 +111,13 @@ export function catLabel(c: Categoria): string {
 function generateBannersTs(banners: import('@/data/banners').BannerConfig): string {
   const opt = (val: unknown, key: string) => val ? `\n    ${key}: '${String(val).replace(/'/g,"\\'")}',` : '';
   const heroSlides = banners.heroSlides.map(s => {
-    const extra = [s.img&&opt(s.img,'img'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
+    const panZoom = s.img ? `\n    imgPanX: ${s.imgPanX??0},\n    imgPanY: ${s.imgPanY??0},\n    imgZoom: ${s.imgZoom??1},` : '';
+    const extra = [s.img&&opt(s.img,'img'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), panZoom, s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
     return `  {\n    id: ${s.id},\n    tag: '${s.tag.replace(/'/g,"\\'")}',\n    h1Line1: '${s.h1Line1.replace(/'/g,"\\'")}',\n    h1Line2: '${s.h1Line2.replace(/'/g,"\\'")}',\n    p: '${s.p.replace(/'/g,"\\'")}',\n    cta: '${s.cta.replace(/'/g,"\\'")}',\n    ctaType: '${s.ctaType}',${extra}\n    bg: '${s.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   const promoBanners = banners.promoBanners.map(b => {
-    const extra = [b.img&&opt(b.img,'img'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
+    const panZoom = b.img ? `\n    imgPanX: ${b.imgPanX??0},\n    imgPanY: ${b.imgPanY??0},\n    imgZoom: ${b.imgZoom??1},` : '';
+    const extra = [b.img&&opt(b.img,'img'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), panZoom, b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
     return `  {\n    id: ${b.id},\n    label: '${b.label.replace(/'/g,"\\'")}',\n    titleLine1: '${b.titleLine1.replace(/'/g,"\\'")}',\n    titleLine2: '${b.titleLine2.replace(/'/g,"\\'")}',\n    cta: '${b.cta.replace(/'/g,"\\'")}',\n    ctaType: '${b.ctaType}',${extra}\n    bg: '${b.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   return `export interface HeroSlideData {
@@ -441,10 +443,12 @@ function BannerEditorModal({
   onSave: (updated: import('@/data/banners').HeroSlideData | import('@/data/banners').PromoBannerData) => void;
   onClose: () => void;
 }) {
-  const [form, setForm] = useState<any>({ ...data });
+  const [form, setForm] = useState<any>({ ...data, imgPanX: (data as any).imgPanX ?? 0, imgPanY: (data as any).imgPanY ?? 0, imgZoom: (data as any).imgZoom ?? 1 });
   const [uploadState, setUploadState] = useState<UploadState>('idle');
   const [uploadError, setUploadError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
 
   const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
 
@@ -490,6 +494,36 @@ function BannerEditorModal({
     setTimeout(() => onClose(), 600);
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!form.img) return;
+    e.preventDefault();
+    dragRef.current = { startX: e.clientX, startY: e.clientY, panX: form.imgPanX, panY: form.imgPanY };
+    const onMove = (ev: MouseEvent) => {
+      if (!dragRef.current) return;
+      const dx = ev.clientX - dragRef.current.startX;
+      const dy = ev.clientY - dragRef.current.startY;
+      set('imgPanX', Math.round((dragRef.current.panX + dx) * 10) / 10);
+      set('imgPanY', Math.round((dragRef.current.panY + dy) * 10) / 10);
+    };
+    const onUp = () => { dragRef.current = null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
+
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!form.img) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.05 : 0.05;
+    const newZoom = Math.max(0.2, Math.min(5, (form.imgZoom ?? 1) + delta));
+    set('imgZoom', Math.round(newZoom * 100) / 100);
+  };
+
+  const resetTransform = () => {
+    set('imgPanX', 0);
+    set('imgPanY', 0);
+    set('imgZoom', 1);
+  };
+
   const vAlignFlex = form.textVertical === 'middle' ? 'center' : form.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
 
   return (
@@ -528,7 +562,10 @@ function BannerEditorModal({
                 display:'flex', alignItems: vAlignFlex, minHeight:'480px', background:'#000',
               }}>
                 {/* Imagen de fondo como img para mejor compatibilidad */}
-                {form.img && <img src={form.img} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center' }} />}
+                {form.img && <img ref={previewRef as any} src={form.img} alt=""
+                  onMouseDown={handleMouseDown}
+                  onWheel={handleWheel}
+                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
                 {/* Fallback gradient cuando no hay imagen */}
                 {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' }} />}
                 {/* Overlay oscuro */}
@@ -578,7 +615,10 @@ function BannerEditorModal({
                 position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
                 display:'flex', alignItems: vAlignFlex, minHeight:'280px', background:'#000',
               }}>
-                {form.img && <img src={form.img} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center' }} />}
+                {form.img && <img src={form.img} alt=""
+                  onMouseDown={handleMouseDown}
+                  onWheel={handleWheel}
+                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
                 {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #166534 0%, #14532d 100%)' }} />}
                 <div style={{ position:'absolute', inset:0, background: overlayCss }} />
                 <div style={{
@@ -634,6 +674,28 @@ function BannerEditorModal({
                 <button onClick={() => set('img', undefined)} style={{ background:'none', border:'none', color:'#dc2626', fontSize:11, cursor:'pointer', marginBottom:8, textDecoration:'underline' }}>
                   Eliminar imagen
                 </button>
+              )}
+              {form.img && (
+                <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
+                  <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                    <span>🖱️ Arrastra para mover · Rueda para zoom</span>
+                    <button onClick={resetTransform} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
+                  </div>
+                  <div style={bannerEditorStyles.row}>
+                    <label style={bannerEditorStyles.label}>
+                      Pan X
+                      <input type="number" value={form.imgPanX??0} onChange={(e) => set('imgPanX', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
+                    </label>
+                    <label style={bannerEditorStyles.label}>
+                      Pan Y
+                      <input type="number" value={form.imgPanY??0} onChange={(e) => set('imgPanY', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
+                    </label>
+                    <label style={bannerEditorStyles.label}>
+                      Zoom
+                      <input type="number" value={form.imgZoom??1} onChange={(e) => set('imgZoom', Number(e.target.value))} style={bannerEditorStyles.input} step={0.1} min={0.2} max={5} />
+                    </label>
+                  </div>
+                </div>
               )}
               <div style={bannerEditorStyles.row}>
                 <label style={bannerEditorStyles.label}>
