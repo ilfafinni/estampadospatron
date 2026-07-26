@@ -507,6 +507,7 @@ function BannerEditorModal({
   const inputRef = useRef<HTMLInputElement>(null);
   const inputMobRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
+  const [previewMode, setPreviewMode] = useState<'horizontal' | 'vertical' | 'movil'>('horizontal');
   const [isDragging, setIsDragging] = useState(false);
   const dragRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
 
@@ -663,102 +664,119 @@ function BannerEditorModal({
         <div style={bannerEditorStyles.body}>
           {/* ── PREVIEW ── */}
           <div style={bannerEditorStyles.previewPanel}>
-            {/* Label que indica que es preview */}
-            <div style={{ position:'absolute', top:24, left:24, zIndex:10, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:700, padding:'3px 10px', borderRadius:4, letterSpacing:'0.08em' }}>
-              VISTA PREVIA
+            {/* Toggle de vista */}
+            <div style={{ position:'absolute', top:16, left:16, zIndex:10, display:'flex', gap:4 }}>
+              {(['horizontal','vertical','movil'] as const).map(mode => (
+                <button key={mode} onClick={() => setPreviewMode(mode)}
+                  style={{
+                    background: previewMode === mode ? '#fff' : 'rgba(0,0,0,0.55)',
+                    color: previewMode === mode ? '#111' : '#fff',
+                    border: previewMode === mode ? '1px solid #fff' : '1px solid transparent',
+                    fontSize:10, fontWeight:700, padding:'4px 10px', borderRadius:4,
+                    cursor:'pointer', letterSpacing:'0.04em',
+                    backdropFilter: previewMode === mode ? 'none' : 'blur(4px)',
+                  }}>
+                  {mode === 'horizontal' ? 'Horizontal' : mode === 'vertical' ? 'Vertical' : 'Móvil'}
+                </button>
+              ))}
             </div>
-            {isHero ? (
-              <div style={{
-                width:'100%', aspectRatio:'21/9', maxHeight:'100%', borderRadius:12, overflow:'hidden',
-                position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-                display:'flex', alignItems: vAlignFlex, minHeight:'320px', background:'#000',
-              }}>
-                {/* Imagen de fondo como img para mejor compatibilidad */}
-                {form.img && <img ref={previewRef as any} src={form.img} alt=""
-                  onMouseDown={handleMouseDown}
-                  onWheel={handleWheel}
-                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
-                {/* Fallback gradient cuando no hay imagen */}
-                {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' }} />}
-                {/* Overlay oscuro */}
-                <div style={{ position:'absolute', inset:0, background: overlayCss }} />
-                {/* Contenido */}
+            {/* Info de zoom/posición */}
+            <div style={{ position:'absolute', top:16, right:16, zIndex:10, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:600, padding:'3px 10px', borderRadius:4 }}>
+              {previewMode === 'movil'
+                ? `X:${Math.round(form.imgPanXMob??0)} Y:${Math.round(form.imgPanYMob??0)} Zoom:${(form.imgZoomMob??1).toFixed(2)}×`
+                : `X:${Math.round(form.imgPanX??0)} Y:${Math.round(form.imgPanY??0)} Zoom:${(form.imgZoom??1).toFixed(2)}×`}
+            </div>
+            {(() => {
+              const isMobile = previewMode === 'movil';
+              const imgSrc = isMobile ? form.imgMob : form.img;
+              const panX = isMobile ? (form.imgPanXMob??0) : (form.imgPanX??0);
+              const panY = isMobile ? (form.imgPanYMob??0) : (form.imgPanY??0);
+              const zoom = isMobile ? (form.imgZoomMob??1) : (form.imgZoom??1);
+              const onMouseDown = isMobile ? handleMouseDownMob : handleMouseDown;
+              const onWheel = isMobile ? handleWheelMob : handleWheel;
+              const aspectRatio = previewMode === 'horizontal'
+                ? (isHero ? '21/9' : '16/9')
+                : previewMode === 'vertical' ? '3/4' : '9/16';
+              const minH = previewMode === 'horizontal' ? (isHero ? 320 : 200) : 300;
+              return (
                 <div style={{
-                  position:'relative', zIndex:2, padding:'3rem 2rem', maxWidth:'640px', color:'#fff',
-                  textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
+                  width:'100%', aspectRatio, maxHeight:'100%', borderRadius:12, overflow:'hidden',
+                  position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
+                  display:'flex', alignItems: vAlignFlex, minHeight: `${minH}px`, background:'#000',
                 }}>
-                  <div style={{
-                    fontSize:'11px', fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase',
-                    color:'#93c5fd', background:'rgba(255,255,255,0.15)',
-                    padding:'4px 12px', borderRadius:'4px', display:'inline-block',
-                    marginBottom:'1rem', backdropFilter:'blur(4px)',
-                  }}>
-                    {form.tag || 'Tag del slide'}
-                  </div>
-                  <h1 style={{
-                    fontSize:'clamp(1.8rem, 4vw, 3.2rem)', fontWeight:800, lineHeight:1.1,
-                    marginBottom:'1rem', letterSpacing:'-0.02em',
-                    marginLeft: hAlign === 'center' ? 'auto' : '0',
-                    marginRight: hAlign === 'center' ? 'auto' : '0',
-                  }}>
-                    <span>{form.h1Line1 || 'Título'}</span><br />{form.h1Line2 || ''}
-                  </h1>
-                  <p style={{
-                    fontSize:'clamp(13px, 2.5vw, 15px)', opacity:0.9, marginBottom:'2rem',
-                    lineHeight:1.7, maxWidth:'500px',
-                    marginLeft: hAlign === 'center' ? 'auto' : '0',
-                    marginRight: hAlign === 'center' ? 'auto' : '0',
-                  }}>
-                    {form.p || 'Descripción del slide'}
-                  </p>
-                  <button style={{
-                    background:'#fff', color:'#111', fontSize:'13px', fontWeight:700,
-                    letterSpacing:'0.06em', textTransform:'uppercase', padding:'14px 32px',
-                    borderRadius:'6px', border:'none', cursor:'default',
-                    boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
-                  }}>
-                    {form.cta || 'CTA'}
-                  </button>
+                  {imgSrc && <img ref={isMobile ? undefined : previewRef as any} src={imgSrc} alt=""
+                    onMouseDown={onMouseDown}
+                    onWheel={onWheel}
+                    style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${panX}px, ${panY}px) scale(${zoom})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
+                  {!imgSrc && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' }} />}
+                  <div style={{ position:'absolute', inset:0, background: overlayCss }} />
+                  {isHero ? (
+                    <div style={{
+                      position:'relative', zIndex:2, padding:'3rem 2rem', maxWidth:'640px', color:'#fff',
+                      textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
+                    }}>
+                      <div style={{
+                        fontSize:'11px', fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase',
+                        color:'#93c5fd', background:'rgba(255,255,255,0.15)',
+                        padding:'4px 12px', borderRadius:'4px', display:'inline-block',
+                        marginBottom:'1rem', backdropFilter:'blur(4px)',
+                      }}>
+                        {form.tag || 'Tag del slide'}
+                      </div>
+                      <h1 style={{
+                        fontSize:'clamp(1.8rem, 4vw, 3.2rem)', fontWeight:800, lineHeight:1.1,
+                        marginBottom:'1rem', letterSpacing:'-0.02em',
+                        marginLeft: hAlign === 'center' ? 'auto' : '0',
+                        marginRight: hAlign === 'center' ? 'auto' : '0',
+                      }}>
+                        <span>{form.h1Line1 || 'Título'}</span><br />{form.h1Line2 || ''}
+                      </h1>
+                      <p style={{
+                        fontSize:'clamp(13px, 2.5vw, 15px)', opacity:0.9, marginBottom:'2rem',
+                        lineHeight:1.7, maxWidth:'500px',
+                        marginLeft: hAlign === 'center' ? 'auto' : '0',
+                        marginRight: hAlign === 'center' ? 'auto' : '0',
+                      }}>
+                        {form.p || 'Descripción del slide'}
+                      </p>
+                      <button style={{
+                        background:'#fff', color:'#111', fontSize:'13px', fontWeight:700,
+                        letterSpacing:'0.06em', textTransform:'uppercase', padding:'14px 32px',
+                        borderRadius:'6px', border:'none', cursor:'default',
+                        boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
+                      }}>
+                        {form.cta || 'CTA'}
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{
+                      position:'relative', zIndex:2, padding:'2.5rem 2.5rem',
+                      color:'#fff', textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
+                    }}>
+                      <div style={{
+                        fontSize:'10px', fontWeight:700, letterSpacing:'0.14em',
+                        textTransform:'uppercase', color:'#93c5fd', marginBottom:'8px',
+                      }}>
+                        {form.label || 'Label'}
+                      </div>
+                      <div style={{
+                        fontSize:'1.8rem', fontWeight:800, lineHeight:1.15, marginBottom:'12px',
+                      }}>
+                        {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
+                      </div>
+                      <span style={{
+                        background:'#1e40af', color:'#fff', fontSize:'11px',
+                        fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase',
+                        padding:'10px 22px', borderRadius:'6px', display:'inline-block',
+                        boxShadow:'0 4px 12px rgba(30,64,175,0.3)',
+                      }}>
+                        {form.cta || 'CTA'}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ) : (
-              <div style={{
-                width:'100%', aspectRatio:'16/9', maxHeight:'100%', borderRadius:12, overflow:'hidden',
-                position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-                display:'flex', alignItems: vAlignFlex, minHeight:'200px', background:'#000',
-              }}>
-                {form.img && <img src={form.img} alt=""
-                  onMouseDown={handleMouseDown}
-                  onWheel={handleWheel}
-                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanX??0}px, ${form.imgPanY??0}px) scale(${form.imgZoom??1})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
-                {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #166534 0%, #14532d 100%)' }} />}
-                <div style={{ position:'absolute', inset:0, background: overlayCss }} />
-                <div style={{
-                  position:'relative', zIndex:2, padding:'2.5rem 2.5rem',
-                  color:'#fff', textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
-                }}>
-                  <div style={{
-                    fontSize:'10px', fontWeight:700, letterSpacing:'0.14em',
-                    textTransform:'uppercase', color:'#93c5fd', marginBottom:'8px',
-                  }}>
-                    {form.label || 'Label'}
-                  </div>
-                  <div style={{
-                    fontSize:'1.8rem', fontWeight:800, lineHeight:1.15, marginBottom:'12px',
-                  }}>
-                    {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
-                  </div>
-                  <span style={{
-                    background:'#1e40af', color:'#fff', fontSize:'11px',
-                    fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase',
-                    padding:'10px 22px', borderRadius:'6px', display:'inline-block',
-                    boxShadow:'0 4px 12px rgba(30,64,175,0.3)',
-                  }}>
-                    {form.cta || 'CTA'}
-                  </span>
-                </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
 
           {/* ── CONTROLS ── */}
@@ -816,17 +834,11 @@ function BannerEditorModal({
                       <span> Ajustes de imagen móvil</span>
                       <button onClick={resetTransformMob} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
                     </div>
-                    <div style={{ aspectRatio:'9/16', maxHeight:220, borderRadius:8, overflow:'hidden', position:'relative', background:'#000', marginBottom:8, border:'1px solid #ddd' }}>
-                      <img src={form.imgMob} alt=""
-                        onMouseDown={handleMouseDownMob}
-                        onWheel={handleWheelMob}
-                        style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanXMob??0}px, ${form.imgPanYMob??0}px) scale(${form.imgZoomMob??1})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />
-                      <div style={{ position:'absolute', bottom:4, left:4, background:'rgba(0,0,0,0.65)', color:'#fff', fontSize:9, padding:'2px 6px', borderRadius:3, pointerEvents:'none' }}>
-                        Arrastra · Rueda zoom
-                      </div>
-                    </div>
-                    <div style={{ fontSize:10, color:'#888', textAlign:'center', padding:'2px 0' }}>
+                    <div style={{ fontSize:10, color:'#888', textAlign:'center', padding:'4px 0' }}>
                       X: {Math.round(form.imgPanXMob??0)} · Y: {Math.round(form.imgPanYMob??0)} · Zoom: {(form.imgZoomMob??1).toFixed(2)}×
+                    </div>
+                    <div style={{ fontSize:9, color:'#aaa', textAlign:'center' }}>
+                      Arrastra en la vista previa en modo Móvil para ajustar
                     </div>
                   </div>
                 )}
@@ -834,7 +846,7 @@ function BannerEditorModal({
               {form.img && (
                 <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span>Arrastra la imagen en la vista previa para mover · Rueda para zoom</span>
+                    <span>Selecciona Horizontal/Vertical/Móvil en la vista previa y arrastra</span>
                     <button onClick={resetTransform} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
                   </div>
                   <div style={{ fontSize:10, color:'#888', textAlign:'center', padding:'4px 0' }}>
