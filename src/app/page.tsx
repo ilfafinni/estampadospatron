@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PRODUCTS, CATEGORIES, catLabel, slugify, type Product, type Categoria } from '@/data/products';
+import { BANNERS } from '@/data/banners';
 import Header from '@/components/Header';
 
 const WHATSAPP_NUMBER_DISPLAY = '+56 9 6638 9299';
@@ -27,32 +28,18 @@ export default function HomePage() {
     setTimeout(() => setToast(''), 3500);
   };
 
-  const slides = [
-    {
-      bg: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%)',
-      tag: 'Nueva colección 2025',
-      h1: <><span>Estampados</span><br />con tu diseño</>,
-      p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad, sin mínimos.',
-      cta: 'Ver poleras',
-      onCta: () => { window.location.href = '/catalogo?cat=poleras'; },
-    },
-    {
-      bg: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 50%, var(--bg-primary) 100%)',
-      tag: 'Personalización profesional',
-      h1: <>Tu marca en<br />cada prenda</>,
-      p: 'Serigrafía, sublimación y bordado. El mejor acabado para tu empresa o evento corporativo.',
-      cta: 'Cotizar ahora',
-      onCta: () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }),
-    },
-    {
-      bg: 'linear-gradient(135deg, #052e16 0%, #14532d 50%, #166534 100%)',
-      tag: 'Entrega Express',
-      h1: <>Retira en<br />4 horas</>,
-      p: '¿Necesitas urgente? Contáctanos y coordinamos entrega express el mismo día en Curicó.',
-      cta: 'WhatsApp',
-      onCta: () => window.open(WHATSAPP_URL, '_blank'),
-    },
-  ];
+  const slides = BANNERS.heroSlides.map(s => ({
+    bg: s.img ? `url(${s.img}) center/cover no-repeat` : s.bg,
+    tag: s.tag,
+    h1: <><span>{s.h1Line1}</span><br />{s.h1Line2}</>,
+    p: s.p,
+    cta: s.cta,
+    onCta: s.ctaType === 'catalogo'
+      ? () => { window.location.href = s.ctaParam ? `/catalogo?cat=${s.ctaParam}` : '/catalogo'; }
+      : s.ctaType === 'whatsapp'
+        ? () => window.open(WHATSAPP_URL, '_blank')
+        : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }),
+  }));
 
   const scrollToCat = () => {
     setTimeout(() => document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' }), 50);
@@ -204,22 +191,23 @@ export default function HomePage() {
       <div style={{ padding: '0 1.5rem 3rem', maxWidth: '1400px', margin: '0 auto' }}>
         <style>{`@media (max-width: 640px) { .promo-grid { grid-template-columns: 1fr !important; gap: 16px !important; } .promo-card { min-height: 220px !important; } .promo-card-content { padding: 1.8rem 1.5rem !important; } .promo-card-title { font-size: 1.4rem !important; } }`}</style>
         <div className="promo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-          <PromoCard
-            bg="linear-gradient(135deg, var(--bg-primary) 0%, #166534 100%)"
-            label="Ideal para equipos"
-            title={<>Polerones<br />Personalizados</>}
-            cta="Ver polerones"
-            onClick={() => { setActiveCat('polerones'); scrollToCat(); }}
-            large
-          />
-          <PromoCard
-            bg="linear-gradient(135deg, var(--color-primary) 0%, #1e3a8a 100%)"
-            label="Descuento por volumen"
-            title={<>Venta<br />Corporativa</>}
-            cta="Cotizar empresa"
-            onClick={() => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })}
-            large
-          />
+          {BANNERS.promoBanners.map(b => {
+            const bg = b.img ? `url(${b.img}) center/cover no-repeat` : b.bg;
+            const onClick = b.ctaType === 'categoria'
+              ? () => { setActiveCat((b.ctaParam || 'polerones') as Categoria); scrollToCat(); }
+              : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' });
+            return (
+              <PromoCard
+                key={b.id}
+                bg={bg}
+                label={b.label}
+                title={<>{b.titleLine1}<br />{b.titleLine2}</>}
+                cta={b.cta}
+                onClick={onClick}
+                large
+              />
+            );
+          })}
         </div>
       </div>
 

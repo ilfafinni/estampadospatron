@@ -15,7 +15,7 @@ interface CategoryDef {
 const ADMIN_PASSWORD = 'JasperDante.26';
 
 // ── tipos ─────────────────────────────────────────────────────────────────────
-type Tab = 'fotos' | 'productos' | 'categorias';
+type Tab = 'fotos' | 'productos' | 'categorias' | 'banners';
 type UploadState = 'idle' | 'uploading' | 'done' | 'error';
 interface UploadResult { url: string; publicId: string; productId: number; }
 interface EditableProduct extends Omit<Product,'c'> { c: string; _dirty?: boolean; _new?: boolean; _deleted?: boolean; }
@@ -106,6 +106,51 @@ export function catLabel(c: Categoria): string {
   const map: Record<Categoria,string> = {\n${labelMap}\n};
   return map[c] || c;
 }`;
+}
+
+function generateBannersTs(banners: import('@/data/banners').BannerConfig): string {
+  const heroSlides = banners.heroSlides.map(s => {
+    const img = s.img ? `\n    img: '${s.img}',` : '';
+    return `  {\n    id: ${s.id},\n    tag: '${s.tag.replace(/'/g,"\\'")}',\n    h1Line1: '${s.h1Line1.replace(/'/g,"\\'")}',\n    h1Line2: '${s.h1Line2.replace(/'/g,"\\'")}',\n    p: '${s.p.replace(/'/g,"\\'")}',\n    cta: '${s.cta.replace(/'/g,"\\'")}',\n    ctaType: '${s.ctaType}',${s.ctaParam ? `\n    ctaParam: '${s.ctaParam}',` : ''}${img}\n    bg: '${s.bg.replace(/'/g,"\\'")}',\n  }`;
+  }).join(',\n');
+  const promoBanners = banners.promoBanners.map(b => {
+    const img = b.img ? `\n    img: '${b.img}',` : '';
+    return `  {\n    id: ${b.id},\n    label: '${b.label.replace(/'/g,"\\'")}',\n    titleLine1: '${b.titleLine1.replace(/'/g,"\\'")}',\n    titleLine2: '${b.titleLine2.replace(/'/g,"\\'")}',\n    cta: '${b.cta.replace(/'/g,"\\'")}',\n    ctaType: '${b.ctaType}',${b.ctaParam ? `\n    ctaParam: '${b.ctaParam}',` : ''}${img}\n    bg: '${b.bg.replace(/'/g,"\\'")}',\n  }`;
+  }).join(',\n');
+  return `export interface HeroSlideData {
+  id: number;
+  tag: string;
+  h1Line1: string;
+  h1Line2: string;
+  p: string;
+  cta: string;
+  ctaType: 'catalogo' | 'contacto' | 'whatsapp';
+  ctaParam?: string;
+  img?: string;
+  bg: string;
+}
+
+export interface PromoBannerData {
+  id: number;
+  label: string;
+  titleLine1: string;
+  titleLine2: string;
+  cta: string;
+  ctaType: 'categoria' | 'contacto';
+  ctaParam?: string;
+  img?: string;
+  bg: string;
+}
+
+export interface BannerConfig {
+  heroSlides: HeroSlideData[];
+  promoBanners: PromoBannerData[];
+}
+
+export const BANNERS: BannerConfig = {
+  heroSlides: [\n${heroSlides}\n  ],
+  promoBanners: [\n${promoBanners}\n  ],
+};`;
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
@@ -324,6 +369,51 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
   );
 }
 
+// ── Banner image uploader ──────────────────────────────────────────────────────
+function BannerImageUpload({ currentUrl, label, bannerKey, onUploaded }: { currentUrl: string; label: string; bannerKey: string; onUploaded: (url: string) => void }) {
+  const [state, setState] = useState<UploadState>('idle');
+  const [error, setError] = useState('');
+  const [dragOver, setDragOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const upload = useCallback(async (file: File) => {
+    if (!file.type.startsWith('image/')) { setError('Solo imágenes.'); return; }
+    if (file.size > 10*1024*1024) { setError('Máx 10 MB.'); return; }
+    setState('uploading'); setError('');
+    try {
+      const data = await fileToBase64(file);
+      const res = await fetch('/api/cloudinary/upload', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ data, productId:0, folder:'patronestampados/banners' }),
+      });
+      if (!res.ok) { const b = await res.json(); throw new Error(b.error||`HTTP ${res.status}`); }
+      const result = await res.json();
+      setState('done');
+      onUploaded(result.url);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error'); setState('error');
+    }
+  }, [onUploaded]);
+
+  return (
+    <div style={{ border:'1px dashed #d1d5db', borderRadius:8, padding:'8px', background:'#fafafa', cursor:'pointer' }}
+      onClick={()=>inputRef.current?.click()}
+      onDragOver={e=>{e.preventDefault();setDragOver(true);}}
+      onDragLeave={()=>setDragOver(false)}
+      onDrop={e=>{e.preventDefault();setDragOver(false);if(e.dataTransfer.files[0])upload(e.dataTransfer.files[0]);}}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap' }}>
+        <span style={{ fontSize:11, fontWeight:600, color:'#555', minWidth:80 }}>{label}</span>
+        {currentUrl
+          ? <span style={{ fontSize:10, color:'#16a34a', flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>✓ Imagen asignada</span>
+          : <span style={{ fontSize:10, color:dragOver?'#6366f1':'#bbb', flex:1 }}>{dragOver?'Suelta aquí':'Arrastra o clic para subir'}</span>}
+        {state==='uploading'&&<span style={{ fontSize:10, color:'#6366f1' }}>Subiendo…</span>}
+        {error&&<span style={{ fontSize:10, color:'#dc2626' }}>⚠ {error}</span>}
+      </div>
+      <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{if(e.target.files?.[0])upload(e.target.files[0]);}} />
+    </div>
+  );
+}
+
 // ── Página principal ───────────────────────────────────────────────────────────
 export default function AdminPage() {
   const [authed, setAuthed]   = useState(false);
@@ -348,6 +438,15 @@ export default function AdminPage() {
   const [editingCat, setEditingCat]     = useState<CategoryDef|null>(null);
   const [showCatModal, setShowCatModal] = useState(false);
   const [catDirty, setCatDirty]         = useState(0);
+
+  // Tab banners
+  const [banners, setBanners]           = useState<import('@/data/banners').BannerConfig>(()=>{
+    try { return require('@/data/banners').BANNERS; } catch { return { heroSlides:[], promoBanners:[] }; }
+  });
+  const [bannerSaving, setBannerSaving] = useState(false);
+  const [bannerMsg, setBannerMsg]       = useState('');
+  const [bannerDirty, setBannerDirty]   = useState(false);
+  const [bannerUploads, setBannerUploads] = useState<Record<string,string>>({});
 
   const handleUploaded = useCallback((result: UploadResult) => {
     setUploads(prev=>{
@@ -411,7 +510,7 @@ export default function AdminPage() {
     return catOk&&(!q||p.n.toLowerCase().includes(q)||p.ref.toLowerCase().includes(q)||p.precio.includes(q));
   });
 
-  const dirtyCount = products.filter(p=>p._dirty||p._new||p._deleted).length + catDirty;
+  const dirtyCount = products.filter(p=>p._dirty||p._new||p._deleted).length + catDirty + (bannerDirty?1:0);
   const totalConFoto = products.filter(p=>!p._deleted&&p.img).length;
 
   const tabBtn = (t:Tab,label:string):React.CSSProperties => ({
@@ -461,6 +560,7 @@ export default function AdminPage() {
         <button style={tabBtn('fotos','📷 Fotos')}   onClick={()=>setTab('fotos')}>📷 Fotos</button>
         <button style={tabBtn('productos','📦')}      onClick={()=>setTab('productos')}>📦 Productos</button>
         <button style={tabBtn('categorias','🏷️')}    onClick={()=>setTab('categorias')}>🏷️ Categorías</button>
+        <button style={tabBtn('banners','🖼️')}       onClick={()=>setTab('banners')}>🖼️ Banners</button>
       </div>
 
       <div style={{ maxWidth:1200, margin:'0 auto', padding:'20px 16px' }}>
@@ -637,6 +737,179 @@ export default function AdminPage() {
                 onClose={()=>{setShowCatModal(false);setEditingCat(null);}}
               />
             )}
+          </>
+        )}
+
+        {/* ── TAB BANNERS ── */}
+        {tab==='banners'&&(
+          <>
+            <div style={{ background:'#fffbeb', border:'1px solid #fde68a', borderRadius:12, padding:'14px 18px', marginBottom:20, display:'flex', gap:14, alignItems:'flex-start' }}>
+              <span style={{ fontSize:20 }}>🖼️</span>
+              <div style={{ fontSize:13, color:'#92400e', lineHeight:1.7 }}>
+                <strong>Banners del landing page</strong><br />
+                Sube imágenes de fondo para los slides del hero y los banners promocionales. Si no hay imagen, se usará el gradiente por defecto.
+              </div>
+            </div>
+
+            <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:20 }}>
+              {bannerMsg&&<div style={{ fontSize:12, color:bannerMsg.startsWith('✓')?'#16a34a':'#dc2626', fontWeight:600, width:'100%' }}>{bannerMsg}</div>}
+            </div>
+
+            <h3 style={{ fontSize:14, fontWeight:700, margin:'0 0 12px', color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>🎠 Hero Slider</h3>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:16, marginBottom:32 }}>
+              {banners.heroSlides.map((slide,idx)=>{
+                const key = `hero-${slide.id}`;
+                const imgUrl = bannerUploads[key] || slide.img || '';
+                return (
+                  <div key={key} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden' }}>
+                    <div style={{ position:'relative', height:160, background:'#f5f5f5', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
+                      {imgUrl
+                        ? <img src={imgUrl} alt={slide.tag} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                        : <div style={{ width:'100%', height:'100%', background:slide.bg, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:14 }}>{slide.tag}</div>
+                      }
+                      <div style={{ position:'absolute', top:8, left:8, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>
+                        Slide {idx+1}
+                      </div>
+                    </div>
+                    <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:8 }}>
+                      <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                        Tag
+                        <input value={slide.tag} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],tag:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                      </label>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Línea 1
+                          <input value={slide.h1Line1} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],h1Line1:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Línea 2
+                          <input value={slide.h1Line2} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],h1Line2:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                      </div>
+                      <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                        Descripción
+                        <textarea value={slide.p} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],p:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} rows={2} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', resize:'vertical', boxSizing:'border-box' }} />
+                      </label>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          CTA texto
+                          <input value={slide.cta} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],cta:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Acción
+                          <select value={slide.ctaType} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],ctaType:e.target.value as 'catalogo'|'contacto'|'whatsapp'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box', background:'#fff' }}>
+                            <option value="catalogo">Ir a catálogo</option>
+                            <option value="contacto">Ir a contacto</option>
+                            <option value="whatsapp">Abrir WhatsApp</option>
+                          </select>
+                        </label>
+                      </div>
+                      {slide.ctaType==='catalogo'&&(
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Categoría (opcional)
+                          <input value={slide.ctaParam||''} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],ctaParam:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} placeholder="poleras" style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                      )}
+                      <BannerImageUpload
+                        currentUrl={imgUrl}
+                        label="Imagen de fondo"
+                        bannerKey={key}
+                        onUploaded={(url)=>{setBannerUploads(prev=>({...prev,[key]:url}));const u=[...banners.heroSlides];u[idx]={...u[idx],img:url};setBanners({...banners,heroSlides:u});setBannerDirty(true);}}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <h3 style={{ fontSize:14, fontWeight:700, margin:'0 0 12px', color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>📢 Banners Promocionales</h3>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:16, marginBottom:24 }}>
+              {banners.promoBanners.map((banner,idx)=>{
+                const key = `promo-${banner.id}`;
+                const imgUrl = bannerUploads[key] || banner.img || '';
+                return (
+                  <div key={key} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden' }}>
+                    <div style={{ position:'relative', height:140, background:'#f5f5f5', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
+                      {imgUrl
+                        ? <img src={imgUrl} alt={banner.label} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                        : <div style={{ width:'100%', height:'100%', background:banner.bg, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:13 }}>{banner.label}</div>
+                      }
+                      <div style={{ position:'absolute', top:8, left:8, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>
+                        Banner {idx+1}
+                      </div>
+                    </div>
+                    <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:8 }}>
+                      <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                        Label
+                        <input value={banner.label} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],label:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                      </label>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Línea 1
+                          <input value={banner.titleLine1} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],titleLine1:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Línea 2
+                          <input value={banner.titleLine2} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],titleLine2:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                      </div>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          CTA texto
+                          <input value={banner.cta} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],cta:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Acción
+                          <select value={banner.ctaType} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],ctaType:e.target.value as 'categoria'|'contacto'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box', background:'#fff' }}>
+                            <option value="categoria">Ir a categoría</option>
+                            <option value="contacto">Ir a contacto</option>
+                          </select>
+                        </label>
+                      </div>
+                      {banner.ctaType==='categoria'&&(
+                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
+                          Categoría
+                          <input value={banner.ctaParam||''} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],ctaParam:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} placeholder="polerones" style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
+                        </label>
+                      )}
+                      <BannerImageUpload
+                        currentUrl={imgUrl}
+                        label="Imagen de fondo"
+                        bannerKey={key}
+                        onUploaded={(url)=>{setBannerUploads(prev=>({...prev,[key]:url}));const u=[...banners.promoBanners];u[idx]={...u[idx],img:url};setBanners({...banners,promoBanners:u});setBannerDirty(true);}}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div style={{ marginTop:20, marginBottom:20, background:bannerDirty?'#fffbeb':'#fff', border:`1px solid ${bannerDirty?'#fde68a':'#e8e8e8'}`, borderRadius:12, padding:'14px 18px', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:12 }}>
+              <div>
+                <div style={{ fontWeight:700, fontSize:14 }}>{bannerDirty?'⚠ Cambios sin guardar':'✓ Todo guardado'}</div>
+                <div style={{ fontSize:12, color:'#888', marginTop:3 }}>Los cambios en banners se publican al guardar.</div>
+              </div>
+              <button onClick={async()=>{
+                setBannerSaving(true);setBannerMsg('');
+                try {
+                  const content = generateBannersTs(banners);
+                  const res = await fetch('/api/github/save-banners',{
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body:JSON.stringify({content}),
+                  });
+                  const data = await res.json();
+                  if(!res.ok) throw new Error(data.error||'Error al guardar');
+                  setBannerMsg('✓ Banners guardados — Vercel está redesplegando (1-2 min)');
+                  setBannerDirty(false);
+                  setBannerUploads({});
+                } catch(err:unknown){
+                  setBannerMsg('⚠ '+(err instanceof Error?err.message:'Error desconocido'));
+                } finally { setBannerSaving(false); }
+              }} disabled={bannerSaving||!bannerDirty}
+                style={{ background:bannerSaving?'#ccc':!bannerDirty?'#e5e7eb':'#111', color:!bannerDirty?'#999':'#fff', border:'none', borderRadius:8, padding:'10px 24px', fontSize:13, fontWeight:700, cursor:bannerSaving||!bannerDirty?'not-allowed':'pointer', whiteSpace:'nowrap' }}>
+                {bannerSaving?'Guardando…':'💾 Guardar banners'}
+              </button>
+            </div>
           </>
         )}
       </div>
