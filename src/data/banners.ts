@@ -65,7 +65,7 @@ export const BANNERS: BannerConfig = {
     img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785043812/patronestampados/banners/nt0zhtyrdt5zcbkrgdr5.jpg',
     imgMob: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785046412/patronestampados/banners/gnqpvbh7vgyurjc5ofia.jpg',
     imgFit: 'cover',
-    imgPosition: 'right',
+    imgPosition: 'center',
     imgPanX: 0,
     imgPanY: 0,
     imgZoom: 1,
