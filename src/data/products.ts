@@ -10,10 +10,12 @@ export interface Product {
 export const PRODUCTS: Product[] = [
   {
   id: 1, c: 'poleras', n: 'Polera Básica Algodón MC', ref: 'PAT-6630',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040094/patronestampados/productos/producto-1.jpg',
   desc: 'Algodón 180 g peinado. Base ideal para serigrafía o sublimación. La más vendida.', v: {t:['XS','S','M','L','XL','XXL','3XL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'},{n:'Rojo',h:'#c0392b'}]}, precio: '$6.000',
   },
   {
   id: 2, c: 'poleras', n: 'Polera Premium Cuello V', ref: 'PAT-6635',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040099/patronestampados/productos/producto-2.jpg',
   desc: 'Corte slim fit. Cuello V reforzado. Ideal para impresión de alta definición.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris Jaspe',h:'#95a5a6'}]}, precio: '$7.000',
   badge: 'popular',
   },
@@ -53,15 +55,18 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 11, c: 'polerones', n: 'Polerón Canguro', ref: 'PAT-6960',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040145/patronestampados/productos/producto-11.jpg',
   desc: 'Con bolsillo frontal canguro. Diseño urbano y funcional. Tela premium 300 g.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Blanco',h:'#f0f0f0'},{n:'Verde Oscuro',h:'#145a32'}]}, precio: '$15.000',
   badge: 'popular',
   },
   {
   id: 12, c: 'polerones', n: 'Canguro con Cierre', ref: 'PAT-6965',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040135/patronestampados/productos/producto-12.jpg',
   desc: 'Cremallera frontal. Versátil, ideal para uniformes y conjuntos corporativos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Gris',h:'#888'},{n:'Azul Marino',h:'#1a2980'}]}, precio: '$15.000',
   },
   {
   id: 13, c: 'polerones', n: 'Cortavientos Glasgow', ref: 'PAT-7630',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040122/patronestampados/productos/producto-13.jpg',
   desc: 'Chaqueta ligera con capucha, resistente al viento y agua. Muy popular para eventos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#145a32'}]}, precio: '$15.000',
   },
   {
@@ -154,12 +159,12 @@ export const PRODUCTS: Product[] = [
   }
 ];
 export const CATEGORIES = [
-  {c:'poleras' as Categoria,   name:'Poleras',    count:'9 productos',    icon:'👕', bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
-  {c:'polerones' as Categoria, name:'Polerones',  count:'4 productos',   icon:'🧥', bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
-  {c:'tazas' as Categoria,     name:'Tazas',      count:'9 modelos',      icon:'☕', bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
-  {c:'accesorios' as Categoria,name:'Accesorios', count:'3 productos',    icon:'📱', bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
-  {c:'deportiva' as Categoria, name:'Deportiva',  count:'4 productos',    icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
-  {c:'impresion' as Categoria, name:'Impresión',  count:'5 productos',    icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'},
+  {c:'poleras' as Categoria, name:'Poleras', count:'9 productos', icon:'👕', bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
+  {c:'polerones' as Categoria, name:'Polerones', count:'4 productos', icon:'🧥', bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
+  {c:'tazas' as Categoria, name:'Tazas', count:'9 productos', icon:'☕', bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
+  {c:'accesorios' as Categoria, name:'Accesorios', count:'3 productos', icon:'📱', bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
+  {c:'deportiva' as Categoria, name:'Deportiva', count:'4 productos', icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
+  {c:'impresion' as Categoria, name:'Impresión', count:'5 productos', icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'}
 ];
 export interface EstampadoSize { id: string; label: string; precio: number; }
 export const ESTAMPADO_SIZES: EstampadoSize[] = [
@@ -171,7 +176,7 @@ export const ESTAMPADO_SIZES: EstampadoSize[] = [
 export type Ubicacion = 'Frente' | 'Espalda';
 export interface EstampadoSeleccion { ubicacion: Ubicacion; id: string; label: string; precio: number; }
 export function slugify(p: Product): string {
-  const base = p.n.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+  const base = p.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
   return `${base}-${p.id}`;
 }
 export function findBySlug(slug: string): Product | undefined {
@@ -185,6 +190,13 @@ export function parsePrecio(precio: string): number {
   return parseInt(match[0].replace(/\./g, ''), 10);
 }
 export function catLabel(c: Categoria): string {
-  const map: Record<Categoria,string> = { poleras:'Poleras', polerones:'Polerones', tazas:'Tazas', accesorios:'Accesorios', deportiva:'Deportiva', impresion:'Impresión' };
+  const map: Record<Categoria,string> = {
+  'poleras':'Poleras',
+  'polerones':'Polerones',
+  'tazas':'Tazas',
+  'accesorios':'Accesorios',
+  'deportiva':'Deportiva',
+  'impresion':'Impresión'
+};
   return map[c] || c;
 }
