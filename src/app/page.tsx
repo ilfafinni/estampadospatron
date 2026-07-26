@@ -37,6 +37,7 @@ export default function HomePage() {
     const imgUrlMob = cloudOpt(s.imgMob);
     const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
     const bgImgMob = imgUrlMob ? `url(${imgUrlMob}) ${imgPos} / ${imgFit} no-repeat` : '';
+    const bgImgDesk = imgUrl ? `url(${imgUrl}) ${imgPos} / contain no-repeat` : '';
     const panX = s.imgPanX ?? 0;
     const panY = s.imgPanY ?? 0;
     const zoom = s.imgZoom ?? 1;
@@ -47,6 +48,7 @@ export default function HomePage() {
       bg: s.img ? `${bgImg}, ${s.bg}` : s.bg,
       bgGradient: s.bg,
       bgImg,
+      bgImgDesk,
       bgImgMob,
       imgTransform: s.img ? `translate(${panX}px, ${panY}px) scale(${zoom})` : '',
       imgTransformMob: s.imgMob ? `translate(${panXMob}px, ${panYMob}px) scale(${zoomMob})` : '',
@@ -132,7 +134,7 @@ export default function HomePage() {
             }}
           >
             <div style={{ position: 'absolute', inset: 0, background: slide.bgGradient }} />
-            {slide.bgImg && <div className="hero-bg-desk" style={{ position: 'absolute', inset: 0, background: slide.bgImg, transform: slide.imgTransform, transformOrigin:'center' }} />}
+            {slide.bgImgDesk && <div className="hero-bg-desk" style={{ position: 'absolute', inset: 0, background: slide.bgImgDesk, transform: slide.imgTransform, transformOrigin:'center' }} />}
             {slide.bgImgMob && <div className="hero-bg-mob" style={{ position: 'absolute', inset: 0, background: slide.bgImgMob, transform: slide.imgTransformMob, transformOrigin:'center' }} />}
             <div style={{ position: 'absolute', inset: 0, background: slide.overlayStyle }} />
             <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff', textAlign: slide.textAlign as React.CSSProperties['textAlign'] }}>
