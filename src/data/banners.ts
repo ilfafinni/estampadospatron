@@ -10,6 +10,9 @@ export interface HeroSlideData {
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
   imgPosition?: string;
+  imgPanX?: number;
+  imgPanY?: number;
+  imgZoom?: number;
   textAlign?: 'left' | 'center' | 'right';
   textVertical?: 'top' | 'middle' | 'bottom';
   overlayStyle?: string;
@@ -27,6 +30,9 @@ export interface PromoBannerData {
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
   imgPosition?: string;
+  imgPanX?: number;
+  imgPanY?: number;
+  imgZoom?: number;
   textAlign?: 'left' | 'center' | 'right';
   textVertical?: 'top' | 'middle' | 'bottom';
   overlayStyle?: string;
