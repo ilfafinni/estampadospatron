@@ -35,7 +35,7 @@ export default function HomePage() {
 
   const slides = BANNERS.heroSlides.map(s => {
     const imgPos = s.imgPosition || 'center';
-    const imgFit = s.imgFit || 'contain';
+    const imgFit = s.imgFit || 'cover';
     const imgUrl = cloudOpt(s.img);
     const imgUrlMob = cloudOpt(s.imgMob);
     const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
@@ -231,11 +231,12 @@ export default function HomePage() {
         <div className="promo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           {BANNERS.promoBanners.map(b => {
             const imgPos = b.imgPosition || 'center';
-            const imgFit = b.imgFit || 'contain';
+            const imgFit = b.imgFit || 'cover';
             const imgUrl = cloudOpt(b.img);
             const imgUrlMob = cloudOpt(b.imgMob);
             const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
-            const bgImgMob = imgUrlMob ? `url(${imgUrlMob}) ${imgPos} / ${imgFit} no-repeat` : '';
+            const mobileImgFallback = imgUrlMob || imgUrl;
+            const bgImgMob = mobileImgFallback ? `url(${mobileImgFallback}) ${imgPos} / ${imgFit} no-repeat` : '';
             const panX = b.imgPanX ?? 0;
             const panY = b.imgPanY ?? 0;
             const zoom = b.imgZoom ?? 1;
