@@ -48,8 +48,9 @@ export const BANNERS: BannerConfig = {
     p: 'Personaliza tus prendas y productos favoritos con tu logo o diseño. Desde 1 unidad, sin mínimos.',
     cta: 'Ver poleras',
     ctaType: 'catalogo',
+    img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785038391/patronestampados/banners/g71nrkdbokfq46dkng2h.jpg',
+    imgFit: 'fill',
     ctaParam: 'poleras',
-    img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785037868/patronestampados/banners/ok9i2j8nyhz7pnc8abya.jpg',
     bg: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%)',
   },
   {
