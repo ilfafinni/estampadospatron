@@ -10,9 +10,6 @@ export interface HeroSlideData {
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
   imgPosition?: string;
-  imgPanX?: number;
-  imgPanY?: number;
-  imgZoom?: number;
   textAlign?: 'left' | 'center' | 'right';
   textVertical?: 'top' | 'middle' | 'bottom';
   overlayStyle?: string;
@@ -30,9 +27,6 @@ export interface PromoBannerData {
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
   imgPosition?: string;
-  imgPanX?: number;
-  imgPanY?: number;
-  imgZoom?: number;
   textAlign?: 'left' | 'center' | 'right';
   textVertical?: 'top' | 'middle' | 'bottom';
   overlayStyle?: string;
@@ -56,6 +50,10 @@ export const BANNERS: BannerConfig = {
     ctaType: 'catalogo',
     img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785038773/patronestampados/banners/cx4lkfls89vtzszxxmso.jpg',
     imgFit: 'cover',
+    imgPosition: 'top',
+    imgPanX: 0,
+    imgPanY: 0,
+    imgZoom: 1,
     ctaParam: 'poleras',
     bg: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%)',
   },
