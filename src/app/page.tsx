@@ -13,7 +13,7 @@ const CONTACT_EMAIL = 'contacto@estampadospatron.com';
 
 function cloudOpt(url: string | undefined, w = 1920): string {
   if (!url) return '';
-  return url.replace('/upload/', `/upload/q_auto:best,f_auto,w_${w}/`);
+  return url.replace('/upload/', `/upload/q_auto:best,f_auto,dpr_auto,w_${w}/`);
 }
 
 export default function HomePage() {
@@ -33,8 +33,8 @@ export default function HomePage() {
   const slides = BANNERS.heroSlides.map(s => {
     const imgPos = s.imgPosition || 'center';
     const imgFit = s.imgFit || 'cover';
-    const imgUrl = cloudOpt(s.img);
-    const imgUrlMob = cloudOpt(s.imgMob);
+    const imgUrl = cloudOpt(s.img, 2400);
+    const imgUrlMob = cloudOpt(s.imgMob, 1200);
     const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
     const bgImgMob = imgUrlMob ? `url(${imgUrlMob}) ${imgPos} / ${imgFit} no-repeat` : '';
     const panX = s.imgPanX ?? 0;
@@ -80,8 +80,8 @@ export default function HomePage() {
     <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
       <style>{`
         @media (min-width: 769px) {
-          .hero-outer { height: calc(100vh - 64px) !important; }
-          .hero-slide { height: calc(100vh - 64px) !important; }
+          .hero-outer { height: min(calc(100vh - 65px), 720px) !important; }
+          .hero-slide { height: min(calc(100vh - 65px), 720px) !important; }
           .hero-bg-mob { display: none !important; }
         }
         @media (max-width: 768px) {

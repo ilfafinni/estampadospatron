@@ -78,7 +78,7 @@ export default function Header({
           zIndex: 500,
           background: scrolled ? 'rgba(255,255,255,0.95)' : 'var(--bg-card)',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid var(--border-light)' : 'none',
+          borderBottom: scrolled ? '1px solid var(--border-light)' : '1px solid transparent',
           transition: 'background 0.3s, border 0.3s, box-shadow 0.3s',
           boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
         }}
