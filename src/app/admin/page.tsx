@@ -114,12 +114,14 @@ function generateBannersTs(banners: import('@/data/banners').BannerConfig): stri
   const opt = (val: unknown, key: string) => val ? `\n    ${key}: '${String(val).replace(/'/g,"\\'")}',` : '';
   const heroSlides = banners.heroSlides.map(s => {
     const panZoom = s.img ? `\n    imgPanX: ${s.imgPanX??0},\n    imgPanY: ${s.imgPanY??0},\n    imgZoom: ${s.imgZoom??1},` : '';
-    const extra = [s.img&&opt(s.img,'img'), s.imgMob&&opt(s.imgMob,'imgMob'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), panZoom, s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
+    const panZoomMob = s.imgMob ? `\n    imgPanXMob: ${s.imgPanXMob??0},\n    imgPanYMob: ${s.imgPanYMob??0},\n    imgZoomMob: ${s.imgZoomMob??1},` : '';
+    const extra = [s.img&&opt(s.img,'img'), s.imgMob&&opt(s.imgMob,'imgMob'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), panZoom, panZoomMob, s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
     return `  {\n    id: ${s.id},\n    tag: '${s.tag.replace(/'/g,"\\'")}',\n    h1Line1: '${s.h1Line1.replace(/'/g,"\\'")}',\n    h1Line2: '${s.h1Line2.replace(/'/g,"\\'")}',\n    p: '${s.p.replace(/'/g,"\\'")}',\n    cta: '${s.cta.replace(/'/g,"\\'")}',\n    ctaType: '${s.ctaType}',${extra}\n    bg: '${s.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   const promoBanners = banners.promoBanners.map(b => {
     const panZoom = b.img ? `\n    imgPanX: ${b.imgPanX??0},\n    imgPanY: ${b.imgPanY??0},\n    imgZoom: ${b.imgZoom??1},` : '';
-    const extra = [b.img&&opt(b.img,'img'), b.imgMob&&opt(b.imgMob,'imgMob'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), panZoom, b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
+    const panZoomMob = b.imgMob ? `\n    imgPanXMob: ${b.imgPanXMob??0},\n    imgPanYMob: ${b.imgPanYMob??0},\n    imgZoomMob: ${b.imgZoomMob??1},` : '';
+    const extra = [b.img&&opt(b.img,'img'), b.imgMob&&opt(b.imgMob,'imgMob'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), panZoom, panZoomMob, b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
     return `  {\n    id: ${b.id},\n    label: '${b.label.replace(/'/g,"\\'")}',\n    titleLine1: '${b.titleLine1.replace(/'/g,"\\'")}',\n    titleLine2: '${b.titleLine2.replace(/'/g,"\\'")}',\n    cta: '${b.cta.replace(/'/g,"\\'")}',\n    ctaType: '${b.ctaType}',${extra}\n    bg: '${b.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   return `export interface HeroSlideData {
@@ -138,6 +140,9 @@ function generateBannersTs(banners: import('@/data/banners').BannerConfig): stri
     imgPanY?: number;
     imgZoom?: number;
     imgMob?: string;
+    imgPanXMob?: number;
+    imgPanYMob?: number;
+    imgZoomMob?: number;
     textAlign?: 'left' | 'center' | 'right';
     textVertical?: 'top' | 'middle' | 'bottom';
     overlayStyle?: string;
@@ -159,6 +164,9 @@ function generateBannersTs(banners: import('@/data/banners').BannerConfig): stri
     imgPanY?: number;
     imgZoom?: number;
     imgMob?: string;
+    imgPanXMob?: number;
+    imgPanYMob?: number;
+    imgZoomMob?: number;
     textAlign?: 'left' | 'center' | 'right';
     textVertical?: 'top' | 'middle' | 'bottom';
     overlayStyle?: string;
@@ -491,7 +499,7 @@ function BannerEditorModal({
   onSave: (updated: import('@/data/banners').HeroSlideData | import('@/data/banners').PromoBannerData) => void;
   onClose: () => void;
 }) {
-  const [form, setForm] = useState<any>({ ...data, imgPanX: (data as any).imgPanX ?? 0, imgPanY: (data as any).imgPanY ?? 0, imgZoom: (data as any).imgZoom ?? 1 });
+  const [form, setForm] = useState<any>({ ...data, imgPanX: (data as any).imgPanX ?? 0, imgPanY: (data as any).imgPanY ?? 0, imgZoom: (data as any).imgZoom ?? 1, imgPanXMob: (data as any).imgPanXMob ?? 0, imgPanYMob: (data as any).imgPanYMob ?? 0, imgZoomMob: (data as any).imgZoomMob ?? 1 });
   const [uploadState, setUploadState] = useState<UploadState>('idle');
   const [uploadError, setUploadError] = useState('');
   const [uploadStateMob, setUploadStateMob] = useState<UploadState>('idle');
@@ -593,6 +601,12 @@ function BannerEditorModal({
     set('imgPanX', 0);
     set('imgPanY', 0);
     set('imgZoom', 1);
+  };
+
+  const resetTransformMob = () => {
+    set('imgPanXMob', 0);
+    set('imgPanYMob', 0);
+    set('imgZoomMob', 1);
   };
 
   const vAlignFlex = form.textVertical === 'middle' ? 'center' : form.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
@@ -768,6 +782,28 @@ function BannerEditorModal({
                   <button onClick={() => set('imgMob', undefined)} style={{ background:'none', border:'none', color:'#dc2626', fontSize:11, cursor:'pointer', marginTop:4, textDecoration:'underline' }}>
                     Eliminar imagen móvil
                   </button>
+                )}
+                {form.imgMob && (
+                  <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginTop:8 }}>
+                    <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                      <span>📱 Ajustes de imagen móvil</span>
+                      <button onClick={resetTransformMob} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
+                    </div>
+                    <div style={bannerEditorStyles.row}>
+                      <label style={bannerEditorStyles.label}>
+                        Pan X
+                        <input type="number" value={form.imgPanXMob??0} onChange={(e) => set('imgPanXMob', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
+                      </label>
+                      <label style={bannerEditorStyles.label}>
+                        Pan Y
+                        <input type="number" value={form.imgPanYMob??0} onChange={(e) => set('imgPanYMob', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
+                      </label>
+                      <label style={bannerEditorStyles.label}>
+                        Zoom
+                        <input type="number" value={form.imgZoomMob??1} onChange={(e) => set('imgZoomMob', Number(e.target.value))} style={bannerEditorStyles.input} step={0.1} min={0.2} max={5} />
+                      </label>
+                    </div>
+                  </div>
                 )}
               </div>
               {form.img && (
