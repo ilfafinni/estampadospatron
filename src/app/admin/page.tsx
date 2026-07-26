@@ -380,6 +380,337 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
   );
 }
 
+// ── Editor completo de banners ────────────────────────────────────────────────
+const bannerEditorStyles = {
+  overlay: {
+    position:'fixed' as const, inset:0, background:'rgba(0,0,0,.7)', zIndex:300,
+    display:'flex', alignItems:'center', justifyContent:'center', padding:16,
+  },
+  container: {
+    background:'#fff', borderRadius:16, width:'100%', maxWidth:1100,
+    maxHeight:'94vh', display:'flex', flexDirection:'column' as const,
+    overflow:'hidden', boxShadow:'0 24px 80px rgba(0,0,0,.5)',
+  },
+  header: {
+    display:'flex', alignItems:'center', justifyContent:'space-between',
+    padding:'16px 24px', borderBottom:'1px solid #eee',
+  },
+  body: {
+    display:'flex', flex:1, overflow:'hidden',
+    flexDirection:'row' as const, flexWrap:'wrap' as const,
+  },
+  previewPanel: {
+    flex:'1 1 50%' as const, minWidth:320, padding:20,
+    display:'flex', alignItems:'center', justifyContent:'center',
+    background:'#f5f5f5', position:'relative' as const, overflow:'hidden',
+  },
+  controlsPanel: {
+    flex:'1 1 50%' as const, minWidth:320, padding:'20px 24px',
+    overflowY:'auto' as const, maxHeight:'calc(94vh - 60px)',
+  },
+  sectionTitle: {
+    fontSize:11, fontWeight:700, color:'#888', textTransform:'uppercase' as const,
+    letterSpacing:'0.08em', marginBottom:12, paddingBottom:8,
+    borderBottom:'1px solid #eee',
+  },
+  label: {
+    display:'flex', flexDirection:'column' as const, gap:4,
+    fontSize:11, fontWeight:600, color:'#555', marginBottom:12,
+  },
+  input: {
+    padding:'7px 10px', border:'1px solid #ddd', borderRadius:6,
+    fontSize:13, fontFamily:'inherit' as const, outline:'none',
+    width:'100%', boxSizing:'border-box' as const, marginTop:2,
+  },
+  select: {
+    padding:'7px 10px', border:'1px solid #ddd', borderRadius:6,
+    fontSize:13, fontFamily:'inherit' as const, outline:'none',
+    width:'100%', boxSizing:'border-box' as const, marginTop:2,
+    background:'#fff', cursor:'pointer',
+  },
+  row: {
+    display:'grid', gridTemplateColumns:'1fr 1fr', gap:12, marginBottom:4,
+  },
+};
+
+function BannerEditorModal({
+  type, data, onSave, onClose,
+}: {
+  type: 'hero' | 'promo';
+  data: import('@/data/banners').HeroSlideData | import('@/data/banners').PromoBannerData;
+  onSave: (updated: import('@/data/banners').HeroSlideData | import('@/data/banners').PromoBannerData) => void;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState<any>({ ...data });
+  const [uploadState, setUploadState] = useState<UploadState>('idle');
+  const [uploadError, setUploadError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const set = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
+
+  const bgImgCss = form.img
+    ? `${form.bg || ''}, url(${form.img}) ${form.imgPosition || 'center'} / ${form.imgFit || 'cover'} no-repeat`
+    : form.bg || (type === 'hero'
+        ? 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 50%, var(--bg-secondary) 100%)'
+        : 'linear-gradient(135deg, #111 0%, #333 100%)');
+
+  const overlayCss = form.overlayStyle || (type === 'hero'
+    ? 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)'
+    : 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)');
+
+  const vAlign = form.textVertical === 'middle' ? 'center' : form.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
+  const hAlign = form.textAlign || 'left';
+
+  const handleFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) { setUploadError('Solo imágenes.'); return; }
+    if (file.size > 10*1024*1024) { setUploadError('Máx 10 MB.'); return; }
+    setUploadState('uploading'); setUploadError('');
+    try {
+      const base64 = await fileToBase64(file);
+      const res = await fetch('/api/cloudinary/upload', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ data:base64, productId:0, folder:'patronestampados/banners' }),
+      });
+      if (!res.ok) { const b = await res.json(); throw new Error(b.error||`HTTP ${res.status}`); }
+      const result = await res.json();
+      set('img', result.url);
+      setUploadState('done');
+    } catch (err: unknown) {
+      setUploadError(err instanceof Error ? err.message : 'Error');
+      setUploadState('error');
+    }
+  };
+
+  const isHero = type === 'hero';
+
+  return (
+    <div style={bannerEditorStyles.overlay} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div style={bannerEditorStyles.container}>
+        {/* Header */}
+        <div style={bannerEditorStyles.header}>
+          <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+            <button onClick={onClose} style={{ background:'none', border:'none', fontSize:18, cursor:'pointer', color:'#999' }}>←</button>
+            <span style={{ fontWeight:700, fontSize:16 }}>
+              {isHero ? `🎠 Slide ${form.id}` : `📢 Banner ${form.id}`}
+              <span style={{ fontWeight:400, color:'#999', fontSize:13, marginLeft:8 }}>
+                {isHero ? 'Hero Slider' : 'Promocional'}
+              </span>
+            </span>
+          </div>
+          <div style={{ display:'flex', gap:8 }}>
+            <button onClick={onClose} style={{ background:'#f3f4f6', color:'#555', border:'1px solid #ddd', borderRadius:8, padding:'8px 16px', fontSize:12, cursor:'pointer' }}>Cancelar</button>
+            <button onClick={() => { onSave(form); onClose(); }} style={{ background:'#111', color:'#fff', border:'none', borderRadius:8, padding:'8px 20px', fontSize:12, fontWeight:700, cursor:'pointer' }}>💾 Guardar</button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={bannerEditorStyles.body}>
+          {/* ── PREVIEW ── */}
+          <div style={bannerEditorStyles.previewPanel}>
+            <div style={{
+              width:'100%', height:'100%', minHeight:300, borderRadius:12, overflow:'hidden',
+              position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
+              display:'flex', alignItems:vAlign, justifyContent:'flex-start',
+            }}>
+              <div style={{ position:'absolute', inset:0, background:bgImgCss, backgroundSize:'cover' }} />
+              <div style={{ position:'absolute', inset:0, background:overlayCss }} />
+              <div style={{
+                position:'relative', zIndex:2, padding:isHero?'2.5rem 2rem':'2rem 1.8rem',
+                color:'#fff', textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
+              }}>
+                {isHero ? (
+                  <>
+                    <div style={{ fontSize:10, fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase', color:'#93c5fd', background:'rgba(255,255,255,0.15)', padding:'4px 12px', borderRadius:4, display:hAlign==='center'?'inline-block':'inline-block', marginBottom:'0.8rem', backdropFilter:'blur(4px)' }}>
+                      {form.tag || 'Tag'}
+                    </div>
+                    <h2 style={{ fontSize:'clamp(1.3rem,2.5vw,2rem)', fontWeight:800, lineHeight:1.1, marginBottom:'0.6rem', margin:0 }}>
+                      {form.h1Line1 || 'Título'}<br />{form.h1Line2 || ''}
+                    </h2>
+                    <p style={{ fontSize:'clamp(11px,1.5vw,13px)', opacity:0.9, margin:'0.6rem 0 1.2rem', lineHeight:1.6 }}>
+                      {form.p || 'Descripción del slide'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ fontSize:9, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'#93c5fd', marginBottom:6 }}>{form.label || 'Label'}</div>
+                    <h2 style={{ fontSize:'clamp(1.2rem,2vw,1.6rem)', fontWeight:800, lineHeight:1.15, marginBottom:10 }}>
+                      {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
+                    </h2>
+                  </>
+                )}
+                <div style={{
+                  background:isHero?'#fff':'var(--color-accent)', color:isHero?'#111':'#fff',
+                  fontSize:10, fontWeight:700, letterSpacing:'0.06em', textTransform:'uppercase',
+                  padding:'8px 20px', borderRadius:6, display:'inline-block',
+                  boxShadow:isHero?'0 4px 12px rgba(0,0,0,0.1)':'0 4px 12px rgba(220,38,38,0.3)',
+                }}>
+                  {form.cta || 'CTA'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── CONTROLS ── */}
+          <div style={bannerEditorStyles.controlsPanel}>
+            {/* IMAGEN */}
+            <div style={{ marginBottom:24 }}>
+              <div style={bannerEditorStyles.sectionTitle}>📷 Imagen de fondo</div>
+              <div
+                style={{ border:'2px dashed #ddd', borderRadius:8, padding:16, background:'#fafafa', cursor:'pointer', textAlign:'center', marginBottom:12 }}
+                onClick={() => inputRef.current?.click()}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => { e.preventDefault(); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); }}
+              >
+                {form.img
+                  ? <div style={{ display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}>
+                      <img src={form.img} alt="" style={{ height:48, width:48, borderRadius:6, objectFit:'cover' }} />
+                      <span style={{ fontSize:12, color:'#16a34a', fontWeight:600 }}>✓ Imagen asignada</span>
+                    </div>
+                  : <span style={{ fontSize:12, color:'#aaa' }}>Arrastra una imagen o haz clic para subir</span>}
+                {uploadState === 'uploading' && <span style={{ fontSize:11, color:'#6366f1', display:'block', marginTop:4 }}>Subiendo…</span>}
+                {uploadError && <span style={{ fontSize:11, color:'#dc2626', display:'block', marginTop:4 }}>{uploadError}</span>}
+                <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }} />
+              </div>
+              {form.img && (
+                <button onClick={() => set('img', undefined)} style={{ background:'none', border:'none', color:'#dc2626', fontSize:11, cursor:'pointer', marginBottom:8, textDecoration:'underline' }}>
+                  Eliminar imagen
+                </button>
+              )}
+              <div style={bannerEditorStyles.row}>
+                <label style={bannerEditorStyles.label}>
+                  Ajuste
+                  <select value={form.imgFit||'cover'} onChange={(e) => set('imgFit', e.target.value)} style={bannerEditorStyles.select}>
+                    <option value="cover">Cover (recortar)</option>
+                    <option value="contain">Contain (completa)</option>
+                    <option value="fill">Fill (estirar)</option>
+                  </select>
+                </label>
+                <label style={bannerEditorStyles.label}>
+                  Posición
+                  <select value={form.imgPosition||'center'} onChange={(e) => set('imgPosition', e.target.value)} style={bannerEditorStyles.select}>
+                    <option value="center">Centro</option>
+                    <option value="top">Arriba</option>
+                    <option value="bottom">Abajo</option>
+                    <option value="left">Izquierda</option>
+                    <option value="right">Derecha</option>
+                    <option value="top left">Sup. izq.</option>
+                    <option value="top right">Sup. der.</option>
+                    <option value="bottom left">Inf. izq.</option>
+                    <option value="bottom right">Inf. der.</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            {/* TEXTO */}
+            <div style={{ marginBottom:24 }}>
+              <div style={bannerEditorStyles.sectionTitle}>✏️ Texto</div>
+              {isHero ? (
+                <>
+                  <label style={bannerEditorStyles.label}>
+                    Tag
+                    <input value={form.tag||''} onChange={(e) => set('tag', e.target.value)} style={bannerEditorStyles.input} placeholder="Nueva colección 2025" />
+                  </label>
+                  <div style={bannerEditorStyles.row}>
+                    <label style={bannerEditorStyles.label}>
+                      Título línea 1
+                      <input value={form.h1Line1||''} onChange={(e) => set('h1Line1', e.target.value)} style={bannerEditorStyles.input} placeholder="Estampados" />
+                    </label>
+                    <label style={bannerEditorStyles.label}>
+                      Título línea 2
+                      <input value={form.h1Line2||''} onChange={(e) => set('h1Line2', e.target.value)} style={bannerEditorStyles.input} placeholder="con tu diseño" />
+                    </label>
+                  </div>
+                  <label style={bannerEditorStyles.label}>
+                    Descripción
+                    <textarea value={form.p||''} onChange={(e) => set('p', e.target.value)} rows={2} style={bannerEditorStyles.input} placeholder="Describe el slide…" />
+                  </label>
+                </>
+              ) : (
+                <>
+                  <label style={bannerEditorStyles.label}>
+                    Label
+                    <input value={form.label||''} onChange={(e) => set('label', e.target.value)} style={bannerEditorStyles.input} placeholder="Ideal para equipos" />
+                  </label>
+                  <div style={bannerEditorStyles.row}>
+                    <label style={bannerEditorStyles.label}>
+                      Título línea 1
+                      <input value={form.titleLine1||''} onChange={(e) => set('titleLine1', e.target.value)} style={bannerEditorStyles.input} placeholder="Polerones" />
+                    </label>
+                    <label style={bannerEditorStyles.label}>
+                      Título línea 2
+                      <input value={form.titleLine2||''} onChange={(e) => set('titleLine2', e.target.value)} style={bannerEditorStyles.input} placeholder="Personalizados" />
+                    </label>
+                  </div>
+                </>
+              )}
+              <div style={bannerEditorStyles.row}>
+                <label style={bannerEditorStyles.label}>
+                  Texto CTA
+                  <input value={form.cta||''} onChange={(e) => set('cta', e.target.value)} style={bannerEditorStyles.input} placeholder="Ver más" />
+                </label>
+                <label style={bannerEditorStyles.label}>
+                  Acción
+                  <select value={form.ctaType||(isHero?'catalogo':'categoria')} onChange={(e) => set('ctaType', e.target.value)} style={bannerEditorStyles.select}>
+                    {isHero ? (
+                      <>
+                        <option value="catalogo">Ir a catálogo</option>
+                        <option value="contacto">Ir a contacto</option>
+                        <option value="whatsapp">Abrir WhatsApp</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="categoria">Ir a categoría</option>
+                        <option value="contacto">Ir a contacto</option>
+                      </>
+                    )}
+                  </select>
+                </label>
+              </div>
+              {((isHero && form.ctaType === 'catalogo') || (!isHero && form.ctaType === 'categoria')) && (
+                <label style={bannerEditorStyles.label}>
+                  Parámetro (categoría)
+                  <input value={form.ctaParam||''} onChange={(e) => set('ctaParam', e.target.value)} style={bannerEditorStyles.input} placeholder={isHero?'poleras':'polerones'} />
+                </label>
+              )}
+              <div style={bannerEditorStyles.row}>
+                <label style={bannerEditorStyles.label}>
+                  Alineación texto
+                  <select value={form.textAlign||'left'} onChange={(e) => set('textAlign', e.target.value)} style={bannerEditorStyles.select}>
+                    <option value="left">Izquierda</option>
+                    <option value="center">Centrado</option>
+                    <option value="right">Derecha</option>
+                  </select>
+                </label>
+                <label style={bannerEditorStyles.label}>
+                  Posición vertical
+                  <select value={form.textVertical||(isHero?'top':'bottom')} onChange={(e) => set('textVertical', e.target.value)} style={bannerEditorStyles.select}>
+                    <option value="top">Arriba</option>
+                    <option value="middle">Centro</option>
+                    <option value="bottom">Abajo</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            {/* OVERLAY */}
+            <div style={{ marginBottom:24 }}>
+              <div style={bannerEditorStyles.sectionTitle}>🎨 Overlay oscuro</div>
+              <label style={bannerEditorStyles.label}>
+                Gradiente CSS (capa oscura sobre la imagen)
+                <textarea value={form.overlayStyle||''} onChange={(e) => set('overlayStyle', e.target.value)} rows={2} style={{...bannerEditorStyles.input, fontFamily:'monospace', fontSize:11}} placeholder={isHero?'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)':'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)'} />
+              </label>
+              <div style={{ fontSize:10, color:'#aaa', marginTop:4 }}>
+                Deja vacío para usar el valor por defecto. El gradiente se muestra encima de la imagen para mejorar la legibilidad del texto.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Banner image uploader ──────────────────────────────────────────────────────
 function BannerImageUpload({ currentUrl, label, bannerKey, onUploaded }: { currentUrl: string; label: string; bannerKey: string; onUploaded: (url: string) => void }) {
   const [state, setState] = useState<UploadState>('idle');
@@ -458,6 +789,11 @@ export default function AdminPage() {
   const [bannerMsg, setBannerMsg]       = useState('');
   const [bannerDirty, setBannerDirty]   = useState(false);
   const [bannerUploads, setBannerUploads] = useState<Record<string,string>>({});
+  const [bannerEditor, setBannerEditor] = useState<{
+    type: 'hero' | 'promo';
+    data: import('@/data/banners').HeroSlideData | import('@/data/banners').PromoBannerData;
+    index: number;
+  } | null>(null);
 
   const handleUploaded = useCallback((result: UploadResult) => {
     setUploads(prev=>{
@@ -766,231 +1102,64 @@ export default function AdminPage() {
               {bannerMsg&&<div style={{ fontSize:12, color:bannerMsg.startsWith('✓')?'#16a34a':'#dc2626', fontWeight:600, width:'100%' }}>{bannerMsg}</div>}
             </div>
 
-            <h3 style={{ fontSize:14, fontWeight:700, margin:'0 0 12px', color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>🎠 Hero Slider</h3>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:16, marginBottom:32 }}>
+            <div style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center', marginBottom:16 }}>
+              <h3 style={{ fontSize:14, fontWeight:700, margin:0, color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>🎠 Hero Slider</h3>
+              <span style={{ fontSize:11, color:'#bbb' }}>{banners.heroSlides.length} slides</span>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16, marginBottom:40 }}>
               {banners.heroSlides.map((slide,idx)=>{
-                const key = `hero-${slide.id}`;
-                const imgUrl = bannerUploads[key] || slide.img || '';
+                const imgUrl = slide.img || '';
+                const bgCss = imgUrl ? slide.bg + `, url(${imgUrl}) ${slide.imgPosition||'center'} / ${slide.imgFit||'cover'} no-repeat` : slide.bg;
                 return (
-                  <div key={key} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden' }}>
-                    <div style={{ position:'relative', height:160, background:'#f5f5f5', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
-                      {imgUrl
-                        ? <img src={imgUrl} alt={slide.tag} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                        : <div style={{ width:'100%', height:'100%', background:slide.bg, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:14 }}>{slide.tag}</div>
-                      }
-                      <div style={{ position:'absolute', top:8, left:8, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>
-                        Slide {idx+1}
+                  <div key={`hero-${slide.id}`} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', display:'flex', flexDirection:'column' }}>
+                    <div style={{ height:140, background:bgCss, backgroundSize:'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
+                      <div style={{ position:'absolute', inset:0, background:slide.overlayStyle||'linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 100%)' }} />
+                      <span style={{ position:'relative', zIndex:2, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>Slide {idx+1}</span>
+                    </div>
+                    <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:4 }}>
+                      <div style={{ fontSize:12, fontWeight:600 }}>{slide.tag}</div>
+                      <div style={{ fontSize:11, color:'#666' }}>{'\u201C'}{slide.h1Line1} {slide.h1Line2}{'\u201D'}</div>
+                      <div style={{ fontSize:10, color:'#999', marginTop:'auto' }}>
+                        CTA: {slide.cta} · {slide.img ? '📷' : '🎨 gradiente'}
                       </div>
                     </div>
-                    <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:8 }}>
-                      <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                        Tag
-                        <input value={slide.tag} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],tag:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                      </label>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Línea 1
-                          <input value={slide.h1Line1} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],h1Line1:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Línea 2
-                          <input value={slide.h1Line2} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],h1Line2:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                      </div>
-                      <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                        Descripción
-                        <textarea value={slide.p} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],p:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} rows={2} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', resize:'vertical', boxSizing:'border-box' }} />
-                      </label>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          CTA texto
-                          <input value={slide.cta} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],cta:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Acción
-                          <select value={slide.ctaType} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],ctaType:e.target.value as 'catalogo'|'contacto'|'whatsapp'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box', background:'#fff' }}>
-                            <option value="catalogo">Ir a catálogo</option>
-                            <option value="contacto">Ir a contacto</option>
-                            <option value="whatsapp">Abrir WhatsApp</option>
-                          </select>
-                        </label>
-                      </div>
-                      {slide.ctaType==='catalogo'&&(
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Categoría (opcional)
-                          <input value={slide.ctaParam||''} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],ctaParam:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} placeholder="poleras" style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                      )}
-                      <details style={{ marginTop:4 }}>
-                        <summary style={{ fontSize:11, fontWeight:600, color:'#6366f1', cursor:'pointer' }}>⚙️ Ajustes de imagen y texto</summary>
-                        <div style={{ display:'flex', flexDirection:'column', gap:8, marginTop:8, padding:'8px', background:'#f8f9fa', borderRadius:6, border:'1px solid #e8e8e8' }}>
-                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Ajuste imagen
-                              <select value={slide.imgFit||'cover'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],imgFit:e.target.value as 'cover'|'contain'|'fill'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="cover">Cover (recortar)</option>
-                                <option value="contain">Contain (completa)</option>
-                                <option value="fill">Fill (estirar)</option>
-                              </select>
-                            </label>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Posición imagen
-                              <select value={slide.imgPosition||'center'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],imgPosition:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="center">Centro</option>
-                                <option value="top">Arriba</option>
-                                <option value="bottom">Abajo</option>
-                                <option value="left">Izquierda</option>
-                                <option value="right">Derecha</option>
-                                <option value="top left">Sup. izq.</option>
-                                <option value="top right">Sup. der.</option>
-                                <option value="bottom left">Inf. izq.</option>
-                                <option value="bottom right">Inf. der.</option>
-                              </select>
-                            </label>
-                          </div>
-                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Alineación texto
-                              <select value={slide.textAlign||'left'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],textAlign:e.target.value as 'left'|'center'|'right'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="left">Izquierda</option>
-                                <option value="center">Centrado</option>
-                                <option value="right">Derecha</option>
-                              </select>
-                            </label>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Posición vertical
-                              <select value={slide.textVertical||'top'} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],textVertical:e.target.value as 'top'|'middle'|'bottom'};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="top">Arriba</option>
-                                <option value="middle">Centro</option>
-                                <option value="bottom">Abajo</option>
-                              </select>
-                            </label>
-                          </div>
-                          <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                            Overlay oscuro (CSS gradient)
-                            <input value={slide.overlayStyle||''} onChange={e=>{const u=[...banners.heroSlides];u[idx]={...u[idx],overlayStyle:e.target.value};setBanners({...banners,heroSlides:u});setBannerDirty(true);}} placeholder="linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)" style={{ width:'100%', padding:'5px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:10, marginTop:3, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }} />
-                          </label>
-                        </div>
-                      </details>
-                      <BannerImageUpload
-                        currentUrl={imgUrl}
-                        label="Imagen de fondo"
-                        bannerKey={key}
-                        onUploaded={(url)=>{setBannerUploads(prev=>({...prev,[key]:url}));const u=[...banners.heroSlides];u[idx]={...u[idx],img:url};setBanners({...banners,heroSlides:u});setBannerDirty(true);}}
-                      />
+                    <div style={{ borderTop:'1px solid #f0f0f0', padding:'8px 12px', display:'flex', justifyContent:'flex-end' }}>
+                      <button onClick={()=>setBannerEditor({type:'hero',data:{...slide},index:idx})}
+                        style={{ background:'#111', color:'#fff', border:'none', borderRadius:6, padding:'5px 14px', fontSize:11, fontWeight:600, cursor:'pointer' }}>
+                        ✏️ Editar
+                      </button>
                     </div>
                   </div>
                 );
               })}
             </div>
 
-            <h3 style={{ fontSize:14, fontWeight:700, margin:'0 0 12px', color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>📢 Banners Promocionales</h3>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(320px,1fr))', gap:16, marginBottom:24 }}>
+            <div style={{ display:'flex', gap:12, flexWrap:'wrap', alignItems:'center', marginBottom:16 }}>
+              <h3 style={{ fontSize:14, fontWeight:700, margin:0, color:'#555', letterSpacing:'0.05em', textTransform:'uppercase' }}>📢 Banners Promocionales</h3>
+              <span style={{ fontSize:11, color:'#bbb' }}>{banners.promoBanners.length} banners</span>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16, marginBottom:24 }}>
               {banners.promoBanners.map((banner,idx)=>{
-                const key = `promo-${banner.id}`;
-                const imgUrl = bannerUploads[key] || banner.img || '';
+                const imgUrl = banner.img || '';
+                const bgCss = imgUrl ? banner.bg + `, url(${imgUrl}) ${banner.imgPosition||'center'} / ${banner.imgFit||'cover'} no-repeat` : banner.bg;
                 return (
-                  <div key={key} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden' }}>
-                    <div style={{ position:'relative', height:140, background:'#f5f5f5', display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden' }}>
-                      {imgUrl
-                        ? <img src={imgUrl} alt={banner.label} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                        : <div style={{ width:'100%', height:'100%', background:banner.bg, display:'flex', alignItems:'center', justifyContent:'center', color:'#fff', fontWeight:700, fontSize:13 }}>{banner.label}</div>
-                      }
-                      <div style={{ position:'absolute', top:8, left:8, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>
-                        Banner {idx+1}
+                  <div key={`promo-${banner.id}`} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', display:'flex', flexDirection:'column' }}>
+                    <div style={{ height:120, background:bgCss, backgroundSize:'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
+                      <div style={{ position:'absolute', inset:0, background:banner.overlayStyle||'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.7) 100%)' }} />
+                      <span style={{ position:'relative', zIndex:2, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:700, padding:'2px 8px', borderRadius:4 }}>Banner {idx+1}</span>
+                    </div>
+                    <div style={{ padding:'10px 12px', flex:1, display:'flex', flexDirection:'column', gap:4 }}>
+                      <div style={{ fontSize:12, fontWeight:600 }}>{banner.label}</div>
+                      <div style={{ fontSize:11, color:'#666' }}>{'\u201C'}{banner.titleLine1} {banner.titleLine2}{'\u201D'}</div>
+                      <div style={{ fontSize:10, color:'#999', marginTop:'auto' }}>
+                        CTA: {banner.cta} · {banner.img ? '📷' : '🎨 gradiente'}
                       </div>
                     </div>
-                    <div style={{ padding:'12px 14px', display:'flex', flexDirection:'column', gap:8 }}>
-                      <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                        Label
-                        <input value={banner.label} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],label:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                      </label>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Línea 1
-                          <input value={banner.titleLine1} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],titleLine1:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Línea 2
-                          <input value={banner.titleLine2} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],titleLine2:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                      </div>
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          CTA texto
-                          <input value={banner.cta} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],cta:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Acción
-                          <select value={banner.ctaType} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],ctaType:e.target.value as 'categoria'|'contacto'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box', background:'#fff' }}>
-                            <option value="categoria">Ir a categoría</option>
-                            <option value="contacto">Ir a contacto</option>
-                          </select>
-                        </label>
-                      </div>
-                      {banner.ctaType==='categoria'&&(
-                        <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                          Categoría
-                          <input value={banner.ctaParam||''} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],ctaParam:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} placeholder="polerones" style={{ width:'100%', padding:'6px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:12, marginTop:3, fontFamily:'inherit', outline:'none', boxSizing:'border-box' }} />
-                        </label>
-                      )}
-                      <details style={{ marginTop:4 }}>
-                        <summary style={{ fontSize:11, fontWeight:600, color:'#6366f1', cursor:'pointer' }}>⚙️ Ajustes de imagen y texto</summary>
-                        <div style={{ display:'flex', flexDirection:'column', gap:8, marginTop:8, padding:'8px', background:'#f8f9fa', borderRadius:6, border:'1px solid #e8e8e8' }}>
-                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Ajuste imagen
-                              <select value={banner.imgFit||'cover'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],imgFit:e.target.value as 'cover'|'contain'|'fill'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="cover">Cover (recortar)</option>
-                                <option value="contain">Contain (completa)</option>
-                                <option value="fill">Fill (estirar)</option>
-                              </select>
-                            </label>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Posición imagen
-                              <select value={banner.imgPosition||'center'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],imgPosition:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="center">Centro</option>
-                                <option value="top">Arriba</option>
-                                <option value="bottom">Abajo</option>
-                                <option value="left">Izquierda</option>
-                                <option value="right">Derecha</option>
-                                <option value="top left">Sup. izq.</option>
-                                <option value="top right">Sup. der.</option>
-                                <option value="bottom left">Inf. izq.</option>
-                                <option value="bottom right">Inf. der.</option>
-                              </select>
-                            </label>
-                          </div>
-                          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Alineación texto
-                              <select value={banner.textAlign||'left'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],textAlign:e.target.value as 'left'|'center'|'right'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="left">Izquierda</option>
-                                <option value="center">Centrado</option>
-                                <option value="right">Derecha</option>
-                              </select>
-                            </label>
-                            <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                              Posición vertical
-                              <select value={banner.textVertical||'bottom'} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],textVertical:e.target.value as 'top'|'middle'|'bottom'};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} style={{ width:'100%', padding:'5px 6px', border:'1px solid #ddd', borderRadius:5, fontSize:11, marginTop:3, fontFamily:'inherit', outline:'none', background:'#fff' }}>
-                                <option value="top">Arriba</option>
-                                <option value="middle">Centro</option>
-                                <option value="bottom">Abajo</option>
-                              </select>
-                            </label>
-                          </div>
-                          <label style={{ fontSize:11, fontWeight:600, color:'#555' }}>
-                            Overlay oscuro (CSS gradient)
-                            <input value={banner.overlayStyle||''} onChange={e=>{const u=[...banners.promoBanners];u[idx]={...u[idx],overlayStyle:e.target.value};setBanners({...banners,promoBanners:u});setBannerDirty(true);}} placeholder="linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)" style={{ width:'100%', padding:'5px 8px', border:'1px solid #ddd', borderRadius:5, fontSize:10, marginTop:3, fontFamily:'monospace', outline:'none', boxSizing:'border-box' }} />
-                          </label>
-                        </div>
-                      </details>
-                      <BannerImageUpload
-                        currentUrl={imgUrl}
-                        label="Imagen de fondo"
-                        bannerKey={key}
-                        onUploaded={(url)=>{setBannerUploads(prev=>({...prev,[key]:url}));const u=[...banners.promoBanners];u[idx]={...u[idx],img:url};setBanners({...banners,promoBanners:u});setBannerDirty(true);}}
-                      />
+                    <div style={{ borderTop:'1px solid #f0f0f0', padding:'8px 12px', display:'flex', justifyContent:'flex-end' }}>
+                      <button onClick={()=>setBannerEditor({type:'promo',data:{...banner},index:idx})}
+                        style={{ background:'#111', color:'#fff', border:'none', borderRadius:6, padding:'5px 14px', fontSize:11, fontWeight:600, cursor:'pointer' }}>
+                        ✏️ Editar
+                      </button>
                     </div>
                   </div>
                 );
@@ -1028,6 +1197,22 @@ export default function AdminPage() {
       </div>
 
       {showModal&&<ProductModal product={editingProd} onSave={handleSaveProd} onClose={()=>{setShowModal(false);setEditingProd(null);}} catList={categories}/>}
+      {bannerEditor&&(
+        <BannerEditorModal
+          type={bannerEditor.type}
+          data={bannerEditor.data}
+          onSave={(updated)=>{
+            if (bannerEditor.type==='hero') {
+              setBanners(prev=>{const u=[...prev.heroSlides];u[bannerEditor.index]={...updated as import('@/data/banners').HeroSlideData};return{...prev,heroSlides:u};});
+            } else {
+              setBanners(prev=>{const u=[...prev.promoBanners];u[bannerEditor.index]={...updated as import('@/data/banners').PromoBannerData};return{...prev,promoBanners:u};});
+            }
+            setBannerDirty(true);
+            setBannerEditor(null);
+          }}
+          onClose={()=>setBannerEditor(null)}
+        />
+      )}
     </div>
   );
 }
