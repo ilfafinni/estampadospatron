@@ -180,7 +180,8 @@ export default function HomePage() {
               href={`/catalogo?cat=${cat.c}`}
               className="cat-card"
             >
-              <div style={{ position: 'absolute', inset: 0, background: cat.bg }} />
+              {cat.img&&<div style={{ position:'absolute', inset:0, background:`url(${cat.img}) center/cover no-repeat` }}/>}
+              <div style={{ position: 'absolute', inset: 0, background: cat.bg, opacity: cat.img ? 0.5 : 1 }} />
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.85) 100%)' }} />
               <div style={{ position: 'absolute', top: '-5px', right: '-5px', fontSize: '90px', opacity: 0.12, transform: 'rotate(12deg)', userSelect: 'none', pointerEvents: 'none', lineHeight: 1 }}>
                 {cat.icon}

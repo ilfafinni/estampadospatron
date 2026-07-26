@@ -9,6 +9,7 @@ interface CategoryDef {
   name: string;
   count: string;
   icon: string;
+  img?: string;
   bg: string;
 }
 
@@ -54,7 +55,8 @@ function generateProductsTs(products: EditableProduct[], cats: CategoryDef[]): s
   const catsArr = cats.map(c => {
     const count = products.filter(p => !p._deleted && p.c === c.c).length;
     const label = count === 1 ? 'producto' : 'productos';
-    return `  {c:'${c.c}' as Categoria, name:'${c.name.replace(/'/g,"\\'")}', count:'${count} ${label}', icon:'${c.icon}', bg:'${c.bg}'}`;
+    const img = c.img ? `, img:'${c.img}'` : '';
+    return `  {c:'${c.c}' as Categoria, name:'${c.name.replace(/'/g,"\\'")}', count:'${count} ${label}', icon:'${c.icon}'${img}, bg:'${c.bg}'}`;
   }).join(',\n');
 
   const recargoConds = catCodes.filter(c => c === 'poleras' || c === 'polerones');
@@ -341,8 +343,31 @@ const catLbl: React.CSSProperties = { display:'flex', flexDirection:'column', ga
 function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryDef | null; existingCodes: string[]; onSave:(c:CategoryDef)=>void; onClose:()=>void }) {
   const blank: CategoryDef = { c:'', name:'', count:'', icon:'', bg:'linear-gradient(160deg,#111 0%,#333 60%,#555 100%)' };
   const [form, setForm] = useState<CategoryDef>(cat || blank);
+  const [uploadState, setUploadState] = useState<UploadState>('idle');
+  const [uploadError, setUploadError] = useState('');
   const [codeError, setCodeError] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
   const set = (k: keyof CategoryDef, v: string) => setForm(f=>({...f,[k]:v}));
+
+  const handleFile = async (file: File) => {
+    if (!file.type.startsWith('image/')) { setUploadError('Solo imágenes.'); return; }
+    if (file.size > 10*1024*1024) { setUploadError('Máx 10 MB.'); return; }
+    setUploadState('uploading'); setUploadError('');
+    try {
+      const base64 = await fileToBase64(file);
+      const res = await fetch('/api/cloudinary/upload', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ data:base64, productId:0, folder:'patronestampados/categorias' }),
+      });
+      if (!res.ok) { const b = await res.json(); throw new Error(b.error||`HTTP ${res.status}`); }
+      const result = await res.json();
+      set('img', result.url);
+      setUploadState('done');
+    } catch (err: unknown) {
+      setUploadError(err instanceof Error ? err.message : 'Error');
+      setUploadState('error');
+    }
+  };
 
   const handleSave = () => {
     if(!form.c.trim()||!form.name.trim()){ alert('Código y nombre son obligatorios.'); return; }
@@ -372,11 +397,26 @@ function CategoryModal({ cat, existingCodes, onSave, onClose }: { cat: CategoryD
           <label style={catLbl}>Icono (emoji)
             <input value={form.icon} onChange={e=>set('icon',e.target.value)} style={catInp} placeholder="Ej: 👕, ☕, 🧥"/>
           </label>
+          <label style={catLbl}>Imagen de fondo
+            <input ref={inputRef} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{const f=e.target.files?.[0];if(f)handleFile(f);}} />
+            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+              <button onClick={()=>inputRef.current?.click()} style={{ background:'#f3f4f6', border:'1px solid #ddd', borderRadius:6, padding:'7px 14px', fontSize:12, cursor:'pointer' }}>
+                {uploadState==='uploading'?'Subiendo...':'Subir imagen'}
+              </button>
+              {form.img&&<button onClick={()=>set('img','')} style={{ background:'none', border:'none', color:'#dc2626', fontSize:11, cursor:'pointer', textDecoration:'underline' }}>Eliminar</button>}
+              {uploadError&&<span style={{ color:'#dc2626', fontSize:11 }}>{uploadError}</span>}
+              {uploadState==='done'&&<span style={{ color:'#16a34a', fontSize:11 }}>✓ Imagen subida</span>}
+            </div>
+          </label>
           <label style={catLbl}>Gradiente de fondo
             <input value={form.bg} onChange={e=>set('bg',e.target.value)} style={catInp} placeholder="linear-gradient(...)"/>
           </label>
-          <div style={{ borderRadius:8, overflow:'hidden', minHeight:60, display:'flex', alignItems:'center', justifyContent:'center', background:form.bg||'#eee', fontSize:28 }}>
-            {form.icon||'📁'} <span style={{ color:'#fff', marginLeft:8, fontWeight:700, fontSize:14 }}>{form.name||'Vista previa'}</span>
+          <div style={{ borderRadius:8, overflow:'hidden', minHeight:160, display:'flex', alignItems:'center', justifyContent:'center', position:'relative', background:form.bg||'#eee', fontSize:28 }}>
+            {form.img&&<div style={{ position:'absolute', inset:0, background:`url(${form.img}) center/cover no-repeat` }} />}
+            <div style={{ position:'relative', zIndex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
+              <span style={{ fontSize:32 }}>{form.icon||'📁'}</span>
+              <span style={{ color:'#fff', fontWeight:700, fontSize:14, textShadow:'0 2px 8px rgba(0,0,0,.5)' }}>{form.name||'Vista previa'}</span>
+            </div>
           </div>
         </div>
         <div style={{ display:'flex', gap:10, marginTop:22 }}>
@@ -563,9 +603,9 @@ function BannerEditorModal({
             </div>
             {isHero ? (
               <div style={{
-                width:'100%', height:'100%', borderRadius:12, overflow:'hidden',
+                width:'100%', aspectRatio:'21/9', maxHeight:'100%', borderRadius:12, overflow:'hidden',
                 position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-                display:'flex', alignItems: vAlignFlex, minHeight:'480px', background:'#000',
+                display:'flex', alignItems: vAlignFlex, minHeight:'320px', background:'#000',
               }}>
                 {/* Imagen de fondo como img para mejor compatibilidad */}
                 {form.img && <img ref={previewRef as any} src={form.img} alt=""
@@ -617,9 +657,9 @@ function BannerEditorModal({
               </div>
             ) : (
               <div style={{
-                width:'100%', height:'100%', borderRadius:12, overflow:'hidden',
+                width:'100%', aspectRatio:'16/9', maxHeight:'100%', borderRadius:12, overflow:'hidden',
                 position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-                display:'flex', alignItems: vAlignFlex, minHeight:'280px', background:'#000',
+                display:'flex', alignItems: vAlignFlex, minHeight:'200px', background:'#000',
               }}>
                 {form.img && <img src={form.img} alt=""
                   onMouseDown={handleMouseDown}
@@ -1147,6 +1187,23 @@ export default function AdminPage() {
                 style={{ background:'#e53935', color:'#fff', border:'none', borderRadius:8, padding:'8px 16px', fontSize:13, fontWeight:700, cursor:'pointer', whiteSpace:'nowrap' }}>
                 + Nueva categoría
               </button>
+            </div>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:16, marginBottom:24 }}>
+              {categories.map(cat=>(
+                <div key={cat.c} onClick={()=>{setEditingCat(cat);setShowCatModal(true);}}
+                  style={{ borderRadius:12, overflow:'hidden', cursor:'pointer', minHeight:160, display:'flex', flexDirection:'column', justifyContent:'flex-end', position:'relative', boxShadow:'0 4px 12px rgba(0,0,0,.1)', transition:'transform 0.2s, box-shadow 0.2s' }}
+                  onMouseEnter={(e)=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 8px 24px rgba(0,0,0,.15)';}}
+                  onMouseLeave={(e)=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,.1)';}}>
+                  {cat.img&&<div style={{ position:'absolute', inset:0, background:`url(${cat.img}) center/cover no-repeat` }}/>}
+                  <div style={{ position:'absolute', inset:0, background:cat.bg, opacity:cat.img?0.5:1 }}/>
+                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.85) 100%)' }}/>
+                  <div style={{ position:'relative', zIndex:2, padding:'1rem' }}>
+                    <div style={{ fontSize:24, marginBottom:4 }}>{cat.icon}</div>
+                    <div style={{ fontSize:14, fontWeight:800, color:'#fff', textTransform:'uppercase', letterSpacing:'0.04em' }}>{cat.name}</div>
+                    <div style={{ fontSize:11, color:'rgba(255,255,255,0.7)', marginTop:2 }}>{cat.count}</div>
+                  </div>
+                </div>
+              ))}
             </div>
             <div style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', marginBottom:20 }}>
               <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>

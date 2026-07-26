@@ -159,12 +159,12 @@ export const PRODUCTS: Product[] = [
   }
 ];
 export const CATEGORIES = [
-  {c:'poleras' as Categoria, name:'Poleras', count:'9 productos', icon:'👕', bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
-  {c:'polerones' as Categoria, name:'Polerones', count:'4 productos', icon:'🧥', bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
-  {c:'tazas' as Categoria, name:'Tazas', count:'9 productos', icon:'☕', bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
-  {c:'accesorios' as Categoria, name:'Accesorios', count:'3 productos', icon:'📱', bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
-  {c:'deportiva' as Categoria, name:'Deportiva', count:'4 productos', icon:'🩳', bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
-  {c:'impresion' as Categoria, name:'Impresión', count:'5 productos', icon:'🏷️', bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'}
+  {c:'poleras' as Categoria, name:'Poleras', count:'9 productos', icon:'👕', img:undefined as string|undefined, bg:'linear-gradient(160deg,#0d1b2a 0%,#1b4f72 60%,#2980b9 100%)'},
+  {c:'polerones' as Categoria, name:'Polerones', count:'4 productos', icon:'🧥', img:undefined as string|undefined, bg:'linear-gradient(160deg,#0a0a0a 0%,#1a3a1a 60%,#2d5016 100%)'},
+  {c:'tazas' as Categoria, name:'Tazas', count:'9 productos', icon:'☕', img:undefined as string|undefined, bg:'linear-gradient(160deg,#3e1a00 0%,#7d3c02 60%,#b7561a 100%)'},
+  {c:'accesorios' as Categoria, name:'Accesorios', count:'3 productos', icon:'📱', img:undefined as string|undefined, bg:'linear-gradient(160deg,#1a0a3e 0%,#4a1a8b 60%,#7b4fc0 100%)'},
+  {c:'deportiva' as Categoria, name:'Deportiva', count:'4 productos', icon:'🩳', img:undefined as string|undefined, bg:'linear-gradient(160deg,#1a0000 0%,#6b0000 60%,#b71c1c 100%)'},
+  {c:'impresion' as Categoria, name:'Impresión', count:'5 productos', icon:'🏷️', img:undefined as string|undefined, bg:'linear-gradient(160deg,#00141a 0%,#005c6b 60%,#00acc1 100%)'}
 ];
 export interface EstampadoSize { id: string; label: string; precio: number; }
 export const ESTAMPADO_SIZES: EstampadoSize[] = [
