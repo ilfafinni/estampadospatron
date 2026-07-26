@@ -609,6 +609,30 @@ function BannerEditorModal({
     set('imgZoomMob', 1);
   };
 
+  const handleMouseDownMob = (e: React.MouseEvent) => {
+    if (!form.imgMob) return;
+    e.preventDefault();
+    dragRef.current = { startX: e.clientX, startY: e.clientY, panX: form.imgPanXMob??0, panY: form.imgPanYMob??0 };
+    const onMove = (ev: MouseEvent) => {
+      if (!dragRef.current) return;
+      const dx = ev.clientX - dragRef.current.startX;
+      const dy = ev.clientY - dragRef.current.startY;
+      set('imgPanXMob', Math.round((dragRef.current.panX + dx) * 10) / 10);
+      set('imgPanYMob', Math.round((dragRef.current.panY + dy) * 10) / 10);
+    };
+    const onUp = () => { dragRef.current = null; document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  };
+
+  const handleWheelMob = (e: React.WheelEvent) => {
+    if (!form.imgMob) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.05 : 0.05;
+    const newZoom = Math.max(0.2, Math.min(5, (form.imgZoomMob ?? 1) + delta));
+    set('imgZoomMob', Math.round(newZoom * 100) / 100);
+  };
+
   const vAlignFlex = form.textVertical === 'middle' ? 'center' : form.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
 
   return (
@@ -789,19 +813,17 @@ function BannerEditorModal({
                       <span>📱 Ajustes de imagen móvil</span>
                       <button onClick={resetTransformMob} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
                     </div>
-                    <div style={bannerEditorStyles.row}>
-                      <label style={bannerEditorStyles.label}>
-                        Pan X
-                        <input type="number" value={form.imgPanXMob??0} onChange={(e) => set('imgPanXMob', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
-                      </label>
-                      <label style={bannerEditorStyles.label}>
-                        Pan Y
-                        <input type="number" value={form.imgPanYMob??0} onChange={(e) => set('imgPanYMob', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
-                      </label>
-                      <label style={bannerEditorStyles.label}>
-                        Zoom
-                        <input type="number" value={form.imgZoomMob??1} onChange={(e) => set('imgZoomMob', Number(e.target.value))} style={bannerEditorStyles.input} step={0.1} min={0.2} max={5} />
-                      </label>
+                    <div style={{ aspectRatio:'9/16', maxHeight:220, borderRadius:8, overflow:'hidden', position:'relative', background:'#000', marginBottom:8, border:'1px solid #ddd' }}>
+                      <img src={form.imgMob} alt=""
+                        onMouseDown={handleMouseDownMob}
+                        onWheel={handleWheelMob}
+                        style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${form.imgPanXMob??0}px, ${form.imgPanYMob??0}px) scale(${form.imgZoomMob??1})`, cursor:'grab', transition:'transform 0.05s', transformOrigin:'center' }} />
+                      <div style={{ position:'absolute', bottom:4, left:4, background:'rgba(0,0,0,0.65)', color:'#fff', fontSize:9, padding:'2px 6px', borderRadius:3, pointerEvents:'none' }}>
+                        Arrastra · Rueda zoom
+                      </div>
+                    </div>
+                    <div style={{ fontSize:10, color:'#888', textAlign:'center', padding:'2px 0' }}>
+                      X: {Math.round(form.imgPanXMob??0)} · Y: {Math.round(form.imgPanYMob??0)} · Zoom: {(form.imgZoomMob??1).toFixed(2)}×
                     </div>
                   </div>
                 )}
@@ -809,22 +831,11 @@ function BannerEditorModal({
               {form.img && (
                 <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-                    <span>🖱️ Arrastra para mover · Rueda para zoom</span>
+                    <span>🖱️ Arrastra la imagen en la vista previa para mover · Rueda para zoom</span>
                     <button onClick={resetTransform} style={{ background:'none', border:'none', color:'#6366f1', fontSize:10, cursor:'pointer', textDecoration:'underline' }}>Restablecer</button>
                   </div>
-                  <div style={bannerEditorStyles.row}>
-                    <label style={bannerEditorStyles.label}>
-                      Pan X
-                      <input type="number" value={form.imgPanX??0} onChange={(e) => set('imgPanX', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
-                    </label>
-                    <label style={bannerEditorStyles.label}>
-                      Pan Y
-                      <input type="number" value={form.imgPanY??0} onChange={(e) => set('imgPanY', Number(e.target.value))} style={bannerEditorStyles.input} step={5} />
-                    </label>
-                    <label style={bannerEditorStyles.label}>
-                      Zoom
-                      <input type="number" value={form.imgZoom??1} onChange={(e) => set('imgZoom', Number(e.target.value))} style={bannerEditorStyles.input} step={0.1} min={0.2} max={5} />
-                    </label>
+                  <div style={{ fontSize:10, color:'#888', textAlign:'center', padding:'4px 0' }}>
+                    X: {Math.round(form.imgPanX??0)} · Y: {Math.round(form.imgPanY??0)} · Zoom: {(form.imgZoom??1).toFixed(2)}×
                   </div>
                 </div>
               )}
