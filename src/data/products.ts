@@ -15,7 +15,7 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 2, c: 'poleras', n: 'Polera Premium Cuello V', ref: 'PAT-6635',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040099/patronestampados/productos/producto-2.jpg',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785041969/patronestampados/productos/producto-2.jpg',
   desc: 'Corte slim fit. Cuello V reforzado. Ideal para impresión de alta definición.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Blanco',h:'#f0f0f0'},{n:'Negro',h:'#111'},{n:'Gris Jaspe',h:'#95a5a6'}]}, precio: '$7.000',
   badge: 'popular',
   },
@@ -66,7 +66,7 @@ export const PRODUCTS: Product[] = [
   },
   {
   id: 13, c: 'polerones', n: 'Cortavientos Glasgow', ref: 'PAT-7630',
-  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785040122/patronestampados/productos/producto-13.jpg',
+  img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785041865/patronestampados/productos/producto-13.jpg',
   desc: 'Chaqueta ligera con capucha, resistente al viento y agua. Muy popular para eventos.', v: {t:['S','M','L','XL','XXL'],col:[{n:'Negro',h:'#111'},{n:'Azul',h:'#1a5276'},{n:'Rojo',h:'#c0392b'},{n:'Verde',h:'#145a32'}]}, precio: '$15.000',
   },
   {
