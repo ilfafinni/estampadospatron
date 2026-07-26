@@ -9,35 +9,35 @@ export interface HeroSlideData {
   ctaParam?: string;
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
-  imgPosition?: string;
-  imgPanX?: number;
-  imgPanY?: number;
-  imgZoom?: number;
-  textAlign?: 'left' | 'center' | 'right';
-  textVertical?: 'top' | 'middle' | 'bottom';
-  overlayStyle?: string;
-  bg: string;
-}
+   imgPosition?: string;
+   imgPanX?: number;
+   imgPanY?: number;
+   imgZoom?: number;
+   textAlign?: 'left' | 'center' | 'right';
+   textVertical?: 'top' | 'middle' | 'bottom';
+   overlayStyle?: string;
+   bg: string;
+ }
 
-export interface PromoBannerData {
-  id: number;
-  label: string;
-  titleLine1: string;
-  titleLine2: string;
-  cta: string;
-  ctaType: 'categoria' | 'contacto';
-  ctaParam?: string;
-  img?: string;
-  imgFit?: 'cover' | 'contain' | 'fill';
-  imgPosition?: string;
-  imgPanX?: number;
-  imgPanY?: number;
-  imgZoom?: number;
-  textAlign?: 'left' | 'center' | 'right';
-  textVertical?: 'top' | 'middle' | 'bottom';
-  overlayStyle?: string;
-  bg: string;
-}
+ export interface PromoBannerData {
+   id: number;
+   label: string;
+   titleLine1: string;
+   titleLine2: string;
+   cta: string;
+   ctaType: 'categoria' | 'contacto';
+   ctaParam?: string;
+   img?: string;
+   imgFit?: 'cover' | 'contain' | 'fill';
+   imgPosition?: string;
+   imgPanX?: number;
+   imgPanY?: number;
+   imgZoom?: number;
+   textAlign?: 'left' | 'center' | 'right';
+   textVertical?: 'top' | 'middle' | 'bottom';
+   overlayStyle?: string;
+   bg: string;
+ }
 
 export interface BannerConfig {
   heroSlides: HeroSlideData[];
@@ -56,7 +56,7 @@ export const BANNERS: BannerConfig = {
     ctaType: 'catalogo',
     img: 'https://res.cloudinary.com/dguwdbts9/image/upload/v1785038773/patronestampados/banners/cx4lkfls89vtzszxxmso.jpg',
     imgFit: 'cover',
-    imgPosition: 'top',
+    imgPosition: 'right',
     imgPanX: 0,
     imgPanY: 0,
     imgZoom: 1,
