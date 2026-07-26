@@ -35,7 +35,7 @@ export default function HomePage() {
 
   const slides = BANNERS.heroSlides.map(s => {
     const imgPos = s.imgPosition || 'center';
-    const imgFit = s.imgFit || 'cover';
+    const imgFit = s.imgFit || 'contain';
     const imgUrl = cloudOpt(s.img);
     const imgUrlMob = cloudOpt(s.imgMob);
     const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
@@ -76,8 +76,8 @@ export default function HomePage() {
     <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
       <style>{`
         @media (min-width: 769px) {
-          .hero-outer { height: auto; min-height: 400px !important; max-height: 60vh !important; }
-          .hero-slide { height: auto; min-height: 400px !important; max-height: 60vh !important; }
+          .hero-outer { height: calc(100vh - 80px) !important; }
+          .hero-slide { height: calc(100vh - 80px) !important; }
           .hero-bg-mob { display: none !important; }
         }
         @media (min-width: 769px) {
@@ -231,7 +231,7 @@ export default function HomePage() {
         <div className="promo-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           {BANNERS.promoBanners.map(b => {
             const imgPos = b.imgPosition || 'center';
-            const imgFit = b.imgFit || 'cover';
+            const imgFit = b.imgFit || 'contain';
             const imgUrl = cloudOpt(b.img);
             const imgUrlMob = cloudOpt(b.imgMob);
             const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
