@@ -80,8 +80,8 @@ export default function HomePage() {
     <div style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden', minHeight: '100vh' }}>
       <style>{`
         @media (min-width: 769px) {
-          .hero-outer { height: calc(100vh - 80px) !important; }
-          .hero-slide { height: calc(100vh - 80px) !important; }
+          .hero-outer { height: calc(100vh - 64px) !important; }
+          .hero-slide { height: calc(100vh - 64px) !important; }
           .hero-bg-mob { display: none !important; }
         }
         @media (max-width: 768px) {
