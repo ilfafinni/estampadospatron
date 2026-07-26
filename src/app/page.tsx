@@ -83,9 +83,10 @@ export default function HomePage() {
           .hero-outer { height: calc(100vh - 80px) !important; }
           .hero-slide { height: calc(100vh - 80px) !important; }
           .hero-bg-mob { display: none !important; }
-        }
-        @media (min-width: 769px) {
-          .hero-bg-mob { display: none !important; }
+          .hero-bg-desk {
+            background-size: contain !important;
+            background-position: center !important;
+          }
         }
         @media (max-width: 768px) {
           .hero-outer { min-height: 480px !important; }
