@@ -11,6 +11,11 @@ const WHATSAPP_NUMBER_DISPLAY = '+56 9 6638 9299';
 const WHATSAPP_URL = 'https://wa.me/56966389299';
 const CONTACT_EMAIL = 'contacto@estampadospatron.com';
 
+function cloudOpt(url: string | undefined, w = 1920): string {
+  if (!url) return '';
+  return url.replace('/upload/', `/upload/q_auto:best,f_auto,w_${w}/`);
+}
+
 export default function HomePage() {
   const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
   const [slideIdx, setSlideIdx] = useState(0);
@@ -31,8 +36,10 @@ export default function HomePage() {
   const slides = BANNERS.heroSlides.map(s => {
     const imgPos = s.imgPosition || 'center';
     const imgFit = s.imgFit || 'cover';
-    const bgImg = s.img ? `url(${s.img}) ${imgPos} / ${imgFit} no-repeat` : '';
-    const bgImgMob = s.imgMob ? `url(${s.imgMob}) ${imgPos} / ${imgFit} no-repeat` : '';
+    const imgUrl = cloudOpt(s.img);
+    const imgUrlMob = cloudOpt(s.imgMob);
+    const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
+    const bgImgMob = imgUrlMob ? `url(${imgUrlMob}) ${imgPos} / ${imgFit} no-repeat` : '';
     const panX = s.imgPanX ?? 0;
     const panY = s.imgPanY ?? 0;
     const zoom = s.imgZoom ?? 1;
@@ -224,8 +231,10 @@ export default function HomePage() {
           {BANNERS.promoBanners.map(b => {
             const imgPos = b.imgPosition || 'center';
             const imgFit = b.imgFit || 'cover';
-            const bgImg = b.img ? `url(${b.img}) ${imgPos} / ${imgFit} no-repeat` : '';
-            const bgImgMob = b.imgMob ? `url(${b.imgMob}) ${imgPos} / ${imgFit} no-repeat` : '';
+            const imgUrl = cloudOpt(b.img);
+            const imgUrlMob = cloudOpt(b.imgMob);
+            const bgImg = imgUrl ? `url(${imgUrl}) ${imgPos} / ${imgFit} no-repeat` : '';
+            const bgImgMob = imgUrlMob ? `url(${imgUrlMob}) ${imgPos} / ${imgFit} no-repeat` : '';
             const panX = b.imgPanX ?? 0;
             const panY = b.imgPanY ?? 0;
             const zoom = b.imgZoom ?? 1;
