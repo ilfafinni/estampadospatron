@@ -32,6 +32,7 @@ export default function HomePage() {
     const imgPos = s.imgPosition || 'center';
     const imgFit = s.imgFit || 'cover';
     const bgImg = s.img ? `url(${s.img}) ${imgPos} / ${imgFit} no-repeat` : '';
+    const bgImgMob = s.imgMob ? `url(${s.imgMob}) ${imgPos} / ${imgFit} no-repeat` : '';
     const panX = s.imgPanX ?? 0;
     const panY = s.imgPanY ?? 0;
     const zoom = s.imgZoom ?? 1;
@@ -39,6 +40,7 @@ export default function HomePage() {
       bg: s.img ? `${bgImg}, ${s.bg}` : s.bg,
       bgGradient: s.bg,
       bgImg,
+      bgImgMob,
       imgTransform: s.img ? `translate(${panX}px, ${panY}px) scale(${zoom})` : '',
       tag: s.tag,
       h1: <><span>{s.h1Line1}</span><br />{s.h1Line2}</>,
@@ -66,9 +68,13 @@ export default function HomePage() {
           .hero-outer { height: calc(100vh - 80px) !important; }
           .hero-slide { height: calc(100vh - 80px) !important; }
         }
+        @media (min-width: 769px) {
+          .hero-bg-mob { display: none !important; }
+        }
         @media (max-width: 768px) {
           .hero-outer { min-height: 480px !important; }
           .hero-slide { min-height: 480px !important; }
+          .hero-bg-desk { display: none !important; }
         }
         @media (max-width: 640px) {
           .hero-outer { min-height: 420px !important; }
@@ -99,7 +105,8 @@ export default function HomePage() {
             }}
           >
             <div style={{ position: 'absolute', inset: 0, background: slide.bgGradient }} />
-            {slide.bgImg && <div style={{ position: 'absolute', inset: 0, background: slide.bgImg, transform: slide.imgTransform, transformOrigin:'center' }} />}
+            {slide.bgImg && <div className="hero-bg-desk" style={{ position: 'absolute', inset: 0, background: slide.bgImg, transform: slide.imgTransform, transformOrigin:'center' }} />}
+            {slide.bgImgMob && <div className="hero-bg-mob" style={{ position: 'absolute', inset: 0, background: slide.bgImgMob, transform: slide.imgTransform, transformOrigin:'center' }} />}
             <div style={{ position: 'absolute', inset: 0, background: slide.overlayStyle }} />
             <div style={{ position: 'relative', zIndex: 2, padding: '3rem 2rem', maxWidth: '640px', color: '#fff', textAlign: slide.textAlign as React.CSSProperties['textAlign'] }}>
               <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-primary-light)', background: 'rgba(255,255,255,0.15)', padding: '4px 12px', borderRadius: '4px', display: slide.textAlign === 'center' ? 'inline-block' : 'inline-block', marginBottom: '1rem', backdropFilter: 'blur(4px)' }}>
@@ -214,6 +221,7 @@ export default function HomePage() {
             const imgPos = b.imgPosition || 'center';
             const imgFit = b.imgFit || 'cover';
             const bgImg = b.img ? `url(${b.img}) ${imgPos} / ${imgFit} no-repeat` : '';
+            const bgImgMob = b.imgMob ? `url(${b.imgMob}) ${imgPos} / ${imgFit} no-repeat` : '';
             const panX = b.imgPanX ?? 0;
             const panY = b.imgPanY ?? 0;
             const zoom = b.imgZoom ?? 1;
@@ -228,6 +236,7 @@ export default function HomePage() {
                 key={b.id}
                 bgGradient={b.bg}
                 bgImg={bgImg}
+                bgImgMob={bgImgMob}
                 imgTransform={bgImg ? `translate(${panX}px, ${panY}px) scale(${zoom})` : ''}
                 overlayStyle={overlayStyle}
                 label={b.label}
@@ -469,13 +478,14 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-function PromoCard({ bgGradient, bgImg, imgTransform, overlayStyle, label, title, cta, onClick, large, textAlign, textVertical }: { bgGradient: string; bgImg?: string; imgTransform?: string; overlayStyle?: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean; textAlign?: string; textVertical?: string }) {
+function PromoCard({ bgGradient, bgImg, bgImgMob, imgTransform, overlayStyle, label, title, cta, onClick, large, textAlign, textVertical }: { bgGradient: string; bgImg?: string; bgImgMob?: string; imgTransform?: string; overlayStyle?: string; label: string; title: React.ReactNode; cta: string; onClick: () => void; large?: boolean; textAlign?: string; textVertical?: string }) {
   const vAlign = textVertical === 'top' ? 'flex-start' : textVertical === 'middle' ? 'center' : 'flex-end';
   const hAlign = textAlign || 'left';
   return (
     <div className="promo-card" onClick={onClick} style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', minHeight: large ? '280px' : '200px', display: 'flex', alignItems: vAlign, cursor: 'pointer', boxShadow: 'var(--shadow-lg)' }}>
       <div style={{ position: 'absolute', inset: 0, background: bgGradient }} />
-      {bgImg && <div style={{ position: 'absolute', inset: 0, background: bgImg, transform: imgTransform, transformOrigin:'center' }} />}
+      {bgImg && <div className="hero-bg-desk" style={{ position: 'absolute', inset: 0, background: bgImg, transform: imgTransform, transformOrigin:'center' }} />}
+      {bgImgMob && <div className="hero-bg-mob" style={{ position: 'absolute', inset: 0, background: bgImgMob, transform: imgTransform, transformOrigin:'center' }} />}
       <div style={{ position: 'absolute', inset: 0, background: overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)' }} />
       <div className="promo-card-content" style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff', textAlign: hAlign as React.CSSProperties['textAlign'], width: '100%', boxSizing: 'border-box' }}>
         <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{label}</div>

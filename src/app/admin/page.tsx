@@ -114,12 +114,12 @@ function generateBannersTs(banners: import('@/data/banners').BannerConfig): stri
   const opt = (val: unknown, key: string) => val ? `\n    ${key}: '${String(val).replace(/'/g,"\\'")}',` : '';
   const heroSlides = banners.heroSlides.map(s => {
     const panZoom = s.img ? `\n    imgPanX: ${s.imgPanX??0},\n    imgPanY: ${s.imgPanY??0},\n    imgZoom: ${s.imgZoom??1},` : '';
-    const extra = [s.img&&opt(s.img,'img'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), panZoom, s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
+    const extra = [s.img&&opt(s.img,'img'), s.imgMob&&opt(s.imgMob,'imgMob'), s.imgFit&&opt(s.imgFit,'imgFit'), s.imgPosition&&opt(s.imgPosition,'imgPosition'), panZoom, s.textAlign&&opt(s.textAlign,'textAlign'), s.textVertical&&opt(s.textVertical,'textVertical'), s.overlayStyle&&opt(s.overlayStyle,'overlayStyle'), s.ctaParam&&opt(s.ctaParam,'ctaParam')].filter(Boolean).join('');
     return `  {\n    id: ${s.id},\n    tag: '${s.tag.replace(/'/g,"\\'")}',\n    h1Line1: '${s.h1Line1.replace(/'/g,"\\'")}',\n    h1Line2: '${s.h1Line2.replace(/'/g,"\\'")}',\n    p: '${s.p.replace(/'/g,"\\'")}',\n    cta: '${s.cta.replace(/'/g,"\\'")}',\n    ctaType: '${s.ctaType}',${extra}\n    bg: '${s.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   const promoBanners = banners.promoBanners.map(b => {
     const panZoom = b.img ? `\n    imgPanX: ${b.imgPanX??0},\n    imgPanY: ${b.imgPanY??0},\n    imgZoom: ${b.imgZoom??1},` : '';
-    const extra = [b.img&&opt(b.img,'img'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), panZoom, b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
+    const extra = [b.img&&opt(b.img,'img'), b.imgMob&&opt(b.imgMob,'imgMob'), b.imgFit&&opt(b.imgFit,'imgFit'), b.imgPosition&&opt(b.imgPosition,'imgPosition'), panZoom, b.textAlign&&opt(b.textAlign,'textAlign'), b.textVertical&&opt(b.textVertical,'textVertical'), b.overlayStyle&&opt(b.overlayStyle,'overlayStyle'), b.ctaParam&&opt(b.ctaParam,'ctaParam')].filter(Boolean).join('');
     return `  {\n    id: ${b.id},\n    label: '${b.label.replace(/'/g,"\\'")}',\n    titleLine1: '${b.titleLine1.replace(/'/g,"\\'")}',\n    titleLine2: '${b.titleLine2.replace(/'/g,"\\'")}',\n    cta: '${b.cta.replace(/'/g,"\\'")}',\n    ctaType: '${b.ctaType}',${extra}\n    bg: '${b.bg.replace(/'/g,"\\'")}',\n  }`;
   }).join(',\n');
   return `export interface HeroSlideData {
@@ -134,34 +134,36 @@ function generateBannersTs(banners: import('@/data/banners').BannerConfig): stri
   img?: string;
   imgFit?: 'cover' | 'contain' | 'fill';
    imgPosition?: string;
-   imgPanX?: number;
-   imgPanY?: number;
-   imgZoom?: number;
-   textAlign?: 'left' | 'center' | 'right';
-   textVertical?: 'top' | 'middle' | 'bottom';
-   overlayStyle?: string;
-   bg: string;
- }
+    imgPanX?: number;
+    imgPanY?: number;
+    imgZoom?: number;
+    imgMob?: string;
+    textAlign?: 'left' | 'center' | 'right';
+    textVertical?: 'top' | 'middle' | 'bottom';
+    overlayStyle?: string;
+    bg: string;
+  }
 
- export interface PromoBannerData {
-   id: number;
-   label: string;
-   titleLine1: string;
-   titleLine2: string;
-   cta: string;
-   ctaType: 'categoria' | 'contacto';
-   ctaParam?: string;
-   img?: string;
-   imgFit?: 'cover' | 'contain' | 'fill';
-   imgPosition?: string;
-   imgPanX?: number;
-   imgPanY?: number;
-   imgZoom?: number;
-   textAlign?: 'left' | 'center' | 'right';
-   textVertical?: 'top' | 'middle' | 'bottom';
-   overlayStyle?: string;
-   bg: string;
- }
+  export interface PromoBannerData {
+    id: number;
+    label: string;
+    titleLine1: string;
+    titleLine2: string;
+    cta: string;
+    ctaType: 'categoria' | 'contacto';
+    ctaParam?: string;
+    img?: string;
+    imgFit?: 'cover' | 'contain' | 'fill';
+    imgPosition?: string;
+    imgPanX?: number;
+    imgPanY?: number;
+    imgZoom?: number;
+    imgMob?: string;
+    textAlign?: 'left' | 'center' | 'right';
+    textVertical?: 'top' | 'middle' | 'bottom';
+    overlayStyle?: string;
+    bg: string;
+  }
 
 export interface BannerConfig {
   heroSlides: HeroSlideData[];
@@ -492,7 +494,10 @@ function BannerEditorModal({
   const [form, setForm] = useState<any>({ ...data, imgPanX: (data as any).imgPanX ?? 0, imgPanY: (data as any).imgPanY ?? 0, imgZoom: (data as any).imgZoom ?? 1 });
   const [uploadState, setUploadState] = useState<UploadState>('idle');
   const [uploadError, setUploadError] = useState('');
+  const [uploadStateMob, setUploadStateMob] = useState<UploadState>('idle');
+  const [uploadErrorMob, setUploadErrorMob] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputMobRef = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
 
@@ -528,6 +533,26 @@ function BannerEditorModal({
     } catch (err: unknown) {
       setUploadError(err instanceof Error ? err.message : 'Error');
       setUploadState('error');
+    }
+  };
+
+  const handleFileMob = async (file: File) => {
+    if (!file.type.startsWith('image/')) { setUploadErrorMob('Solo imágenes.'); return; }
+    if (file.size > 10*1024*1024) { setUploadErrorMob('Máx 10 MB.'); return; }
+    setUploadStateMob('uploading'); setUploadErrorMob('');
+    try {
+      const base64 = await fileToBase64(file);
+      const res = await fetch('/api/cloudinary/upload', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ data:base64, productId:0, folder:'patronestampados/banners' }),
+      });
+      if (!res.ok) { const b = await res.json(); throw new Error(b.error||`HTTP ${res.status}`); }
+      const result = await res.json();
+      set('imgMob', result.url);
+      setUploadStateMob('done');
+    } catch (err: unknown) {
+      setUploadErrorMob(err instanceof Error ? err.message : 'Error');
+      setUploadStateMob('error');
     }
   };
 
@@ -721,6 +746,30 @@ function BannerEditorModal({
                   Eliminar imagen
                 </button>
               )}
+              <div style={{ marginTop:12, paddingTop:12, borderTop:'1px solid #eee' }}>
+                <div style={{ fontSize:10, fontWeight:700, color:'#888', marginBottom:8 }}>📱 Imagen para móvil (opcional)</div>
+                <div
+                  style={{ border:'2px dashed #ddd', borderRadius:8, padding:12, background:'#fafafa', cursor:'pointer', textAlign:'center' }}
+                  onClick={() => inputMobRef.current?.click()}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => { e.preventDefault(); if (e.dataTransfer.files[0]) handleFileMob(e.dataTransfer.files[0]); }}
+                >
+                  {form.imgMob
+                    ? <div style={{ display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}>
+                        <img src={form.imgMob} alt="" style={{ height:48, width:48, borderRadius:6, objectFit:'cover' }} />
+                        <span style={{ fontSize:12, color:'#16a34a', fontWeight:600 }}>✓ Imagen móvil asignada</span>
+                      </div>
+                    : <span style={{ fontSize:12, color:'#aaa' }}>Arrastra o haz clic para subir imagen para móvil</span>}
+                  {uploadStateMob === 'uploading' && <span style={{ fontSize:11, color:'#6366f1', display:'block', marginTop:4 }}>Subiendo…</span>}
+                  {uploadErrorMob && <span style={{ fontSize:11, color:'#dc2626', display:'block', marginTop:4 }}>{uploadErrorMob}</span>}
+                  <input ref={inputMobRef} type="file" accept="image/*" style={{ display:'none' }} onChange={(e) => { if (e.target.files?.[0]) handleFileMob(e.target.files[0]); }} />
+                </div>
+                {form.imgMob && (
+                  <button onClick={() => set('imgMob', undefined)} style={{ background:'none', border:'none', color:'#dc2626', fontSize:11, cursor:'pointer', marginTop:4, textDecoration:'underline' }}>
+                    Eliminar imagen móvil
+                  </button>
+                )}
+              </div>
               {form.img && (
                 <div style={{ background:'#f3f4f6', borderRadius:8, padding:'10px 12px', marginBottom:12 }}>
                   <div style={{ fontSize:10, fontWeight:700, color:'#666', marginBottom:8, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
