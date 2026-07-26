@@ -482,6 +482,15 @@ function BannerEditorModal({
   };
 
   const isHero = type === 'hero';
+  const [savedLocally, setSavedLocally] = useState(false);
+
+  const handleSave = () => {
+    onSave(form);
+    setSavedLocally(true);
+    setTimeout(() => onClose(), 600);
+  };
+
+  const vAlignFlex = form.textVertical === 'middle' ? 'center' : form.textVertical === 'bottom' ? 'flex-end' : 'flex-start';
 
   return (
     <div style={bannerEditorStyles.overlay} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -496,10 +505,11 @@ function BannerEditorModal({
                 {isHero ? 'Hero Slider' : 'Promocional'}
               </span>
             </span>
+            {savedLocally && <span style={{ background:'#16a34a', color:'#fff', fontSize:10, fontWeight:700, padding:'2px 10px', borderRadius:10 }}>✓ Guardado</span>}
           </div>
           <div style={{ display:'flex', gap:8 }}>
             <button onClick={onClose} style={{ background:'#f3f4f6', color:'#555', border:'1px solid #ddd', borderRadius:8, padding:'8px 16px', fontSize:12, cursor:'pointer' }}>Cancelar</button>
-            <button onClick={() => { onSave(form); onClose(); }} style={{ background:'#111', color:'#fff', border:'none', borderRadius:8, padding:'8px 20px', fontSize:12, fontWeight:700, cursor:'pointer' }}>💾 Guardar</button>
+            <button onClick={handleSave} style={{ background:'#111', color:'#fff', border:'none', borderRadius:8, padding:'8px 20px', fontSize:12, fontWeight:700, cursor:'pointer' }}>💾 Guardar</button>
           </div>
         </div>
 
@@ -507,47 +517,93 @@ function BannerEditorModal({
         <div style={bannerEditorStyles.body}>
           {/* ── PREVIEW ── */}
           <div style={bannerEditorStyles.previewPanel}>
-            <div style={{
-              width:'100%', height:'100%', minHeight:300, borderRadius:12, overflow:'hidden',
-              position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-              display:'flex', alignItems:vAlign, justifyContent:'flex-start',
-            }}>
-              <div style={{ position:'absolute', inset:0, background:bgImgCss, backgroundSize:'cover' }} />
-              <div style={{ position:'absolute', inset:0, background:overlayCss }} />
+            {/* Label que indica que es preview */}
+            <div style={{ position:'absolute', top:24, left:24, zIndex:10, background:'rgba(0,0,0,0.6)', color:'#fff', fontSize:9, fontWeight:700, padding:'3px 10px', borderRadius:4, letterSpacing:'0.08em' }}>
+              VISTA PREVIA
+            </div>
+            {isHero ? (
+              /* ── PREVIEW IDÉNTICO AL HERO SLIDER DE LA LANDING ── */
               <div style={{
-                position:'relative', zIndex:2, padding:isHero?'2.5rem 2rem':'2rem 1.8rem',
-                color:'#fff', textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
+                width:'100%', height:'100%', borderRadius:12, overflow:'hidden',
+                position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
+                display:'flex', alignItems: vAlignFlex, minHeight:'480px',
               }}>
-                {isHero ? (
-                  <>
-                    <div style={{ fontSize:10, fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase', color:'#93c5fd', background:'rgba(255,255,255,0.15)', padding:'4px 12px', borderRadius:4, display:hAlign==='center'?'inline-block':'inline-block', marginBottom:'0.8rem', backdropFilter:'blur(4px)' }}>
-                      {form.tag || 'Tag'}
-                    </div>
-                    <h2 style={{ fontSize:'clamp(1.3rem,2.5vw,2rem)', fontWeight:800, lineHeight:1.1, marginBottom:'0.6rem', margin:0 }}>
-                      {form.h1Line1 || 'Título'}<br />{form.h1Line2 || ''}
-                    </h2>
-                    <p style={{ fontSize:'clamp(11px,1.5vw,13px)', opacity:0.9, margin:'0.6rem 0 1.2rem', lineHeight:1.6 }}>
-                      {form.p || 'Descripción del slide'}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div style={{ fontSize:9, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'#93c5fd', marginBottom:6 }}>{form.label || 'Label'}</div>
-                    <h2 style={{ fontSize:'clamp(1.2rem,2vw,1.6rem)', fontWeight:800, lineHeight:1.15, marginBottom:10 }}>
-                      {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
-                    </h2>
-                  </>
-                )}
+                <div style={{ position:'absolute', inset:0, background:bgImgCss, backgroundSize:'cover', backgroundPosition: form.imgPosition || 'center' }} />
+                <div style={{ position:'absolute', inset:0, background:overlayCss }} />
                 <div style={{
-                  background:isHero?'#fff':'var(--color-accent)', color:isHero?'#111':'#fff',
-                  fontSize:10, fontWeight:700, letterSpacing:'0.06em', textTransform:'uppercase',
-                  padding:'8px 20px', borderRadius:6, display:'inline-block',
-                  boxShadow:isHero?'0 4px 12px rgba(0,0,0,0.1)':'0 4px 12px rgba(220,38,38,0.3)',
+                  position:'relative', zIndex:2, padding:'3rem 2rem', maxWidth:'640px', color:'#fff',
+                  textAlign: hAlign as any,
                 }}>
-                  {form.cta || 'CTA'}
+                  <div style={{
+                    fontSize:'11px', fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase',
+                    color:'var(--color-primary-light)', background:'rgba(255,255,255,0.15)',
+                    padding:'4px 12px', borderRadius:'4px', display:'inline-block',
+                    marginBottom:'1rem', backdropFilter:'blur(4px)',
+                  }}>
+                    {form.tag || 'Tag del slide'}
+                  </div>
+                  <h1 style={{
+                    fontSize:'clamp(1.8rem, 4vw, 3.2rem)', fontWeight:800, lineHeight:1.1,
+                    marginBottom:'1rem', letterSpacing:'-0.02em',
+                    marginLeft: hAlign === 'center' ? 'auto' : '0',
+                    marginRight: hAlign === 'center' ? 'auto' : '0',
+                  }}>
+                    <span>{form.h1Line1 || 'Título'}</span><br />{form.h1Line2 || ''}
+                  </h1>
+                  <p style={{
+                    fontSize:'clamp(13px, 2.5vw, 15px)', opacity:0.9, marginBottom:'2rem',
+                    lineHeight:1.7, maxWidth:'500px',
+                    marginLeft: hAlign === 'center' ? 'auto' : '0',
+                    marginRight: hAlign === 'center' ? 'auto' : '0',
+                  }}>
+                    {form.p || 'Descripción del slide'}
+                  </p>
+                  <button style={{
+                    background:'#fff', color:'#111', fontSize:'13px', fontWeight:700,
+                    letterSpacing:'0.06em', textTransform:'uppercase', padding:'14px 32px',
+                    borderRadius:'6px', border:'none', cursor:'default',
+                    boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
+                    fontFamily:'"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+                  }}>
+                    {form.cta || 'CTA'}
+                  </button>
                 </div>
               </div>
-            </div>
+            ) : (
+              /* ── PREVIEW IDÉNTICO AL PROMO BANNER DE LA LANDING ── */
+              <div style={{
+                width:'100%', height:'100%', borderRadius:12, overflow:'hidden',
+                position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
+                display:'flex', alignItems: vAlignFlex, minHeight:'280px',
+              }}>
+                <div style={{ position:'absolute', inset:0, background:bgImgCss, backgroundSize:'cover', backgroundPosition: form.imgPosition || 'center' }} />
+                <div style={{ position:'absolute', inset:0, background: overlayCss }} />
+                <div style={{
+                  position:'relative', zIndex:2, padding:'2.5rem 2.5rem',
+                  color:'#fff', textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
+                }}>
+                  <div style={{
+                    fontSize:'10px', fontWeight:700, letterSpacing:'0.14em',
+                    textTransform:'uppercase', color:'var(--color-accent)', marginBottom:'8px',
+                  }}>
+                    {form.label || 'Label'}
+                  </div>
+                  <div style={{
+                    fontSize:'1.8rem', fontWeight:800, lineHeight:1.15, marginBottom:'12px',
+                  }}>
+                    {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
+                  </div>
+                  <span style={{
+                    background:'var(--color-accent)', color:'#fff', fontSize:'11px',
+                    fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase',
+                    padding:'10px 22px', borderRadius:'6px', display:'inline-block',
+                    boxShadow:'0 4px 12px rgba(220,38,38,0.3)',
+                  }}>
+                    {form.cta || 'CTA'}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ── CONTROLS ── */}
