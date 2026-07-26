@@ -32,7 +32,7 @@ export default function HomePage() {
     const imgPos = s.imgPosition || 'center';
     const imgFit = s.imgFit || 'cover';
     return {
-      bg: s.img ? `${s.bg}, url(${s.img}) ${imgPos} / ${imgFit} no-repeat` : s.bg,
+      bg: s.img ? `url(${s.img}) ${imgPos} / ${imgFit} no-repeat, ${s.bg}` : s.bg,
       tag: s.tag,
       h1: <><span>{s.h1Line1}</span><br />{s.h1Line2}</>,
       p: s.p,
@@ -204,7 +204,7 @@ export default function HomePage() {
           {BANNERS.promoBanners.map(b => {
             const imgPos = b.imgPosition || 'center';
             const imgFit = b.imgFit || 'cover';
-            const bg = b.img ? `${b.bg}, url(${b.img}) ${imgPos} / ${imgFit} no-repeat` : b.bg;
+            const bg = b.img ? `url(${b.img}) ${imgPos} / ${imgFit} no-repeat, ${b.bg}` : b.bg;
             const textAlign = b.textAlign || 'left';
             const textVertical = b.textVertical || 'bottom';
             const overlayStyle = b.overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)';

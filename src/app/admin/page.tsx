@@ -522,21 +522,25 @@ function BannerEditorModal({
               VISTA PREVIA
             </div>
             {isHero ? (
-              /* ── PREVIEW IDÉNTICO AL HERO SLIDER DE LA LANDING ── */
               <div style={{
                 width:'100%', height:'100%', borderRadius:12, overflow:'hidden',
                 position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-                display:'flex', alignItems: vAlignFlex, minHeight:'480px',
+                display:'flex', alignItems: vAlignFlex, minHeight:'480px', background:'#000',
               }}>
-                <div style={{ position:'absolute', inset:0, background:bgImgCss, backgroundSize:'cover', backgroundPosition: form.imgPosition || 'center' }} />
-                <div style={{ position:'absolute', inset:0, background:overlayCss }} />
+                {/* Imagen de fondo como img para mejor compatibilidad */}
+                {form.img && <img src={form.img} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center' }} />}
+                {/* Fallback gradient cuando no hay imagen */}
+                {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' }} />}
+                {/* Overlay oscuro */}
+                <div style={{ position:'absolute', inset:0, background: overlayCss }} />
+                {/* Contenido */}
                 <div style={{
                   position:'relative', zIndex:2, padding:'3rem 2rem', maxWidth:'640px', color:'#fff',
-                  textAlign: hAlign as any,
+                  textAlign: hAlign as any, width:'100%', boxSizing:'border-box',
                 }}>
                   <div style={{
                     fontSize:'11px', fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase',
-                    color:'var(--color-primary-light)', background:'rgba(255,255,255,0.15)',
+                    color:'#93c5fd', background:'rgba(255,255,255,0.15)',
                     padding:'4px 12px', borderRadius:'4px', display:'inline-block',
                     marginBottom:'1rem', backdropFilter:'blur(4px)',
                   }}>
@@ -563,20 +567,19 @@ function BannerEditorModal({
                     letterSpacing:'0.06em', textTransform:'uppercase', padding:'14px 32px',
                     borderRadius:'6px', border:'none', cursor:'default',
                     boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
-                    fontFamily:'"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                   }}>
                     {form.cta || 'CTA'}
                   </button>
                 </div>
               </div>
             ) : (
-              /* ── PREVIEW IDÉNTICO AL PROMO BANNER DE LA LANDING ── */
               <div style={{
                 width:'100%', height:'100%', borderRadius:12, overflow:'hidden',
                 position:'relative', boxShadow:'0 4px 20px rgba(0,0,0,.15)',
-                display:'flex', alignItems: vAlignFlex, minHeight:'280px',
+                display:'flex', alignItems: vAlignFlex, minHeight:'280px', background:'#000',
               }}>
-                <div style={{ position:'absolute', inset:0, background:bgImgCss, backgroundSize:'cover', backgroundPosition: form.imgPosition || 'center' }} />
+                {form.img && <img src={form.img} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center' }} />}
+                {!form.img && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #166534 0%, #14532d 100%)' }} />}
                 <div style={{ position:'absolute', inset:0, background: overlayCss }} />
                 <div style={{
                   position:'relative', zIndex:2, padding:'2.5rem 2.5rem',
@@ -584,7 +587,7 @@ function BannerEditorModal({
                 }}>
                   <div style={{
                     fontSize:'10px', fontWeight:700, letterSpacing:'0.14em',
-                    textTransform:'uppercase', color:'var(--color-accent)', marginBottom:'8px',
+                    textTransform:'uppercase', color:'#93c5fd', marginBottom:'8px',
                   }}>
                     {form.label || 'Label'}
                   </div>
@@ -594,10 +597,10 @@ function BannerEditorModal({
                     {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
                   </div>
                   <span style={{
-                    background:'var(--color-accent)', color:'#fff', fontSize:'11px',
+                    background:'#1e40af', color:'#fff', fontSize:'11px',
                     fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase',
                     padding:'10px 22px', borderRadius:'6px', display:'inline-block',
-                    boxShadow:'0 4px 12px rgba(220,38,38,0.3)',
+                    boxShadow:'0 4px 12px rgba(30,64,175,0.3)',
                   }}>
                     {form.cta || 'CTA'}
                   </span>
@@ -1165,7 +1168,7 @@ export default function AdminPage() {
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16, marginBottom:40 }}>
               {banners.heroSlides.map((slide,idx)=>{
                 const imgUrl = slide.img || '';
-                const bgCss = imgUrl ? slide.bg + `, url(${imgUrl}) ${slide.imgPosition||'center'} / ${slide.imgFit||'cover'} no-repeat` : slide.bg;
+                const bgCss = imgUrl ? `url(${imgUrl}) ${slide.imgPosition||'center'} / ${slide.imgFit||'cover'} no-repeat, ${slide.bg}` : slide.bg;
                 return (
                   <div key={`hero-${slide.id}`} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', display:'flex', flexDirection:'column' }}>
                     <div style={{ height:140, background:bgCss, backgroundSize:'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
@@ -1197,7 +1200,7 @@ export default function AdminPage() {
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:16, marginBottom:24 }}>
               {banners.promoBanners.map((banner,idx)=>{
                 const imgUrl = banner.img || '';
-                const bgCss = imgUrl ? banner.bg + `, url(${imgUrl}) ${banner.imgPosition||'center'} / ${banner.imgFit||'cover'} no-repeat` : banner.bg;
+                const bgCss = imgUrl ? `url(${imgUrl}) ${banner.imgPosition||'center'} / ${banner.imgFit||'cover'} no-repeat, ${banner.bg}` : banner.bg;
                 return (
                   <div key={`promo-${banner.id}`} style={{ background:'#fff', border:'1px solid #e8e8e8', borderRadius:12, overflow:'hidden', display:'flex', flexDirection:'column' }}>
                     <div style={{ height:120, background:bgCss, backgroundSize:'cover', display:'flex', alignItems:'flex-start', justifyContent:'flex-start', padding:'8px', position:'relative' }}>
