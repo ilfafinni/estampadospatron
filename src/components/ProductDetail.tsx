@@ -42,42 +42,6 @@ export default function ProductDetail({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 2000);
   };
 
-  const handleSendToWhatsApp = () => {
-    if (!talla && product.v.t) {
-      alert('Por favor, selecciona una talla');
-      return;
-    }
-    if (!color && product.v.col) {
-      alert('Por favor, selecciona un color');
-      return;
-    }
-    if (!tipo && product.v.tipo) {
-      alert('Por favor, selecciona un tipo/modelo');
-      return;
-    }
-
-    const lines = [
-      `*Hola, me interesa este producto:*`,
-      ``,
-      `*${product.n}*`,
-      `Ref: ${product.ref}`,
-      talla ? `Talla: ${talla}` : '',
-      color ? `Color: ${color}` : '',
-      tipo ? `Tipo: ${tipo}` : '',
-      estampados.length > 0 ? `\n*Estampados solicitados:*` : '',
-      ...estampados.map(e => `• ${e.ubicacion}: ${e.label} (+$${e.precio.toLocaleString('es-CL')})`),
-      ``,
-      `Cantidad: ${qty}`,
-      `Precio estimado: $${precioUnitTotal.toLocaleString('es-CL')} por unidad`,
-      nota ? `\nInstrucciones: ${nota}` : '',
-      ``,
-      `Link del producto: ${typeof window !== 'undefined' ? window.location.href : ''}`,
-    ].filter(Boolean).join('\n');
-
-    const url = `https://wa.me/56966389299?text=${encodeURIComponent(lines)}`;
-    window.open(url, '_blank');
-  };
-
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -295,7 +259,7 @@ export default function ProductDetail({ product }: { product: Product }) {
           </div>
 
           {/* CTA */}
-          <div className="pd-cta-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px', marginTop: '16px' }}>
             <button
               onClick={handleAddToCart}
               style={{
@@ -308,19 +272,6 @@ export default function ProductDetail({ product }: { product: Product }) {
               onMouseLeave={(e) => { if (!added) e.currentTarget.style.background = 'var(--color-accent)'; }}
             >
               {added ? 'Agregado' : 'Agregar al carrito'}
-            </button>
-            <button
-              onClick={handleSendToWhatsApp}
-              style={{
-                background: '#25D366', color: '#fff', border: 'none',
-                padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em',
-                cursor: 'pointer', borderRadius: 'var(--radius-sm)',
-                transition: 'background 0.3s', textTransform: 'uppercase',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#1db954'}
-              onMouseLeave={(e) => e.currentTarget.style.background = '#25D366'}
-            >
-              Consultar por WhatsApp
             </button>
           </div>
           <p style={{ fontSize: '11px', color: 'var(--text-light)', textAlign: 'center', marginTop: '8px', lineHeight: 1.5 }}>
