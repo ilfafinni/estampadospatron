@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html><head><style>*{margin:0}iframe{border:0;width:1440px;height:900px;display:block}</style></head>
+<body>
+<iframe id="f" src="/"></iframe>
+<script>
+  var f = document.getElementById('f');
+  var iv = setInterval(function () {
+    try {
+      var d = f.contentDocument;
+      if (!d || d.readyState !== 'complete') return;
+      d.documentElement.classList.remove('dark');
+      var h = d.querySelector('header');
+      var hero = d.querySelector('.hero-outer');
+      var step = 0;
+      function run() {
+        var hr = h.getBoundingClientRect();
+        var er = hero.getBoundingClientRect();
+        var rec = {step: step, scrollY: f.contentWindow.scrollY, header: {top: Math.round(hr.top), bottom: Math.round(hr.bottom)}, hero: {top: Math.round(er.top), bottom: Math.round(er.bottom)}, over: er.top < hr.bottom};
+        f.contentWindow.__recs = f.contentWindow.__recs || [];
+        f.contentWindow.__recs.push(rec);
+        if (step < 3) {
+          step++;
+          f.contentWindow.scrollTo(0, step * 300);
+          setTimeout(run, 700);
+        } else {
+          document.title = JSON.stringify(f.contentWindow.__recs);
+          clearInterval(iv);
+        }
+      }
+      run();
+    } catch (e) { document.title = 'ERR ' + e.message; }
+  }, 900);
+</script>
+</body></html>

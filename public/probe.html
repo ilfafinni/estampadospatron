@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><style>*{margin:0}iframe{border:0;width:1440px;height:900px;display:block}</style></head>
+<body>
+<iframe id="f" src="/"></iframe>
+<script>
+  var f = document.getElementById('f');
+  var iv = setInterval(function () {
+    try {
+      var d = f.contentWindow.document;
+      if (d.readyState !== 'complete') return;
+      var h = d.querySelector('header');
+      var hero = d.querySelector('.hero-outer');
+      var slide = d.querySelector('.hero-slide');
+      function r(el){ if(!el) return null; return {top:el.getBoundingClientRect().top,bottom:el.getBoundingClientRect().bottom,height:el.getBoundingClientRect().height}; }
+      var pos = {
+        innerHeight: f.contentWindow.innerHeight,
+        scrollY: f.contentWindow.scrollY,
+        header: r(h), hero: r(hero), slide: r(slide),
+        headerPos: h ? getComputedStyle(h).position : null,
+        heroPos: hero ? getComputedStyle(hero).position : null,
+        heroH: hero ? getComputedStyle(hero).height : null,
+        heroMinH: hero ? getComputedStyle(hero).minHeight : null,
+        slidePos: slide ? getComputedStyle(slide).position : null,
+        slideH: slide ? getComputedStyle(slide).height : null,
+      };
+      document.title = JSON.stringify(pos);
+      clearInterval(iv);
+    } catch (e) { document.title = 'ERR ' + e.message; }
+  }, 600);
+</script>
+</body></html>

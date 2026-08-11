@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+<html><head><style>*{margin:0}iframe{border:0;width:2560px;height:1440px;display:block}</style></head>
+<body>
+<iframe id="f" src="/"></iframe>
+<script>
+  var f = document.getElementById('f');
+  var iv = setInterval(function () {
+    try {
+      var d = f.contentDocument;
+      if (!d || d.readyState !== 'complete') return;
+      var hero = d.querySelector('.hero-outer');
+      if (!hero) return;
+      var read = {};
+      read.viewport = [f.contentWindow.innerWidth, f.contentWindow.innerHeight];
+      var er = hero.getBoundingClientRect();
+      read.hero = {top: Math.round(er.top), bottom: Math.round(er.bottom), w: Math.round(er.width), h: Math.round(er.height), ratio: (er.width / er.height).toFixed(2)};
+      var bg = d.querySelector('.hero-bg-desk');
+      var bgUrl = getComputedStyle(bg).backgroundImage.replace(/url\("|"\)|url\(|\)/g, '');
+      read.bgSize = getComputedStyle(bg).backgroundSize;
+      var img = new Image();
+      img.onload = function () { read.natural = [img.naturalWidth, img.naturalHeight]; read.downscale = img.naturalWidth >= er.width; document.title = JSON.stringify(read); clearInterval(iv); };
+      img.src = bgUrl;
+    } catch (e) { document.title = 'ERR ' + e.message; clearInterval(iv); }
+  }, 900);
+</script>
+</body></html>
