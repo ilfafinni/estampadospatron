@@ -48,26 +48,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           /* CSS Variables for theming */
           :root {
-            --color-primary: #ffffff;
-            --color-primary-hover: #e4e4e7;
-            --color-primary-light: #d4d4d8;
-            --color-accent: #ffffff;
-            --color-accent-hover: #d4d4d8;
+            --color-primary: #111111;
+            --color-primary-hover: #000000;
+            --color-primary-light: #e4e4e7;
+            --color-accent: #111111;
+            --color-accent-hover: #000000;
             --color-success: #22c55e;
             --color-whatsapp: #25D366;
-            --bg-primary: #000000;
-            --bg-secondary: #0a0a0a;
-            --bg-tertiary: #111111;
-            --bg-card: #171717;
-            --text-primary: #ffffff;
-            --text-secondary: #e5e7eb;
-            --text-muted: #a1a1aa;
-            --text-light: #71717a;
-            --border-light: #27272a;
-            --border-medium: #3f3f46;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.55);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.7);
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f7f8;
+            --bg-tertiary: #f1f1f3;
+            --bg-card: #ffffff;
+            --text-primary: #111111;
+            --text-secondary: #3f3f46;
+            --text-muted: #71717a;
+            --text-light: #a1a1aa;
+            --border-light: #e4e4e7;
+            --border-medium: #d4d4d8;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
             --radius-sm: 4px;
             --radius-md: 6px;
             --radius-lg: 8px;
