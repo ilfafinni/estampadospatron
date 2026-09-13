@@ -19,16 +19,10 @@ function cloudOpt(url: string | undefined, w = 2560): string {
 export default function HomePage() {
   const [activeCat, setActiveCat] = useState<'todos' | Categoria>('todos');
   const [slideIdx, setSlideIdx] = useState(0);
-  const [toast, setToast] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   const pauseRef = useRef(false);
   const touchStartX = useRef(0);
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(''), 3500);
-  };
 
   const slides = BANNERS.heroSlides.map(s => {
     const imgPos = s.imgPosition || 'center';
@@ -60,9 +54,9 @@ export default function HomePage() {
       overlayStyle: s.overlayStyle || 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
       onCta: s.ctaType === 'catalogo'
         ? () => { window.location.href = s.ctaParam ? `/catalogo?cat=${s.ctaParam}` : '/catalogo'; }
-        : s.ctaType === 'whatsapp'
+        : s.ctaType === 'whatsapp' || s.ctaType === 'contacto'
           ? () => window.open(WHATSAPP_URL, '_blank')
-          : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' }),
+          : () => window.open(WHATSAPP_URL, '_blank'),
     };
   });
 
@@ -260,7 +254,7 @@ export default function HomePage() {
             const overlayStyle = b.overlayStyle || 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%)';
             const onClick = b.ctaType === 'categoria'
               ? () => { setActiveCat((b.ctaParam || 'polerones') as Categoria); scrollToCat(); }
-              : () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' });
+              : () => window.open(WHATSAPP_URL, '_blank');
             return (
               <PromoCard
                 key={b.id}
@@ -283,84 +277,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── PROCESO ── */}
-      <div style={{ padding: '3rem 1.5rem', maxWidth: '1400px', margin: '0 auto' }} id="proceso">
-        <style>{`
-          .pasos-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 24px; margin-top: 2rem; }
-          @media (max-width: 768px) {
-            .pasos-grid { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 16px; scrollbar-width: none; margin: 2rem -1.5rem 0; padding-left: 1.5rem; padding-right: 0.5rem; width: auto; }
-            .pasos-grid::-webkit-scrollbar { display: none; }
-            .paso-card { scroll-snap-align: start; min-width: 260px; width: 260px; flex-shrink: 0; padding: 1.5rem 1.2rem !important; }
-          }
-        `}</style>
-        <SectionTitle text="Cómo funciona" />
-        <div className="pasos-grid">
-          {[
-            { n: '01', h: 'Elige el producto', p: 'Selecciona de nuestro catálogo. Más de 34 artículos disponibles.' },
-            { n: '02', h: 'Sube tu diseño', p: 'Usa el previsualizador para ver cómo queda tu logo en la prenda.' },
-            { n: '03', h: 'Confirmamos juntos', p: 'Revisamos tallas, colores y acabado contigo antes de producir.' },
-            { n: '04', h: 'Retiro o envío', p: 'Retira en Curicó en 4 hrs o enviamos a todo Chile.' },
-          ].map(paso => (
-            <div key={paso.n} className="paso-card" style={{ textAlign: 'center', padding: '2rem 1.5rem', border: '1px solid var(--border-light)', borderRadius: '8px', background: 'var(--bg-card)', transition: 'border-color 0.2s, box-shadow 0.2s' }}>
-              <div style={{ width: '48px', height: '48px', background: 'var(--text-primary)', color: 'var(--bg-primary)', borderRadius: '50%', fontSize: '18px', fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.2rem' }}>{paso.n}</div>
-              <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>{paso.h}</h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6 }}>{paso.p}</p>
-            </div>
-          ))}
-        </div>
-        {/* Mobile hint dots */}
-        <div className="pasos-dots" style={{ display: 'none', justifyContent: 'center', gap: '8px', marginTop: '4px' }}>
-          {[0,1,2,3].map(i => (
-            <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--text-muted)', opacity: 0.3 }} />
-          ))}
-        </div>
-        <style>{`@media (max-width: 768px) { .pasos-dots { display: flex !important; } }`}</style>
-      </div>
-
-      {/* ── CONTACTO ── */}
-      <div style={{ background: 'var(--bg-secondary)', padding: '3rem 1.5rem' }} id="contacto">
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
-          <div>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Cotiza tu pedido</h2>
-            <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '2rem' }}>Cuéntanos tu proyecto y te respondemos en menos de una hora.</p>
-            <form onSubmit={e => { e.preventDefault(); showToast('¡Cotización enviada! Te respondemos pronto.'); (e.target as HTMLFormElement).reset(); }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <FormField label="Nombre" type="text" placeholder="Tu nombre" />
-                <FormField label="Contacto" type="text" placeholder="Correo o WhatsApp" />
-              </div>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Producto</label>
-                <select style={{ width: '100%', padding: '11px 14px', border: '1px solid var(--border-medium)', borderRadius: '6px', fontFamily: 'inherit', fontSize: '13px', color: 'var(--text-primary)', background: 'var(--bg-card)', outline: 'none', cursor: 'pointer' }}>
-                  <option>Selecciona...</option>
-                  <option>Poleras</option><option>Polerones</option><option>Tazas</option>
-                  <option>Carcasas</option><option>Ropa deportiva</option><option>Otro</option>
-                </select>
-              </div>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Mensaje</label>
-                <textarea placeholder="Describe tu proyecto, cantidad, colores, tallas..." rows={4} style={{ width: '100%', padding: '11px 14px', border: '1px solid var(--border-medium)', borderRadius: '6px', fontFamily: 'inherit', fontSize: '13px', color: 'var(--text-primary)', background: 'var(--bg-card)', outline: 'none', resize: 'vertical' }} />
-              </div>
-              <button type="submit" style={{ width: '100%', background: 'var(--color-accent)', color: '#fff', border: 'none', padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit', borderRadius: '6px', transition: 'background 0.2s' }}>
-                Enviar cotización
-              </button>
-            </form>
-          </div>
-          <div style={{ paddingTop: '1rem' }}>
-            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '2rem', color: 'var(--text-primary)' }}>Información de contacto</h2>
-            {[
-              { title: 'Ubicación', content: 'Curicó, Región del Maule' },
-              { title: 'WhatsApp', content: `${WHATSAPP_NUMBER_DISPLAY}\nRespuesta inmediata en horario hábil` },
-              { title: 'Correo', content: CONTACT_EMAIL },
-            ].map(block => (
-              <div key={block.title} style={{ marginBottom: '2rem' }}>
-                <h4 style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{block.title}</h4>
-                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-line' }}>{block.content}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* ── FOOTER ── */}
       <footer style={{ background: 'var(--bg-primary)', color: 'var(--text-primary)', padding: '3rem 1.5rem 1.5rem', borderTop: '1px solid var(--border-light)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -376,7 +292,7 @@ export default function HomePage() {
             </div>
             {[
               { title: 'Productos', links: [['Poleras', () => window.location.href = '/?cat=poleras'], ['Polerones', () => window.location.href = '/?cat=polerones'], ['Tazas', () => window.location.href = '/?cat=tazas'], ['Deportiva', () => window.location.href = '/?cat=deportiva']] },
-              { title: 'Tienda', links: [['Cómo funciona', () => document.getElementById('proceso')?.scrollIntoView({ behavior: 'smooth' })], ['Cotizar', () => document.getElementById('contacto')?.scrollIntoView({ behavior: 'smooth' })]] },
+              { title: 'Tienda', links: [['Ver catálogo', () => window.location.href = '/catalogo'], ['Cotizar por WhatsApp', () => window.open(WHATSAPP_URL, '_blank')]] },
               { title: 'Contacto', links: [['WhatsApp', () => window.open(WHATSAPP_URL)], ['Email', () => window.open(`mailto:${CONTACT_EMAIL}`)]] },
             ].map(col => (
               <div key={col.title}>
@@ -423,17 +339,6 @@ export default function HomePage() {
       >
         <img src="/images/whatsapp.png" alt="WhatsApp" width="56" height="56" style={{ display: 'block', borderRadius: '50%', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.2))' }} onError={(e) => { e.currentTarget.style.display = 'none'; }} />
       </a>
-
-      {/* ── TOAST ── */}
-      {toast && (
-        <div style={{
-          position: 'fixed', bottom: '2rem', left: '50%', transform: 'translateX(-50%)',
-          background: 'var(--text-primary)', color: 'var(--bg-primary)', padding: '12px 24px', borderRadius: '4px',
-          fontSize: '13px', fontWeight: 500, zIndex: 9999, boxShadow: 'var(--shadow-lg)',
-        }}>
-          {toast}
-        </div>
-      )}
     </div>
   );
 }
@@ -456,15 +361,6 @@ function SectionTitle({ text }: { text: string }) {
   return (
     <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '2px solid var(--text-primary)', display: 'flex', alignItems: 'center', gap: '10px' }}>
       {text}
-    </div>
-  );
-}
-
-function FormField({ label, type, placeholder }: { label: string; type: string; placeholder: string }) {
-  return (
-    <div>
-      <label style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'block', marginBottom: '5px' }}>{label}</label>
-      <input type={type} placeholder={placeholder} required style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-medium)', borderRadius: '3px', fontFamily: 'inherit', fontSize: '13px', color: 'var(--text-primary)', background: 'var(--bg-card)', outline: 'none' }} />
     </div>
   );
 }
