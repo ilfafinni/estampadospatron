@@ -367,7 +367,7 @@ function SectionTitle({ text }: { text: string }) {
 
 function ProductCard({ product }: { product: Product }) {
   const badgeColors: Record<string, string> = {
-    popular: '#ef4444', eco: '#22c55e', pack: '#3b82f6', nuevo: '#111',
+    popular: '#52525b', eco: '#3f3f46', pack: '#27272a', nuevo: '#171717',
   };
   return (
     <Link href={`/producto/${slugify(product)}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -417,7 +417,7 @@ function PromoCard({ bgGradient, bgImg, bgImgMob, imgTransform, imgTransformMob,
       <div className="promo-card-content" style={{ position: 'relative', zIndex: 2, padding: large ? '2.5rem 2.5rem' : '1.8rem 2rem', color: '#fff', textAlign: hAlign as React.CSSProperties['textAlign'], width: '100%', boxSizing: 'border-box' }}>
         <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-accent)', marginBottom: '8px' }}>{label}</div>
         <div className="promo-card-title" style={{ fontSize: large ? '1.8rem' : '1.4rem', fontWeight: 800, lineHeight: 1.15, marginBottom: '12px' }}>{title}</div>
-        <span style={{ background: 'var(--color-accent)', color: '#fff', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '10px 22px', borderRadius: '6px', display: 'inline-block', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>{cta}</span>
+        <span style={{ background: 'var(--color-accent)', color: 'var(--bg-primary)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '10px 22px', borderRadius: '6px', display: 'inline-block', boxShadow: '0 4px 12px rgba(0,0,0,0.4)' }}>{cta}</span>
       </div>
     </div>
   );

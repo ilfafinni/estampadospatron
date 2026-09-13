@@ -263,7 +263,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             <button
               onClick={handleAddToCart}
               style={{
-                background: added ? 'var(--color-success)' : 'var(--color-accent)', color: '#fff', border: 'none',
+                background: added ? 'var(--color-success)' : 'var(--color-accent)', color: 'var(--bg-primary)', border: 'none',
                 padding: '14px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.06em',
                 cursor: 'pointer', borderRadius: 'var(--radius-sm)',
                 transition: 'background var(--transition)', textTransform: 'uppercase',

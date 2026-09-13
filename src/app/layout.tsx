@@ -34,12 +34,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/images/logo.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/images/logo.png" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#1e40af" />
+        <meta name="theme-color" content="#000000" />
         <style>{`
           * { box-sizing: border-box; }
           html { scroll-behavior: smooth; }
           body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; width: 100%; max-width: 100vw; }
-          ::selection { background: var(--color-primary); color: #fff; }
+          ::selection { background: var(--text-primary); color: var(--bg-primary); }
           a { color: inherit; }
           button { font-family: inherit; }
           input, select, textarea { font-family: inherit; max-width: 100%; }
@@ -48,26 +48,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           /* CSS Variables for theming */
           :root {
-            --color-primary: #1e40af;
-            --color-primary-hover: #1e3a8a;
-            --color-primary-light: #dbeafe;
-            --color-accent: #1e40af;
-            --color-accent-hover: #1e3a8a;
+            --color-primary: #ffffff;
+            --color-primary-hover: #e4e4e7;
+            --color-primary-light: #d4d4d8;
+            --color-accent: #ffffff;
+            --color-accent-hover: #d4d4d8;
             --color-success: #22c55e;
             --color-whatsapp: #25D366;
-            --bg-primary: #ffffff;
-            --bg-secondary: #fafafa;
-            --bg-tertiary: #f3f4f6;
-            --bg-card: #ffffff;
-            --text-primary: #111827;
-            --text-secondary: #374151;
-            --text-muted: #6b7280;
-            --text-light: #9ca3af;
-            --border-light: #e5e7eb;
-            --border-medium: #d1d5db;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --bg-card: #171717;
+            --text-primary: #ffffff;
+            --text-secondary: #e5e7eb;
+            --text-muted: #a1a1aa;
+            --text-light: #71717a;
+            --border-light: #27272a;
+            --border-medium: #3f3f46;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.55);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.7);
             --radius-sm: 4px;
             --radius-md: 6px;
             --radius-lg: 8px;
@@ -76,26 +76,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }
 
           .dark {
-            --color-primary: #3b82f6;
-            --color-primary-hover: #2563eb;
-            --color-primary-light: #1e3a5f;
-            --color-accent: #3b82f6;
-            --color-accent-hover: #2563eb;
+            --color-primary: #ffffff;
+            --color-primary-hover: #e4e4e7;
+            --color-primary-light: #d4d4d8;
+            --color-accent: #ffffff;
+            --color-accent-hover: #d4d4d8;
             --color-success: #22c55e;
             --color-whatsapp: #25D366;
-            --bg-primary: #0f172a;
-            --bg-secondary: #111827;
-            --bg-tertiary: #1f2937;
-            --bg-card: #1e293b;
-            --text-primary: #f9fafb;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #111111;
+            --bg-card: #171717;
+            --text-primary: #ffffff;
             --text-secondary: #e5e7eb;
-            --text-muted: #9ca3af;
-            --text-light: #6b7280;
-            --border-light: #374151;
-            --border-medium: #4b5563;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-            --shadow-lg: 0 10px 30px rgba(0,0,0,0.5);
+            --text-muted: #a1a1aa;
+            --text-light: #71717a;
+            --border-light: #27272a;
+            --border-medium: #3f3f46;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.55);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.7);
           }
 
           /* Dark mode transition */

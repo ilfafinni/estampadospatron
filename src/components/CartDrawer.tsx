@@ -145,7 +145,7 @@ export default function CartDrawer() {
             <button
               onClick={handleCheckout}
               style={{
-                width: '100%', background: 'var(--color-accent)', color: '#fff',
+                width: '100%', background: 'var(--color-accent)', color: 'var(--bg-primary)',
                 border: 'none', padding: '14px', fontSize: '14px',
                 fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
                 cursor: 'pointer', borderRadius: 'var(--radius-md)', marginBottom: '10px',

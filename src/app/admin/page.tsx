@@ -516,8 +516,8 @@ function BannerEditorModal({
   const bgImgCss = form.img
     ? `${form.bg || ''}, url(${form.img}) ${form.imgPosition || 'center'} / ${form.imgFit || 'cover'} no-repeat`
     : form.bg || (type === 'hero'
-        ? 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)'
-        : 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)');
+        ? 'linear-gradient(135deg, #000000 0%, #111111 100%)'
+        : 'linear-gradient(135deg, #000000 0%, #111111 100%)');
 
   const overlayCss = form.overlayStyle || (type === 'hero'
     ? 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)'
@@ -708,7 +708,7 @@ function BannerEditorModal({
                     onMouseDown={onMouseDown}
                     onWheel={onWheel}
                     style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:form.imgFit||'cover', objectPosition:form.imgPosition||'center', transform:`translate(${panX}px, ${panY}px) scale(${zoom})`, cursor:isDragging?'grabbing':'grab', transition:'transform 0.05s', transformOrigin:'center' }} />}
-                  {!imgSrc && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)' }} />}
+                  {!imgSrc && <div style={{ position:'absolute', inset:0, background: form.bg || 'linear-gradient(135deg, #000000 0%, #111111 100%)' }} />}
                   <div style={{ position:'absolute', inset:0, background: overlayCss }} />
                   {isHero ? (
                     <div style={{
@@ -717,7 +717,7 @@ function BannerEditorModal({
                     }}>
                       <div style={{
                         fontSize:'11px', fontWeight:700, letterSpacing:'0.15em', textTransform:'uppercase',
-                        color:'#93c5fd', background:'rgba(255,255,255,0.15)',
+                        color:'#d4d4d8', background:'rgba(255,255,255,0.15)',
                         padding:'4px 12px', borderRadius:'4px', display:'inline-block',
                         marginBottom:'1rem', backdropFilter:'blur(4px)',
                       }}>
@@ -755,7 +755,7 @@ function BannerEditorModal({
                     }}>
                       <div style={{
                         fontSize:'10px', fontWeight:700, letterSpacing:'0.14em',
-                        textTransform:'uppercase', color:'#93c5fd', marginBottom:'8px',
+                        textTransform:'uppercase', color:'#d4d4d8', marginBottom:'8px',
                       }}>
                         {form.label || 'Label'}
                       </div>
@@ -765,10 +765,10 @@ function BannerEditorModal({
                         {form.titleLine1 || 'Título'}<br />{form.titleLine2 || ''}
                       </div>
                       <span style={{
-                        background:'#1e40af', color:'#fff', fontSize:'11px',
+                        background:'#ffffff', color:'#111', fontSize:'11px',
                         fontWeight:700, letterSpacing:'0.08em', textTransform:'uppercase',
                         padding:'10px 22px', borderRadius:'6px', display:'inline-block',
-                        boxShadow:'0 4px 12px rgba(30,64,175,0.3)',
+                        boxShadow:'0 4px 12px rgba(0,0,0,0.4)',
                       }}>
                         {form.cta || 'CTA'}
                       </span>

@@ -182,7 +182,7 @@ export default function Header({
               {totalItems > 0 && (
                 <span style={{
                   position: 'absolute', top: '-4px', right: '-4px',
-                  background: 'var(--color-accent)', color: '#fff', borderRadius: '50%',
+                  background: 'var(--color-accent)', color: 'var(--bg-primary)', borderRadius: '50%',
                   width: '16px', height: '16px', fontSize: '9px', fontWeight: 700,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>

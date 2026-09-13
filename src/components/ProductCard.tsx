@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 const badgeColors: Record<string, string> = {
-  popular: '#ef4444', eco: '#22c55e', pack: '#3b82f6', nuevo: '#111',
+  popular: '#52525b', eco: '#3f3f46', pack: '#27272a', nuevo: '#171717',
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
