@@ -107,7 +107,7 @@ export default function ProductDetail({ product }: { product: Product }) {
             )}
           </div>
           <p style={{ fontSize: '11px', color: 'var(--text-light)', textAlign: 'center', marginTop: '8px' }}>
-            Foto referencial — fotos reales del producto próximamente
+            Foto referencial del proveedor — foto real de tu prenda al confirmar
           </p>
 
           {/* Editor visual de ubicación del estampado */}

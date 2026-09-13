@@ -4,14 +4,16 @@
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { findBySlug } from '@/data/products';
+import { findBySlug, PRODUCTS } from '@/data/products';
 import ProductoPageClient from './ProductoPageClient';
-
-export const dynamic = 'force-dynamic';
 
 type ProductoPageProps = {
   params: { slug: string };
 };
+
+export function generateStaticParams() {
+  return PRODUCTS.map(p => ({ slug: p.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') + '-' + p.id }));
+}
 
 export function generateMetadata({ params }: ProductoPageProps): Metadata {
   const product = findBySlug(params.slug);
